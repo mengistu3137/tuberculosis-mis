@@ -1,0 +1,24 @@
+[26-Feb-2026 23:06:31 Europe/Berlin] === DISCHARGE PROCESS STARTED ===
+[26-Feb-2026 23:06:31 Europe/Berlin] Patient ID: PAT-7c331
+[26-Feb-2026 23:06:31 Europe/Berlin] Visit ID: VST-2026-0019
+[26-Feb-2026 23:06:31 Europe/Berlin] User ID: STF-082
+[26-Feb-2026 23:06:31 Europe/Berlin] SUCCESS - Discharge record inserted: DS-9EBC84
+[26-Feb-2026 23:06:31 Europe/Berlin] Update visit status - Rows affected: 0
+[26-Feb-2026 23:06:31 Europe/Berlin] WARNING - No rows updated. Visit ID: VST-2026-0019 may not exist or already completed.
+[26-Feb-2026 23:06:31 Europe/Berlin] Current visit status in DB: completed
+[26-Feb-2026 23:06:31 Europe/Berlin] EXCEPTION - No rows updated. Visit may not exist or already completed.
+[26-Feb-2026 23:06:31 Europe/Berlin] Stack trace: #0 D:\ProgramFiles\Xampp\htdocs\prmis\modules\medical-record\discharge.php(38): Clinical->processDischarge(Array, 'STF-082')
+#1 D:\ProgramFiles\Xampp\htdocs\prmis\index.php(141): include('D:\\ProgramFiles...')
+#2 {main}
+[26-Feb-2026 23:06:31 Europe/Berlin] === DISCHARGE PROCESS FAILED ===
+
+[26-Feb-2026 23:11:08 Europe/Berlin] === DISCHARGE PROCESS STARTED ===
+[26-Feb-2026 23:11:08 Europe/Berlin] Patient ID: PAT-c7e29
+[26-Feb-2026 23:11:08 Europe/Berlin] Visit ID: VST-2026-0013
+[26-Feb-2026 23:11:08 Europe/Berlin] User ID: STF-082
+[26-Feb-2026 23:11:08 Europe/Berlin] SUCCESS - Discharge record inserted: DS-72CE8C
+[26-Feb-2026 23:11:08 Europe/Berlin] Update visit status - Rows affected: 1
+[26-Feb-2026 23:11:08 Europe/Berlin] Verification - New status: completed
+[26-Feb-2026 23:11:08 Europe/Berlin] SUCCESS - Transaction committed for visit: VST-2026-0013
+[26-Feb-2026 23:11:08 Europe/Berlin] === DISCHARGE PROCESS COMPLETED SUCCESSFULLY ===
+

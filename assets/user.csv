@@ -1,0 +1,11 @@
+full_name,email,password,role
+Dr. Samuel Bekele,samuel.bekele@hospital.com,Password123,Doctor
+Sr. Hana Tesfaye,hana.tesfaye@hospital.com,Password123,Nurse
+Mr. Dawit Alemu,dawit.alemu@hospital.com,Password123,Lab Technician
+Ms. Selamawit Girma,selamawit.girma@hospital.com,Password123,Pharmacist
+Mr. Yohannes Kebede,yohannes.kebede@hospital.com,Password123,Clerk
+Admin User,admin@hospital.com,Admin@123,Admin
+Dr. Meron Asfaw,meron.asfaw@hospital.com,Password123,Doctor
+Sr. Rahel Mekonnen,rahel.mekonnen@hospital.com,Password123,Nurse
+Mr. Abebe Tadesse,abebe@gmail.com,Password123,Lab Technician
+Ms. Eyerusalem Fikru,eyu@gmail.com,Password123,Pharmacist

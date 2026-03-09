@@ -1,0 +1,14 @@
+
+# Composer dependencies
+/vendor/
+/composer.lock
+
+# Environment variables
+.env
+.env.local
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+npm-debug.log
