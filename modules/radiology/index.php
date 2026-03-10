@@ -1,7 +1,7 @@
 <?php
 // Access control - only radiologists and doctors can view
 if (!in_array($_SESSION['role'], ['Radiologist', 'Doctor', 'Admin'])) {
-    echo "<div class='p-10 text-red-500 font-black uppercase tracking-widest text-center'>Access Denied</div>";
+    echo "<div class='p-10 text-red-500 font-bold uppercase tracking-widest text-center'>Access Denied</div>";
     exit;
 }
 
@@ -9,7 +9,7 @@ $role = $_SESSION['role'];
 
 // Handle result submission via AJAX/Modal
 $msg = "";
-$msgType = "blue";
+$msgType = "teal";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_radiology_result'])) {
     $result_id = "RADRES-" . strtoupper(substr(md5(uniqid()), 0, 8));
@@ -110,24 +110,24 @@ $total_pages = ceil($total_pending / $limit);
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-black text-gray-800 uppercase tracking-tighter">Radiology Department</h1>
+            <h1 class="text-2xl font-bold text-gray-800 uppercase tracking-tighter">Radiology Department</h1>
             <p class="text-[10px] text-fuchsia-600 font-bold uppercase tracking-widest mt-1">
                 <i data-lucide="scan" class="w-3 h-3 inline mr-1"></i>
                 Pending Imaging Requests
             </p>
         </div>
         <div class="text-right">
-            <span class="px-4 py-2 bg-fuchsia-100 text-fuchsia-600 rounded-xl font-black text-sm">
+            <span class="px-4 py-2 bg-fuchsia-100 text-fuchsia-600 rounded-xl font-semibold text-sm">
                 <?php echo $total_pending; ?> Pending
             </span>
         </div>
     </div>
 
     <!-- Requests Table -->
-    <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <table class="w-full text-left">
             <thead
-                class="bg-gray-50/50 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-100">
+                class="bg-gray-50/50 text-[10px] font-medium text-gray-500 tracking-wide border-b border-gray-100">
                 <tr>
                     <th class="px-8 py-5">Patient</th>
                     <th class="px-8 py-5">Exam Details</th>
@@ -142,7 +142,7 @@ $total_pages = ceil($total_pending / $limit);
                     <tr>
                         <td colspan="6" class="p-20 text-center">
                             <i data-lucide="scan" class="w-12 h-12 text-gray-200 mx-auto mb-4"></i>
-                            <p class="text-sm font-black text-gray-300 uppercase tracking-widest">No pending requests</p>
+                            <p class="text-sm font-semibold text-gray-400 tracking-wide">No pending requests</p>
                         </td>
                     </tr>
                 <?php else: ?>
@@ -151,8 +151,8 @@ $total_pages = ceil($total_pending / $limit);
                         ?>
                         <tr class="hover:bg-fuchsia-50/20 transition-all group">
                             <td class="px-8 py-5">
-                                <p class="font-black text-gray-800"><?php echo $req['patient_name']; ?></p>
-                                <p class="text-[8px] font-black text-gray-400 mt-1"><?php echo $req['medical_record_number']; ?>
+                                <p class="font-bold text-gray-800"><?php echo $req['patient_name']; ?></p>
+                                <p class="text-[8px] font-medium text-gray-400 mt-1"><?php echo $req['medical_record_number']; ?>
                                 </p>
                             </td>
                             <td class="px-8 py-5">
@@ -166,12 +166,12 @@ $total_pages = ceil($total_pending / $limit);
                             </td>
                             <td class="px-8 py-5">
                                 <span
-                                    class="px-2 py-1 bg-<?php echo $priorityColor; ?>-100 text-<?php echo $priorityColor; ?>-600 text-[8px] font-black rounded-full">
+                                    class="px-2 py-1 bg-<?php echo $priorityColor; ?>-100 text-<?php echo $priorityColor; ?>-600 text-[8px] font-medium rounded-full">
                                     <?php echo $req['priority']; ?>
                                 </span>
                             </td>
                             <td class="px-8 py-5">
-                                <span class="px-2 py-1 bg-amber-100 text-amber-600 text-[8px] font-black rounded-full">
+                                <span class="px-2 py-1 bg-amber-100 text-amber-600 text-[8px] font-medium rounded-full">
                                     Pending
                                 </span>
                             </td>
@@ -185,7 +185,7 @@ $total_pages = ceil($total_pending / $limit);
                                     '<?php echo addslashes($req['clinical_history']); ?>',
                                     '<?php echo $req['priority']; ?>'
                                 )"
-                                    class="inline-flex items-center gap-2 px-4 py-2 bg-fuchsia-600 text-white rounded-xl font-black text-[8px] uppercase tracking-widest hover:bg-fuchsia-700 transition-all">
+                                    class="inline-flex items-center gap-2 px-4 py-2 bg-fuchsia-600 text-white rounded-xl font-medium text-[8px] uppercase tracking-widest hover:bg-fuchsia-700 transition-all">
                                     <i data-lucide="upload" class="w-3 h-3"></i> Enter Results
                                 </button>
                             </td>
@@ -198,13 +198,13 @@ $total_pages = ceil($total_pending / $limit);
         <!-- Pagination -->
         <?php if ($total_pages > 1): ?>
             <div class="px-8 py-6 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
-                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                <span class="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">
                     Page <?php echo $current_page; ?> of <?php echo $total_pages; ?>
                 </span>
                 <div class="flex gap-1.5">
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                         <a href="index.php?page=radiology&p=<?php echo $i; ?>"
-                            class="w-9 h-9 flex items-center justify-center rounded-xl font-black text-[10px] transition-all <?php echo ($i == $current_page) ? 'bg-fuchsia-600 text-white' : 'bg-white text-gray-400 border border-gray-100'; ?>">
+                            class="w-9 h-9 flex items-center justify-center rounded-xl font-semibold text-[10px] transition-all <?php echo ($i == $current_page) ? 'bg-fuchsia-600 text-white' : 'bg-white text-gray-400 border border-gray-100'; ?>">
                             <?php echo $i; ?>
                         </a>
                     <?php endfor; ?>
@@ -218,7 +218,7 @@ $total_pages = ceil($total_pending / $limit);
 <div id="radiologyResultModal" class="fixed inset-0 z-[100] hidden">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeResultModal()"></div>
     <div
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl bg-white rounded-[3rem] shadow-2xl p-8 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto custom-scrollbar">
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl bg-white rounded-2xl shadow-xl p-8 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto custom-scrollbar">
 
         <!-- Modal Header - Sticky -->
         <div class="sticky -top-8 bg-white pt-2 pb-4 z-10 border-b border-gray-100 mb-6">
@@ -229,7 +229,7 @@ $total_pages = ceil($total_pending / $limit);
                         <i data-lucide="scan" class="w-7 h-7"></i>
                     </div>
                     <div>
-                        <h2 class="text-2xl font-black text-gray-800 tracking-tight">Enter Radiology Results</h2>
+                        <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Enter Radiology Results</h2>
                         <p id="modalPatientInfo" class="text-[10px] text-gray-500 font-bold mt-1">Loading...</p>
                     </div>
                 </div>
@@ -246,20 +246,20 @@ $total_pages = ceil($total_pending / $limit);
             <div class="bg-gradient-to-r from-fuchsia-50 to-purple-50 rounded-2xl p-6 border border-fuchsia-100">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                        <p class="text-[8px] font-black text-fuchsia-600 uppercase">Exam Type</p>
-                        <p id="modalExamType" class="font-black text-gray-800">-</p>
+                        <p class="text-[8px] font-semibold text-fuchsia-600 uppercase">Exam Type</p>
+                        <p id="modalExamType" class="font-bold text-gray-800">-</p>
                     </div>
                     <div>
-                        <p class="text-[8px] font-black text-fuchsia-600 uppercase">Body Part</p>
-                        <p id="modalBodyPart" class="font-black text-gray-800">-</p>
+                        <p class="text-[8px] font-semibold text-fuchsia-600 uppercase">Body Part</p>
+                        <p id="modalBodyPart" class="font-bold text-gray-800">-</p>
                     </div>
                     <div>
-                        <p class="text-[8px] font-black text-fuchsia-600 uppercase">Priority</p>
-                        <p id="modalPriority" class="font-black text-gray-800">-</p>
+                        <p class="text-[8px] font-semibold text-fuchsia-600 uppercase">Priority</p>
+                        <p id="modalPriority" class="font-bold text-gray-800">-</p>
                     </div>
                     <div>
-                        <p class="text-[8px] font-black text-fuchsia-600 uppercase">Request ID</p>
-                        <p id="modalRequestId" class="font-black text-gray-800">-</p>
+                        <p class="text-[8px] font-semibold text-fuchsia-600 uppercase">Request ID</p>
+                        <p id="modalRequestId" class="font-bold text-gray-800">-</p>
                     </div>
                 </div>
                 <div id="modalClinicalHistory" class="mt-4 p-3 bg-white rounded-xl text-sm text-gray-600 hidden">
@@ -274,7 +274,7 @@ $total_pages = ceil($total_pending / $limit);
 
                 <div class="space-y-4">
                     <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 block mb-2">
+                        <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider ml-2 block mb-2">
                             Findings <span class="text-red-400">*</span>
                         </label>
                         <textarea name="findings" id="findings" rows="4" required
@@ -283,7 +283,7 @@ $total_pages = ceil($total_pending / $limit);
                     </div>
 
                     <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 block mb-2">
+                        <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider ml-2 block mb-2">
                             Impression / Conclusion <span class="text-red-400">*</span>
                         </label>
                         <textarea name="impression" id="impression" rows="3" required
@@ -292,12 +292,12 @@ $total_pages = ceil($total_pending / $limit);
                     </div>
 
                     <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 block mb-2">
+                        <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider ml-2 block mb-2">
                             Upload Image (Optional)
                         </label>
                         <div class="relative">
                             <input type="file" name="image" accept="image/*" id="imageUpload"
-                                class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-fuchsia-500 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[8px] file:font-black file:bg-fuchsia-600 file:text-white hover:file:bg-fuchsia-700">
+                                class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-fuchsia-500 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[8px] file:font-semibold file:bg-fuchsia-600 file:text-white hover:file:bg-fuchsia-700">
                         </div>
                         <p class="text-[8px] text-gray-400 mt-1 ml-2">Accepted formats: JPG, PNG, GIF (Max: 5MB)</p>
                     </div>
@@ -309,11 +309,11 @@ $total_pages = ceil($total_pending / $limit);
         <div class="sticky bottom-0 bg-white pt-4 pb-2 mt-6 border-t border-gray-100">
             <div class="flex justify-end gap-4">
                 <button type="button" onclick="closeResultModal()"
-                    class="px-8 py-4 bg-gray-100 text-gray-600 rounded-xl font-black text-[10px] uppercase hover:bg-gray-200 transition-all">
+                    class="px-8 py-4 bg-gray-100 text-gray-600 rounded-xl font-semibold text-[10px] uppercase hover:bg-gray-200 transition-all">
                     Cancel
                 </button>
                 <button type="submit" form="radiologyForm" id="submitRadiologyBtn"
-                    class="px-8 py-4 bg-fuchsia-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg hover:bg-fuchsia-700 transition-all flex items-center gap-2">
+                    class="px-8 py-4 bg-fuchsia-600 text-white rounded-xl font-semibold text-[10px] uppercase tracking-widest shadow-lg hover:bg-fuchsia-700 transition-all flex items-center gap-2">
                     <i data-lucide="save" class="w-4 h-4"></i> Save Results
                 </button>
             </div>
@@ -351,12 +351,12 @@ $total_pages = ceil($total_pending / $limit);
         // Set priority with color
         const priorityEl = document.getElementById('modalPriority');
         priorityEl.innerText = priority;
-        priorityEl.className = priority === 'STAT' ? 'font-black text-red-600' : 'font-black text-gray-800';
+        priorityEl.className = priority === 'STAT' ? 'font-bold text-red-600' : 'font-bold text-gray-800';
 
         // Show clinical history if exists
         const historyEl = document.getElementById('modalClinicalHistory');
         if (clinicalHistory && clinicalHistory.trim() !== '') {
-            historyEl.innerHTML = `<span class="text-[8px] font-black text-fuchsia-600 uppercase block mb-1">Clinical History</span>${clinicalHistory}`;
+            historyEl.innerHTML = `<span class="text-[8px] font-semibold text-fuchsia-600 uppercase block mb-1">Clinical History</span>${clinicalHistory}`;
             historyEl.classList.remove('hidden');
         } else {
             historyEl.classList.add('hidden');
