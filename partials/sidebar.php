@@ -67,24 +67,23 @@
 
   
     <aside id="main-sidebar"
-        class="w-72 bg-emerald-900 text-white flex-col hidden md:flex h-screen sticky top-0 z-50 transition-all duration-300 shadow-2xl">
+        class="w-[270px] bg-gradient-to-b from-[#0F766E] to-[#115e59] text-white flex-col hidden md:flex h-screen sticky top-0 z-50 transition-all duration-300 shadow-xl shadow-primary-900/20">
 
         <!-- BRAND SECTION -->
-        <div class="p-8 mb-4">
+        <div class="px-6 pt-7 pb-6 mb-2">
             <div class="flex items-center gap-3">
-                <div
-                    class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md border border-white/10 shadow-lg">
-                    <i data-lucide="activity" class="text-white w-6 h-6"></i>
+                <div class="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-md border border-white/10 shadow-inner">
+                    <i data-lucide="heart-pulse" class="text-white w-5 h-5"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-black tracking-tighter leading-none">TBMIS</h1>
-                    <p class="text-[10px] font-bold text-emerald-200 uppercase tracking-widest">Mettu Karl Referral Hospital</p>
+                    <h1 class="text-[15px] font-bold tracking-tight leading-none">TBMIS</h1>
+                    <p class="text-[10px] font-medium text-white/60 mt-0.5">Mettu Karl Referral Hospital</p>
                 </div>
             </div>
         </div>
 
         <!-- NAVIGATION LINKS -->
-        <nav class="flex-1 px-4 space-y-1.5 overflow-y-auto custom-scrollbar">
+        <nav class="flex-1 px-3 space-y-0.5 overflow-y-auto custom-scrollbar">
             <?php foreach ($navItems as $item): ?>
                 <?php
                 // Only display if the user's role is in the allowed list for this item
@@ -92,19 +91,19 @@
                     $isActive = ($page == $item['id']);
                     ?>
                     <a href="index.php?page=<?= $item['id'] ?>"
-                        class="flex items-center justify-between group px-4 py-3.5 rounded-2xl transition-all duration-300 
-                    <?= $isActive ? 'bg-white text-emerald-800 shadow-xl shadow-emerald-900/20 translate-x-2' : 'hover:bg-emerald-800/70 text-emerald-100 hover:text-white' ?>">
+                        class="flex items-center justify-between group px-4 py-3 rounded-xl transition-all duration-200 
+                    <?= $isActive ? 'bg-white text-primary-800 shadow-lg shadow-primary-900/10' : 'hover:bg-white/10 text-white/80 hover:text-white' ?>">
 
-                        <div class="flex items-center gap-3.5">
+                        <div class="flex items-center gap-3">
                             <i data-lucide="<?= $item['icon'] ?>"
-                                class="w-5 h-5 transition-transform duration-300 <?= $isActive ? 'text-emerald-700' : 'group-hover:scale-110' ?>"></i>
-                            <span class="text-sm font-black first-letter:uppercase tracking-wider">
+                                class="w-[18px] h-[18px] transition-transform duration-200 <?= $isActive ? 'text-primary-700' : 'group-hover:scale-110' ?>"></i>
+                            <span class="text-[13px] font-semibold">
                                 <?= $item['label'] ?>
                             </span>
                         </div>
 
                         <?php if ($isActive): ?>
-                            <div class="w-1.5 h-1.5 bg-emerald-600 rounded-full shadow-[0_0_8px_rgba(5,150,105,0.8)]"></div>
+                            <div class="w-1.5 h-1.5 bg-primary-500 rounded-full pulse-glow"></div>
                         <?php endif; ?>
                     </a>
                 <?php endif; ?>
@@ -112,16 +111,16 @@
         </nav>
 
         <!-- FOOTER / LOGOUT -->
-    <div class="p-2">
+        <div class="p-3 border-t border-white/10">
             <a href="logout.php"
-                class="flex items-center gap-3 p-3 text-red-300 hover:text-white hover:bg-red-600 rounded-xl transition-all group">
-                <i data-lucide="log-out" class="w-5 h-5"></i>
-                <span class="font-bold">Logout</span>
+                class="flex items-center gap-3 px-4 py-3 text-white/60 hover:text-white hover:bg-red-500/20 rounded-xl transition-all duration-200 group">
+                <i data-lucide="log-out" class="w-[18px] h-[18px] group-hover:translate-x-0.5 transition-transform"></i>
+                <span class="font-medium text-sm">Logout</span>
             </a>
         </div>
         <!-- Mobile Close Button (Hidden on Desktop) -->
-        <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-6 text-white/50 hover:text-white">
-            <i data-lucide="x" class="w-6 h-6"></i>
+        <button onclick="toggleSidebar()" class="md:hidden absolute top-5 right-5 text-white/50 hover:text-white p-1 hover:bg-white/10 rounded-lg transition-all">
+            <i data-lucide="x" class="w-5 h-5"></i>
         </button>
     </aside>
 

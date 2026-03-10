@@ -298,22 +298,22 @@ if (isset($roleConfig['recentActivity']['query'])) {
 ?>
 
 
-<div class="space-y-8">
+<div class="space-y-6">
     <!-- 1. WELCOME HEADER -->
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-black text-gray-800 uppercase tracking-tight italic">
+            <h1 class="text-2xl font-bold text-gray-800 tracking-tight">
                 <?php echo $roleConfig['welcome']; ?> 
             </h1>
-            <p class="text-[10px] text-emerald-700 font-bold uppercase tracking-widest mt-1">
-                <i data-lucide="<?php echo $roleConfig['icon']; ?>" class="w-3 h-3 inline mr-1"></i>
-                Welcome back, <?php echo explode(' ', $_SESSION['full_name'])[0]; ?> • <?php echo $userRole; ?>
+            <p class="text-sm text-primary-600 font-medium mt-1 flex items-center gap-1.5">
+                <i data-lucide="<?php echo $roleConfig['icon']; ?>" class="w-3.5 h-3.5"></i>
+                Welcome back, <?php echo explode(' ', $_SESSION['full_name'])[0]; ?> &bull; <?php echo $userRole; ?>
             </p>
         </div>
         <div class="text-right hidden sm:block">
-            <p class="text-xs font-bold text-gray-400 uppercase"><?php echo date('l, F j, Y'); ?></p>
-            <p class="text-[10px] text-gray-300 font-medium italic mt-1">
-                <span class="inline-block w-2 h-2 bg-emerald-500 rounded-full animate-pulse mr-1"></span>
+            <p class="text-xs font-medium text-gray-400"><?php echo date('l, F j, Y'); ?></p>
+            <p class="text-xs text-gray-400 mt-1 flex items-center justify-end gap-1.5">
+                <span class="inline-block w-2 h-2 bg-emerald-500 rounded-full pulse-glow"></span>
                 Online
             </p>
         </div>
@@ -321,22 +321,22 @@ if (isset($roleConfig['recentActivity']['query'])) {
 
     <!-- 2. QUICK ACTIONS (if any for this role) -->
     <?php if (!empty($roleConfig['quickActions'])): ?>
-    <div class="bg-gradient-to-r from-emerald-700 to-amber-600 rounded-[2rem] p-6 text-white shadow-xl">
+    <div class="bg-gradient-to-r from-[#0F766E] to-[#0d9488] rounded-2xl p-5 text-white shadow-lg shadow-primary-200/30">
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                    <i data-lucide="zap" class="w-6 h-6"></i>
+            <div class="flex items-center gap-3.5">
+                <div class="w-11 h-11 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                    <i data-lucide="zap" class="w-5 h-5"></i>
                 </div>
                 <div>
-                    <h3 class="font-black text-lg">Quick Actions</h3>
-                    <p class="text-white/80 text-[10px] font-bold uppercase tracking-wider">Common tasks</p>
+                    <h3 class="font-bold text-base">Quick Actions</h3>
+                    <p class="text-white/70 text-xs font-medium">Common tasks</p>
                 </div>
             </div>
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap gap-2.5">
                 <?php foreach ($roleConfig['quickActions'] as $action): ?>
                     <a href="index.php?page=<?php echo $action['page']; ?>" 
-                        class="px-5 py-2.5 bg-white text-<?php echo $action['color']; ?>-700 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-emerald-50 transition-all flex items-center gap-2 shadow-lg">
-                        <i data-lucide="<?php echo $action['icon']; ?>" class="w-4 h-4"></i>
+                        class="px-4 py-2 bg-white/95 text-primary-800 rounded-lg font-semibold text-xs hover:bg-white hover:shadow-lg transition-all duration-200 flex items-center gap-2">
+                        <i data-lucide="<?php echo $action['icon']; ?>" class="w-3.5 h-3.5"></i>
                         <?php echo $action['label']; ?>
                     </a>
                 <?php endforeach; ?>
@@ -346,20 +346,20 @@ if (isset($roleConfig['recentActivity']['query'])) {
     <?php endif; ?>
 
     <!-- 3. ROLE-SPECIFIC STATS GRID -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <?php foreach ($roleConfig['stats'] as $s): ?>
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 border-b-4 border-<?php echo $s['color']; ?>-500 hover:shadow-xl transition-all duration-300 group">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all duration-200 group card-hover">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest"><?php echo $s['label']; ?></p>
-                        <h3 class="text-3xl font-black text-gray-800 mt-2"><?php echo $s['value']; ?></h3>
+                        <p class="text-xs font-medium text-gray-400"><?php echo $s['label']; ?></p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1.5"><?php echo $s['value']; ?></h3>
                     </div>
-                    <div class="w-10 h-10 bg-<?php echo $s['color']; ?>-50 text-<?php echo $s['color']; ?>-600 rounded-xl flex items-center justify-center group-hover:bg-<?php echo $s['color']; ?>-600 group-hover:text-white transition-colors">
+                    <div class="w-10 h-10 bg-<?php echo $s['color']; ?>-50 text-<?php echo $s['color']; ?>-600 rounded-xl flex items-center justify-center group-hover:bg-<?php echo $s['color']; ?>-600 group-hover:text-white transition-all duration-200">
                         <i data-lucide="<?php echo $s['icon']; ?>" class="w-5 h-5"></i>
                     </div>
                 </div>
-                <div class="mt-4 flex items-center gap-1">
-                    <span class="text-[9px] font-black text-<?php echo $s['color']; ?>-600 uppercase italic px-2 py-1 bg-<?php echo $s['color']; ?>-50 rounded-lg">
+                <div class="mt-3">
+                    <span class="text-[10px] font-semibold text-<?php echo $s['color']; ?>-600 px-2 py-0.5 bg-<?php echo $s['color']; ?>-50 rounded-md">
                         <?php echo $s['trend']; ?>
                     </span>
                 </div>
@@ -369,47 +369,47 @@ if (isset($roleConfig['recentActivity']['query'])) {
 
     <!-- 4. NOTIFICATIONS SECTION (if any for this role) -->
     <?php if (!empty($recentNotifications)): ?>
-    <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-        <div class="p-8 border-b border-gray-50 flex justify-between items-center bg-gradient-to-r from-blue-50 to-indigo-50">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-blue-50/80 to-indigo-50/80">
             <div>
-                <h4 class="font-black text-gray-800 uppercase text-sm tracking-widest flex items-center gap-2">
-                    <i data-lucide="bell" class="w-5 h-5 text-blue-600"></i>
+                <h4 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                    <i data-lucide="bell" class="w-4 h-4 text-blue-600"></i>
                     Notifications & Alerts
                 </h4>
-                <p class="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">
+                <p class="text-xs text-gray-500 font-medium mt-0.5">
                     Action items requiring attention
                 </p>
             </div>
-            <span class="px-3 py-1 bg-blue-600 text-white text-[9px] font-black rounded-full">
+            <span class="px-2.5 py-1 bg-blue-600 text-white text-[10px] font-semibold rounded-full">
                 <?php echo count($recentNotifications); ?> New
             </span>
         </div>
         
         <div class="divide-y divide-gray-50 max-h-[500px] overflow-y-auto custom-scrollbar">
             <?php foreach ($recentNotifications as $note): ?>
-                <div class="p-6 hover:bg-gray-50/50 transition-all group">
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 bg-<?php echo $note['color']; ?>-50 text-<?php echo $note['color']; ?>-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                            <i data-lucide="<?php echo $note['icon']; ?>" class="w-5 h-5"></i>
+                <div class="px-6 py-4 hover:bg-gray-50/50 transition-all duration-200 group">
+                    <div class="flex items-start gap-3.5">
+                        <div class="w-9 h-9 bg-<?php echo $note['color']; ?>-50 text-<?php echo $note['color']; ?>-600 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <i data-lucide="<?php echo $note['icon']; ?>" class="w-4 h-4"></i>
                         </div>
                         
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="text-xs font-black text-gray-800"><?php echo $note['patient_name']; ?></span>
-                                <span class="text-[8px] font-black text-gray-400 uppercase tracking-wider"><?php echo $note['medical_record_number']; ?></span>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <span class="text-sm font-semibold text-gray-800"><?php echo $note['patient_name']; ?></span>
+                                <span class="text-[10px] font-medium text-gray-400"><?php echo $note['medical_record_number']; ?></span>
                             </div>
                             
-                            <p class="text-sm font-bold text-gray-700 mb-1"><?php echo $note['message']; ?></p>
+                            <p class="text-sm font-medium text-gray-600 mb-1"><?php echo $note['message']; ?></p>
                             
-                            <div class="flex items-center gap-3 text-[9px]">
-                                <span class="text-gray-400 font-black uppercase tracking-wider">From: <?php echo $note['from_name']; ?></span>
-                                <span class="text-gray-300">•</span>
-                                <span class="text-gray-400 font-black"><?php echo date('M d, H:i', strtotime($note['created_at'])); ?></span>
+                            <div class="flex items-center gap-2.5 text-xs">
+                                <span class="text-gray-400 font-medium">From: <?php echo $note['from_name']; ?></span>
+                                <span class="text-gray-300">&bull;</span>
+                                <span class="text-gray-400"><?php echo date('M d, H:i', strtotime($note['created_at'])); ?></span>
                             </div>
                         </div>
                         
                         <button onclick="handleNotification('<?php echo $note['source']; ?>', '<?php echo $note['id']; ?>', '<?php echo $note['patient_id']; ?>')" 
-                            class="px-4 py-2 bg-<?php echo $note['color']; ?>-600 text-white rounded-xl font-black text-[8px] uppercase tracking-widest hover:bg-<?php echo $note['color']; ?>-700 transition-all shadow-sm hover:shadow-md active:scale-95 shrink-0">
+                            class="px-3.5 py-1.5 bg-<?php echo $note['color']; ?>-600 text-white rounded-lg font-semibold text-xs hover:bg-<?php echo $note['color']; ?>-700 transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.97] shrink-0">
                             Action
                         </button>
                     </div>
@@ -420,37 +420,37 @@ if (isset($roleConfig['recentActivity']['query'])) {
     <?php endif; ?>
 
     <!-- 5. RECENT ACTIVITY -->
-    <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-        <div class="p-8 border-b border-gray-50 flex justify-between items-center">
-            <h4 class="font-black text-gray-700 uppercase text-xs tracking-widest">Recent Activity</h4>
-            <a href="index.php?page=records" class="text-blue-600 text-[10px] font-black uppercase tracking-widest hover:underline flex items-center gap-1">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+            <h4 class="font-bold text-gray-700 text-sm">Recent Activity</h4>
+            <a href="index.php?page=records" class="text-primary-600 text-xs font-semibold hover:text-primary-700 hover:underline flex items-center gap-1 transition-colors">
                 View All <i data-lucide="arrow-right" class="w-3 h-3"></i>
             </a>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left">
-                <thead class="bg-gray-50/50 text-gray-400 text-[9px] font-black uppercase tracking-[0.2em]">
+                <thead class="bg-gray-50/80 text-gray-500 text-xs font-medium border-b border-gray-100">
                     <tr>
                         <?php foreach ($roleConfig['recentActivity']['columns'] as $col): ?>
-                            <th class="px-8 py-5"><?php echo $col; ?></th>
+                            <th class="px-6 py-3.5"><?php echo $col; ?></th>
                         <?php endforeach; ?>
-                        <th class="px-8 py-5 text-right">Action</th>
+                        <th class="px-6 py-3.5 text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
                     <?php foreach ($recentActivity as $row): ?>
-                        <tr class="hover:bg-blue-50/20 transition-all group">
-                            <td class="px-8 py-5 font-black text-gray-800 text-sm"><?php echo $row['full_name']; ?></td>
-                            <td class="px-8 py-5 text-[10px] font-bold text-blue-600 uppercase"><?php echo $row['medical_record_number']; ?></td>
-                            <td class="px-8 py-5 text-xs font-bold text-gray-500"><?php echo $row['details'] ?? $row['address'] ?? $row['test_type'] ?? $row['medication_name'] ?? '-'; ?></td>
-                            <td class="px-8 py-5">
-                                <span class="px-3 py-1 bg-<?php echo $row['color']; ?>-50 text-<?php echo $row['color']; ?>-600 text-[9px] font-black uppercase rounded-lg border border-<?php echo $row['color']; ?>-100">
+                        <tr class="hover:bg-gray-50/50 transition-all duration-150 group">
+                            <td class="px-6 py-4 font-semibold text-gray-800 text-sm"><?php echo $row['full_name']; ?></td>
+                            <td class="px-6 py-4 text-xs font-medium text-primary-600"><?php echo $row['medical_record_number']; ?></td>
+                            <td class="px-6 py-4 text-sm text-gray-500"><?php echo $row['details'] ?? $row['address'] ?? $row['test_type'] ?? $row['medication_name'] ?? '-'; ?></td>
+                            <td class="px-6 py-4">
+                                <span class="px-2.5 py-1 bg-<?php echo $row['color']; ?>-50 text-<?php echo $row['color']; ?>-600 text-xs font-semibold rounded-md border border-<?php echo $row['color']; ?>-100">
                                     <?php echo $row['status'] ?? 'Active'; ?>
                                 </span>
                             </td>
-                            <td class="px-8 py-5 text-right">
+                            <td class="px-6 py-4 text-right">
                                 <button onclick="viewPatientDetail(<?php echo htmlspecialchars(json_encode($row)); ?>)"
-                                    class="p-2 bg-gray-50 text-gray-400 group-hover:bg-blue-600 group-hover:text-white rounded-xl transition-all">
+                                    class="p-2 bg-gray-50 text-gray-400 group-hover:bg-primary-600 group-hover:text-white rounded-lg transition-all duration-200">
                                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                                 </button>
                             </td>
@@ -463,28 +463,28 @@ if (isset($roleConfig['recentActivity']['query'])) {
 </div>
 
 <!-- PATIENT DETAIL MODAL (reused for all roles) -->
-<div id="pDetailModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md transition-all duration-300">
-    <div id="pDetailCard" class="bg-white rounded-[3rem] w-full max-w-lg p-10 shadow-2xl border border-gray-100 transform scale-95 transition-all duration-300">
-        <div class="flex justify-between items-start mb-8">
-            <div id="mInitials" class="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg italic">--</div>
-            <button onclick="closePModal()" class="text-gray-300 hover:text-red-500 transition-colors"><i data-lucide="x-circle" class="w-8 h-8"></i></button>
+<div id="pDetailModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-gray-900/40 backdrop-blur-md transition-all duration-300">
+    <div id="pDetailCard" class="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl border border-gray-100 transform scale-95 transition-all duration-300">
+        <div class="flex justify-between items-start mb-6">
+            <div id="mInitials" class="w-14 h-14 bg-gradient-to-br from-primary-600 to-primary-800 text-white rounded-2xl flex items-center justify-center font-bold text-xl shadow-lg shadow-primary-200/40">--</div>
+            <button onclick="closePModal()" class="text-gray-400 hover:text-red-500 transition-colors p-1 hover:bg-gray-100 rounded-lg"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
-        <div class="space-y-8 mb-10">
+        <div class="space-y-6 mb-8">
             <div>
-                <h2 id="mName" class="text-2xl font-black text-gray-800 uppercase italic leading-tight">--</h2>
+                <h2 id="mName" class="text-xl font-bold text-gray-800 leading-tight">--</h2>
                 <div class="flex gap-2 mt-2">
-                    <span id="mMRN" class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-black uppercase rounded-md border border-blue-100">--</span>
-                    <span id="mAgeSex" class="px-2 py-0.5 bg-gray-50 text-gray-500 text-[10px] font-black uppercase rounded-md border border-gray-100">--</span>
+                    <span id="mMRN" class="px-2.5 py-0.5 bg-primary-50 text-primary-600 text-xs font-semibold rounded-md border border-primary-100">--</span>
+                    <span id="mAgeSex" class="px-2.5 py-0.5 bg-gray-50 text-gray-500 text-xs font-medium rounded-md border border-gray-100">--</span>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-gray-50 p-6 rounded-[2rem] border border-gray-100">
-                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-3 italic">Address</p>
-                    <p id="mAddress" class="text-sm font-bold text-gray-700 italic">--</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-gray-50 p-5 rounded-xl border border-gray-100">
+                    <p class="text-xs font-medium text-gray-400 mb-2">Address</p>
+                    <p id="mAddress" class="text-sm font-medium text-gray-700">--</p>
                 </div>
-                <div class="bg-blue-50/50 p-6 rounded-[2rem] border border-blue-100">
-                    <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-3 italic">Contact</p>
-                    <p id="mPhone" class="text-sm font-black text-blue-700 tracking-widest">--</p>
+                <div class="bg-primary-50/50 p-5 rounded-xl border border-primary-100">
+                    <p class="text-xs font-medium text-primary-400 mb-2">Contact</p>
+                    <p id="mPhone" class="text-sm font-bold text-primary-700 tracking-wide">--</p>
                 </div>
             </div>
         </div>
@@ -495,10 +495,10 @@ if (isset($roleConfig['recentActivity']['query'])) {
    <?php if ($isDoctor): ?>
        href="index.php?page=consultation"
    <?php endif; ?>
-   class="w-full py-4 rounded-[2rem] font-black text-[10px] uppercase tracking-widest shadow-lg flex items-center justify-center gap-2 transition-all
+   class="w-full py-3.5 rounded-xl font-semibold text-sm shadow-md flex items-center justify-center gap-2 transition-all duration-200
    <?php echo $isDoctor 
-        ? 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95' 
-        : 'bg-gray-200 text-gray-400 cursor-not-allowed'; ?>">
+        ? 'bg-gradient-to-r from-primary-700 to-primary-600 text-white hover:shadow-lg active:scale-[0.98]' 
+        : 'bg-gray-100 text-gray-400 cursor-not-allowed'; ?>">
 
     <i data-lucide="folder-open" class="w-4 h-4"></i>
     Open Medical Chart

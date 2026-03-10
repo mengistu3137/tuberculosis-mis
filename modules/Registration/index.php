@@ -172,8 +172,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
     <!-- Header with Notifications -->
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-            <h1 class="text-xl font-black text-gray-800 tracking-tight uppercase text-emerald-700">TB Patient Registry</h1>
-            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
+            <h1 class="text-xl font-bold text-gray-800 tracking-tight">TB Patient Registry</h1>
+            <p class="text-sm text-gray-400 font-medium mt-1">
                 <?php echo $total_records; ?> Total Records
             </p>
 
@@ -198,11 +198,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
 
         <div class="flex items-center gap-3">
             <button onclick="openRegistrationModal()"
-                class="px-5 py-3 bg-emerald-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100 hover:bg-emerald-800 transition-all flex items-center gap-2">
+                class="px-4 py-2.5 bg-gradient-to-r from-primary-700 to-primary-600 text-white rounded-xl font-semibold text-xs shadow-md shadow-primary-200/40 hover:shadow-lg transition-all duration-200 flex items-center gap-2">
                 <i data-lucide="user-plus" class="w-4 h-4"></i> Register TB Patient
             </button>
             <a href="index.php?page=visit"
-                class="group relative px-4 py-2 bg-blue-600 text-white rounded-2xl font-black text-[11px] first-letter:uppercase tracking-wider hover:bg-blue-700 transition-all duration-300 flex items-center gap-3 shadow-xl shadow-blue-200 hover:shadow-blue-300 hover:scale-105 active:scale-95 overflow-hidden">
+                class="group relative px-4 py-2.5 bg-secondary-600 text-white rounded-xl font-semibold text-xs hover:bg-secondary-700 transition-all duration-200 flex items-center gap-2.5 shadow-md hover:shadow-lg active:scale-[0.98] overflow-hidden">
                 <span class="absolute inset-0 bg-white/10 group-hover:animate-pulse rounded-2xl"></span>
                 <span class="relative flex items-center justify-center">
                     <i data-lucide="list"
@@ -228,15 +228,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
     </div>
 
     <!-- TB Patient Registry Table -->
-    <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden transition-all">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all">
         <table class="w-full text-left">
             <thead
-                class="bg-gray-50/50 text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] border-b border-blue-100">
+                class="bg-gray-50/80 text-xs font-medium text-gray-500 border-b border-gray-100">
                 <tr>
-                    <th class="px-8 py-6">Patient Identity</th>
-                    <th class="px-8 py-6 text-center">Bio Stats</th>
-                    <th class="px-8 py-6">Contact Info</th>
-                    <th class="px-8 py-6 text-right">Clerk Action</th>
+                    <th class="px-6 py-3.5">Patient Identity</th>
+                    <th class="px-6 py-3.5 text-center">Bio Stats</th>
+                    <th class="px-6 py-3.5">Contact Info</th>
+                    <th class="px-6 py-3.5 text-right">Clerk Action</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -248,18 +248,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                     $diffMinutes = round((time() - $createdTime) / 60);
                     $canEdit = ($diffMinutes <= 30 && $_SESSION['role'] == 'Clerk');
                     ?>
-                    <tr class="hover:bg-blue-50/20 transition-colors group">
-                        <td class="px-8 py-6">
-                            <div class="flex items-center gap-4">
+                    <tr class="hover:bg-gray-50/50 transition-all duration-150 group">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
                                 <div
-                                    class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black shadow-md">
+                                    class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center font-semibold text-sm shadow-sm">
                                     <?php echo $initials; ?>
                                 </div>
                                 <div>
-                                    <p class="font-black text-gray-800 text-sm">
+                                    <p class="font-semibold text-gray-800 text-sm">
                                         <?php echo $p['full_name']; ?>
                                     </p>
-                                    <p class="text-[9px] font-black text-blue-400 uppercase tracking-tighter mt-1">
+                                    <p class="text-xs font-medium text-primary-500 mt-0.5">
                                         <?php echo $p['medical_record_number']; ?>
                                     </p>
                                     <?php if ($canEdit): ?>
@@ -271,21 +271,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                                 </div>
                             </div>
                         </td>
-                        <td class="px-8 py-6 text-center">
+                        <td class="px-6 py-4 text-center">
                             <span
-                                class="px-3 py-1 bg-white border border-gray-100 rounded-lg text-[10px] font-black text-gray-500 uppercase">
+                                class="px-2.5 py-1 bg-gray-50 border border-gray-100 rounded-md text-xs font-medium text-gray-500">
                                 <?php echo $p['age']; ?>Y • <?php echo $p['gender']; ?>
                             </span>
                         </td>
-                        <td class="px-8 py-6 text-xs font-bold text-gray-500 italic">
+                        <td class="px-6 py-4 text-sm text-gray-500">
                             <?php echo $p['contact_details']; ?>
                         </td>
-                        <td class="px-8 py-6 text-right">
+                        <td class="px-6 py-4 text-right">
                             <div class="flex items-center justify-end gap-2">
                                 <!-- CHECK-IN BUTTON -->
                                 <button
                                     onclick="openCheckinModal('<?php echo $p['patient_id']; ?>', '<?php echo addslashes($p['full_name']); ?>')"
-                                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-md">
+                                    class="inline-flex items-center gap-2 px-4 py-2 bg-secondary-600 text-white rounded-lg font-semibold text-xs hover:bg-secondary-700 transition-all duration-200 shadow-sm">
                                     <i data-lucide="log-in" class="w-3 h-3"></i> Check-in
                                 </button>
 
@@ -293,7 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                                 <?php if ($canEdit): ?>
                                     <div class="relative">
                                         <button onclick="togglePatientMenu('patient-<?php echo $p['patient_id']; ?>')"
-                                            class="p-2.5 bg-gray-50 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
+                                            class="p-2 bg-gray-50 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-200">
                                             <i data-lucide="more-vertical" class="w-4 h-4"></i>
                                         </button>
 
@@ -333,14 +333,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
 
         <!-- PAGINATION -->
         <?php if ($total_pages > 1): ?>
-            <div class="px-8 py-6 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
-                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest italic">
+            <div class="px-6 py-4 bg-gray-50/80 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-xs text-gray-400 font-medium">
                     Page <?php echo $current_page; ?> of <?php echo $total_pages; ?>
                 </span>
                 <div class="flex gap-1.5">
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                         <a href="index.php?page=registration&p=<?php echo $i; ?>&q=<?php echo $searchTerm; ?>"
-                            class="w-9 h-9 flex items-center justify-center rounded-xl font-black text-[10px] transition-all <?php echo ($i == $current_page) ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-white text-gray-400 border border-gray-100 hover:border-blue-200'; ?>">
+                            class="w-8 h-8 flex items-center justify-center rounded-lg font-semibold text-xs transition-all duration-200 <?php echo ($i == $current_page) ? 'bg-primary-600 text-white shadow-md' : 'bg-white text-gray-400 border border-gray-200 hover:border-primary-300'; ?>">
                             <?php echo $i; ?>
                         </a>
                     <?php endfor; ?>
@@ -351,90 +351,73 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
 
     <!-- EDIT PATIENT MODAL -->
     <div id="editPatientModal" class="fixed inset-0 z-[100] hidden">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeEditPatientModal()">
+        <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity" onclick="closeEditPatientModal()">
         </div>
         <div
-            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-[3rem] shadow-2xl p-8 animate-in zoom-in-95 duration-200">
+            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-7 animate-in zoom-in-95 duration-200">
 
             <!-- Modal Header -->
-            <div class="flex justify-between items-start mb-6">
-                <div class="flex items-center gap-4">
+            <div class="flex justify-between items-start mb-5">
+                <div class="flex items-center gap-3">
                     <div
-                        class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-100">
-                        <i data-lucide="user-edit" class="w-6 h-6"></i>
+                        class="w-11 h-11 bg-gradient-to-br from-primary-600 to-primary-800 text-white rounded-xl flex items-center justify-center shadow-md">
+                        <i data-lucide="user-edit" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-black text-gray-800 tracking-tight">Edit Patient</h2>
-                        <p class="text-[9px] text-gray-400 font-bold tracking-[0.2em] mt-1">Update Patient Information
-                        </p>
+                        <h2 class="text-lg font-bold text-gray-800">Edit Patient</h2>
+                        <p class="text-xs text-gray-400 font-medium mt-0.5">Update Patient Information</p>
                     </div>
                 </div>
                 <button onclick="closeEditPatientModal()"
-                    class="text-gray-400 hover:text-red-500 transition-colors p-2 hover:bg-gray-100 rounded-xl">
+                    class="text-gray-400 hover:text-red-500 transition-colors p-1 hover:bg-gray-100 rounded-lg">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
             <!-- Edit Form -->
-            <form method="POST" class="space-y-6">
+            <form method="POST" class="space-y-5">
                 <input type="hidden" name="patient_id" id="edit_patient_id">
                 <input type="hidden" name="update_patient" value="1">
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                    <!-- Name - Full Width -->
-                    <div class="md:col-span-2 space-y-1">
-                        <label class="text-[9px] font-black text-blue-600/60 uppercase tracking-widest ml-4">Full
-                            Patient
-                            Name</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
+                    <div class="md:col-span-2">
+                        <label class="text-[11px] font-semibold text-gray-500 tracking-wide ml-1 mb-1.5 block">Full Patient Name</label>
                         <input type="text" name="full_name" id="edit_full_name" required
-                            class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-gray-700 text-sm shadow-inner transition-all">
+                            class="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 font-medium text-gray-700 text-sm transition-all duration-200">
                     </div>
-
-                    <!-- Age -->
-                    <div class="space-y-1">
-                        <label class="text-[9px] font-black text-blue-600/60 uppercase tracking-widest ml-4">Age
-                            (0-120)</label>
+                    <div>
+                        <label class="text-[11px] font-semibold text-gray-500 tracking-wide ml-1 mb-1.5 block">Age (0-120)</label>
                         <input type="number" name="age" id="edit_age" required min="0" max="120"
-                            class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-gray-700 text-sm shadow-inner transition-all">
+                            class="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 font-medium text-gray-700 text-sm transition-all duration-200">
                     </div>
-
-                    <!-- Gender -->
-                    <div class="space-y-1">
-                        <label class="text-[9px] font-black text-blue-600/60 uppercase tracking-widest ml-4">Biological
-                            Sex</label>
+                    <div>
+                        <label class="text-[11px] font-semibold text-gray-500 tracking-wide ml-1 mb-1.5 block">Biological Sex</label>
                         <select name="gender" id="edit_gender" required
-                            class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-xs uppercase tracking-widest cursor-pointer shadow-inner">
+                            class="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 font-medium text-sm cursor-pointer transition-all duration-200">
                             <option value="">Select</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                         </select>
                     </div>
-
-                    <!-- Phone -->
-                    <div class="space-y-1">
-                        <label class="text-[9px] font-black text-blue-600/60 uppercase tracking-widest ml-4">Contact
-                            Phone</label>
+                    <div>
+                        <label class="text-[11px] font-semibold text-gray-500 tracking-wide ml-1 mb-1.5 block">Contact Phone</label>
                         <input type="text" name="contact_details" id="edit_contact" required maxlength="10"
-                            class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-gray-700 text-sm shadow-inner transition-all">
+                            class="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 font-medium text-gray-700 text-sm transition-all duration-200">
                     </div>
-
-                    <!-- Address -->
-                    <div class="space-y-1">
-                        <label class="text-[9px] font-black text-blue-600/60 uppercase tracking-widest ml-4">Residential
-                            Address</label>
+                    <div>
+                        <label class="text-[11px] font-semibold text-gray-500 tracking-wide ml-1 mb-1.5 block">Residential Address</label>
                         <input type="text" name="address" id="edit_address" required
-                            class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-gray-700 text-sm shadow-inner transition-all">
+                            class="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 font-medium text-gray-700 text-sm transition-all duration-200">
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="pt-4 border-t border-gray-100 flex justify-end gap-3">
                     <button type="button" onclick="closeEditPatientModal()"
-                        class="px-6 py-3 text-gray-400 rounded-xl font-bold text-[9px] uppercase tracking-widest hover:bg-gray-50 transition-all">
+                        class="px-5 py-2.5 text-gray-500 rounded-xl font-medium text-sm hover:bg-gray-50 transition-all">
                         Cancel
                     </button>
                     <button type="submit" name="update_patient_btn"
-                        class="px-8 py-3 bg-blue-600 text-white rounded-xl font-black text-[9px] uppercase tracking-[0.2em] shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95">
+                        class="px-6 py-2.5 bg-gradient-to-r from-primary-700 to-primary-600 text-white rounded-xl font-semibold text-sm shadow-md shadow-primary-200/40 hover:shadow-lg transition-all active:scale-[0.98]">
                         Update Patient
                     </button>
                 </div>
@@ -444,62 +427,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
 
     <!-- CHECK-IN MODAL -->
     <div id="checkinModal"
-        class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md transition-all duration-300">
+        class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-md transition-all duration-300">
         <div id="checkinCard"
-            class="bg-white rounded-[3rem] w-full max-w-md p-8 shadow-2xl border border-gray-100 transform scale-95 transition-all duration-300">
+            class="bg-white rounded-2xl w-full max-w-md p-7 shadow-2xl border border-gray-100 transform scale-95 transition-all duration-300">
 
             <!-- Modal Header -->
-            <div class="flex justify-between items-start mb-6">
+            <div class="flex justify-between items-start mb-5">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black shadow-lg shadow-blue-100">
-                        <i data-lucide="log-in" class="w-6 h-6"></i>
+                        class="w-11 h-11 bg-gradient-to-br from-secondary-600 to-secondary-700 text-white rounded-xl flex items-center justify-center font-bold shadow-md">
+                        <i data-lucide="log-in" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h2 class="text-lg font-black text-gray-800 uppercase tracking-tight">Patient Check-in</h2>
-                        <p class="text-[8px] text-gray-400 font-bold tracking-widest mt-1">Initiate New Encounter</p>
+                        <h2 class="text-lg font-bold text-gray-800">Patient Check-in</h2>
+                        <p class="text-xs text-gray-400 font-medium mt-0.5">Initiate New Encounter</p>
                     </div>
                 </div>
                 <button onclick="closeCheckinModal()"
-                    class="text-gray-400 hover:text-red-500 transition-colors p-2 hover:bg-gray-100 rounded-xl">
+                    class="text-gray-400 hover:text-red-500 transition-colors p-1 hover:bg-gray-100 rounded-lg">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <h3 id="checkinPatientName" class="text-xl font-black text-gray-800 mb-6 pb-4 border-b border-gray-100">--
+            <h3 id="checkinPatientName" class="text-lg font-bold text-gray-800 mb-5 pb-4 border-b border-gray-100">--
             </h3>
 
-            <form method="POST" class="space-y-6">
+            <form method="POST" class="space-y-5">
                 <input type="hidden" name="patient_id" id="checkinID">
                 <input type="hidden" name="perform_checkin" value="1">
 
-                <div class="space-y-2">
-                    <label class="text-[9px] font-black text-blue-600 uppercase tracking-widest ml-2">Visit
-                        Classification</label>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500 tracking-wide ml-1 mb-1.5 block">Visit Classification</label>
                     <select name="visit_type" required
-                        class="w-full px-5 py-4 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-black text-xs uppercase tracking-widest shadow-inner cursor-pointer">
+                        class="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 font-medium text-sm cursor-pointer transition-all duration-200">
                         <option value="Outpatient">🏥 Outpatient Visit</option>
                         <option value="Emergency">🚨 Emergency Triage</option>
                     </select>
-                    <p class="text-[8px] text-gray-400 mt-1 ml-2">Note: Inpatient admissions require Doctor
-                        authorization</p>
+                    <p class="text-[10px] text-gray-400 mt-1 ml-1">Note: Inpatient admissions require Doctor authorization</p>
                 </div>
 
-                <div class="space-y-2">
-                    <label class="text-[9px] font-black text-blue-600 uppercase tracking-widest ml-2">Reason for
-                        Visit</label>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500 tracking-wide ml-1 mb-1.5 block">Reason for Visit</label>
                     <textarea name="clinical_notes" rows="3" required
-                        class="w-full bg-gray-50 border-none rounded-xl px-5 py-4 text-sm font-medium shadow-inner focus:ring-2 focus:ring-blue-500"
+                        class="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-all duration-200"
                         placeholder="E.g. Routine checkup, fever, follow-up..."></textarea>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4">
                     <button type="button" onclick="closeCheckinModal()"
-                        class="px-5 py-3 text-gray-400 rounded-xl font-bold text-[9px] uppercase hover:bg-gray-50 transition-all">
+                        class="px-5 py-2.5 text-gray-500 rounded-xl font-medium text-sm hover:bg-gray-50 transition-all">
                         Cancel
                     </button>
                     <button type="submit"
-                        class="px-6 py-3 bg-blue-600 text-white rounded-xl font-black text-[9px] uppercase tracking-widest shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95 flex items-center gap-2">
+                        class="px-6 py-2.5 bg-gradient-to-r from-secondary-600 to-secondary-700 text-white rounded-xl font-semibold text-sm shadow-md hover:shadow-lg transition-all active:scale-[0.98] flex items-center gap-2">
                         <i data-lucide="check-circle" class="w-4 h-4"></i> Confirm Check-in
                     </button>
                 </div>

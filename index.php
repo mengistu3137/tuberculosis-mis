@@ -74,6 +74,29 @@ if (array_key_exists($page, $routes)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TBMIS | Mettu Karl Referral Hospital</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4',
+                            400: '#2dd4bf', 500: '#14b8a6', 600: '#0d9488', 700: '#0F766E',
+                            800: '#115e59', 900: '#134e4a', 950: '#042f2e',
+                        },
+                        secondary: {
+                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+                            400: '#60a5fa', 500: '#3b82f6', 600: '#2563EB', 700: '#1d4ed8',
+                            800: '#1e40af', 900: '#1e3a8a',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Sora', 'Inter', 'system-ui', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -83,71 +106,76 @@ if (array_key_exists($page, $routes)) {
     <style>
         body {
             font-family: 'Sora', sans-serif;
+            background: #F8FAFC;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
             background:
-                radial-gradient(circle at 12% 16%, rgba(16, 185, 129, 0.08), transparent 32%),
-                radial-gradient(circle at 85% 6%, rgba(245, 158, 11, 0.08), transparent 34%),
-                #f7faf9;
+                radial-gradient(circle at 10% 15%, rgba(15, 118, 110, 0.06), transparent 40%),
+                radial-gradient(circle at 85% 5%, rgba(37, 99, 235, 0.04), transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.03), transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Smooth transitions for all interactive elements */
+        *, *::before, *::after {
+            transition-property: color, background-color, border-color, box-shadow, transform, opacity;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* Custom scrollbar for horizontal scrolling containers */
-        .scrollbar-thin::-webkit-scrollbar {
-            height: 4px;
-        }
+        .scrollbar-thin::-webkit-scrollbar { height: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 20px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.5); }
+        .scrollbar-thin { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.3) transparent; }
 
-        .scrollbar-thin::-webkit-scrollbar-track {
-            background: transparent;
-        }
+        /* Global scrollbar styling */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        .scrollbar-thin::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-        }
+        .snap-start { scroll-snap-align: start; }
+        .overflow-x-auto { overflow-x: auto; overflow-y: hidden; }
 
-        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
+        /* Glassmorphism utility */
+        .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.3); }
 
-        /* For Firefox */
-        .scrollbar-thin {
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-        }
+        /* Card hover lift effect */
+        .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 12px 40px -12px rgba(15, 118, 110, 0.15); }
 
-        /* Snap scrolling */
-        .snap-start {
-            scroll-snap-align: start;
-        }
+        /* Smooth fade-in animation */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeInUp 0.4s ease-out forwards; }
 
-        /* Ensure the container doesn't clip shadows */
-        .overflow-x-auto {
-            overflow-x: auto;
-            overflow-y: hidden;
-        }
+        /* Pulse glow for status indicators */
+        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } }
+        .pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
 
-        /* Optional: Hide gradient edges on mobile if they cause issues */
         @media (max-width: 768px) {
-
-            .bg-gradient-to-r,
-            .bg-gradient-to-l {
-                display: none;
-            }
+            .bg-gradient-to-r, .bg-gradient-to-l { display: none; }
         }
     </style>
 </head>
 
-<body class="flex h-screen overflow-hidden">
+<body class="flex h-screen overflow-hidden bg-[#F8FAFC]">
 
     <!-- SIDEBAR -->
     <?php include('partials/sidebar.php'); ?>
 
     <!-- MAIN AREA -->
-    <main class="flex-1 flex flex-col overflow-hidden">
+    <main class="flex-1 flex flex-col overflow-hidden relative">
 
         <!-- TOPBAR -->
         <?php include('partials/topbar.php'); ?>
 
         <!-- DYNAMIC CONTENT AREA -->
-        <div class="flex-1 p-8 overflow-y-auto">
+        <div class="flex-1 p-6 lg:p-8 overflow-y-auto animate-fade-in">
             <?php
             if (file_exists($content)) {
                 include($content);
