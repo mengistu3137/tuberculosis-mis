@@ -118,7 +118,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     if (isset($_POST['order_lab_btn'])) {
         // 1. Create the request and capture the ID
-        $reqId = $labObj->requestTest($visit_id, $_POST['test_type']);
+        $reqId = $labObj->requestTest(
+            $visit_id,
+            $_POST['test_type'],
+            $_POST['tb_test_category'] ?? null,
+            $_POST['specimen_type'] ?? null
+        );
 
         if ($reqId) {
             // 2. TRIGGER AUTO ASSIGNMENT
@@ -364,9 +369,22 @@ $actions = [
                  <!-- Lab  ORDERS -->
                     <div class="grid grid-cols-1  gap-8 <?php echo ($role != 'Doctor' && $role != 'Admin') ? 'opacity-40 pointer-events-none' : ''; ?>">
                         <div class="bg-blue-50/50 rounded-[2.5rem] p-8 border border-blue-100 shadow-sm flex flex-col justify-between">
-                            <h3 class="text-sm font-black text-gray-800 uppercase italic mb-6 flex items-center gap-2"><i data-lucide="flask-conical" class="w-4 h-4 text-blue-600"></i> Lab Order</h3>
+                            <h3 class="text-sm font-black text-gray-800 uppercase italic mb-6 flex items-center gap-2"><i data-lucide="flask-conical" class="w-4 h-4 text-blue-600"></i> TB Lab Order</h3>
                             <form method="POST" class="space-y-4">
-                                <input type="text" name="test_type" required placeholder="E.g. CBC" class="w-full px-6 py-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm">
+                                <input type="text" name="test_type" required placeholder="E.g. GeneXpert MTB/RIF, Sputum AFB, TB Culture" class="w-full px-6 py-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm">
+                                <select name="tb_test_category" class="w-full px-6 py-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm">
+                                    <option value="">TB Test Category</option>
+                                    <option value="Bacteriological">Bacteriological</option>
+                                    <option value="Molecular">Molecular</option>
+                                    <option value="Drug Susceptibility">Drug Susceptibility</option>
+                                </select>
+                                <select name="specimen_type" class="w-full px-6 py-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm">
+                                    <option value="">Specimen Type</option>
+                                    <option value="Sputum">Sputum</option>
+                                    <option value="Gastric Aspirate">Gastric Aspirate</option>
+                                    <option value="Pleural Fluid">Pleural Fluid</option>
+                                    <option value="Blood">Blood</option>
+                                </select>
                                 <button name="order_lab_btn" class="w-full py-3 bg-blue-600 text-white rounded-xl font-black text-[9px] uppercase tracking-widest shadow-lg hover:bg-blue-700">Transmit</button>
                             </form>
                         </div>
@@ -603,7 +621,7 @@ $actions = [
     <div class="flex-1 bg-white rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm justify-center <?php echo ($role != 'Doctor' && $role != 'Admin') ? 'opacity-40 pointer-events-none' : ''; ?>">
     <div class="flex items-center gap-3 mb-8">
         <div class="w-1.5 h-6 bg-blue-600 rounded-full shadow-lg"></div>
-        <h3 class="text-xl font-black text-gray-800 uppercase italic">Physician Assessment</h3>
+        <h3 class="text-xl font-black text-gray-800 uppercase italic">TB Clinical Assessment</h3>
     </div>
     <form id="diagnosisForm" method="POST" class="space-y-8">
         <input type="hidden" name="visit_id" value="<?php echo $visit_id; ?>">
@@ -616,6 +634,35 @@ $actions = [
             class="w-full bg-gray-50 border-none rounded-[2rem] px-6 sm:px-8 py-6 focus:ring-2 focus:ring-blue-500 font-medium text-gray-700 shadow-inner <?php echo $viewOnly ? 'opacity-60 cursor-not-allowed' : ''; ?>"
             placeholder="<?php echo $viewOnly ? 'View-only mode - patient discharged' : 'Analyze symptoms...'; ?>"><?php echo $viewOnly ? ($diagnosis['diagnosis_details'] ?? '') : ''; ?></textarea>
         </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <select name="tb_classification" <?php echo $viewOnly ? 'disabled' : ''; ?> class="px-4 sm:px-6 py-4 bg-gray-50 border-none rounded-xl font-bold text-sm w-full">
+                <option value="">TB Classification</option>
+                <option value="Pulmonary TB">Pulmonary TB</option>
+                <option value="Extrapulmonary TB">Extrapulmonary TB</option>
+                <option value="Presumptive TB">Presumptive TB</option>
+            </select>
+            <select name="diagnosis_method" <?php echo $viewOnly ? 'disabled' : ''; ?> class="px-4 sm:px-6 py-4 bg-gray-50 border-none rounded-xl font-bold text-sm w-full">
+                <option value="">Diagnosis Method</option>
+                <option value="Clinical">Clinical</option>
+                <option value="GeneXpert">GeneXpert</option>
+                <option value="AFB Smear">AFB Smear</option>
+                <option value="Culture">Culture</option>
+                <option value="Radiology">Radiology</option>
+            </select>
+            <select name="tb_treatment_status" <?php echo $viewOnly ? 'disabled' : ''; ?> class="px-4 sm:px-6 py-4 bg-gray-50 border-none rounded-xl font-bold text-sm w-full">
+                <option value="">TB Treatment Status</option>
+                <option value="Not Started">Not Started</option>
+                <option value="On Treatment">On Treatment</option>
+                <option value="Completed">Completed</option>
+                <option value="Lost to Follow-up">Lost to Follow-up</option>
+            </select>
+            <select name="mdr_tb_status" <?php echo $viewOnly ? 'disabled' : ''; ?> class="px-4 sm:px-6 py-4 bg-gray-50 border-none rounded-xl font-bold text-sm w-full">
+                <option value="No">MDR-TB: No</option>
+                <option value="Yes">MDR-TB: Yes</option>
+            </select>
+        </div>
+
         <div class="flex justify-center pt-4 border-t border-gray-50 items-center gap-6 text-center">
         <?php if ($viewOnly): ?>
             <button type="button" disabled
@@ -637,7 +684,7 @@ $actions = [
     class="flex-1 bg-white rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm <?php echo (!$diagnosis) ? 'opacity-30 grayscale' : ''; ?>">
     <div class="flex items-center gap-3 mb-8">
         <div class="w-1.5 h-6 bg-emerald-500 rounded-full shadow-lg"></div>
-        <h3 class="text-xl font-black text-gray-800 uppercase italic">Treatment Plan</h3>
+        <h3 class="text-xl font-black text-gray-800 uppercase italic">TB Treatment Plan</h3>
     </div>
     <?php if ($diagnosis): ?>
         <form id="treatmentForm" method="POST" class="space-y-6">
@@ -654,6 +701,28 @@ $actions = [
                 class="w-full bg-gray-50 border-none rounded-[2rem] px-6 sm:px-8 py-6 focus:ring-2 focus:ring-emerald-500 font-medium text-gray-700 shadow-inner <?php echo $viewOnly ? 'opacity-60 cursor-not-allowed' : ''; ?>"
                 placeholder="<?php echo $viewOnly ? 'View-only mode - patient discharged' : 'Enter treatment plan...'; ?>"><?php echo $viewOnly ? ($treatment['description'] ?? '') : ''; ?></textarea>
             </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                <select name="tb_phase" <?php echo $viewOnly ? 'disabled' : ''; ?> class="px-4 sm:px-6 py-4 bg-gray-50 border-none rounded-xl font-bold text-sm w-full">
+                    <option value="">TB Treatment Phase</option>
+                    <option value="Intensive Phase">Intensive Phase</option>
+                    <option value="Continuation Phase">Continuation Phase</option>
+                    <option value="MDR-TB Phase">MDR-TB Phase</option>
+                </select>
+                <input type="text" name="drug_regimen" <?php echo $viewOnly ? 'disabled' : ''; ?>
+                    placeholder="Drug regimen (e.g. 2RHZE/4RH)"
+                    class="px-4 sm:px-6 py-4 bg-gray-50 border-none rounded-xl font-bold text-sm w-full">
+                <select name="adherence_status" <?php echo $viewOnly ? 'disabled' : ''; ?> class="px-4 sm:px-6 py-4 bg-gray-50 border-none rounded-xl font-bold text-sm w-full">
+                    <option value="">Adherence Status</option>
+                    <option value="Good">Good</option>
+                    <option value="Fair">Fair</option>
+                    <option value="Poor">Poor</option>
+                </select>
+                <input type="date" name="next_follow_up_date" <?php echo $viewOnly ? 'disabled' : ''; ?>
+                    class="px-4 sm:px-6 py-4 bg-gray-50 border-none rounded-xl font-bold text-sm w-full">
+            </div>
+            <textarea name="follow_up_notes" rows="2" <?php echo $viewOnly ? 'disabled' : ''; ?>
+                placeholder="TB follow-up note"
+                class="w-full bg-gray-50 border-none rounded-xl px-4 sm:px-6 py-4 font-medium text-sm"></textarea>
             <div class="grid grid-cols-2 gap-4 sm:gap-6">
                 <input type="date" name="start_date" required
                     class="treatment-date-input px-4 sm:px-6 py-4 bg-gray-50 border-none rounded-xl font-bold text-sm w-full"

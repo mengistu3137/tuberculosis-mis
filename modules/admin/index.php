@@ -220,7 +220,7 @@ if (isset($_POST['confirm_status_change'])) {
     <!-- Header Section -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-black text-gray-800 tracking-tighter first-letter:uppercase ">Staff Command Center</h1>
+            <h1 class="text-3xl font-black text-gray-800 tracking-tighter first-letter:uppercase ">TBMIS Staff Command Center</h1>
         <?php if ($message): ?>
             <div id="notification-message"
                 class="mt-2 flex items-center justify-between gap-2 text-<?php echo $messageType; ?>-600 bg-<?php echo $messageType; ?>-50 px-3 py-1.5 rounded-xl w-fit border border-<?php echo $messageType; ?>-100">
@@ -256,7 +256,7 @@ if (isset($_POST['confirm_status_change'])) {
     <div id="addModal" class="hidden bg-blue-50/50 border border-blue-100 p-10 rounded-[3.5rem] mb-8 shadow-sm animate-in fade-in zoom-in duration-300">
         <div class="flex items-center gap-3 mb-8 ml-2">
             <div class="w-1.5 h-6 bg-blue-600 rounded-full"></div>
-            <h2 class="text-xl font-black text-gray-800 first-letter:uppercase tracking-tight">Provision New Staff</h2>
+            <h2 class="text-xl font-black text-gray-800 first-letter:uppercase tracking-tight">Provision TB Department Staff</h2>
         </div>
         
         <form method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -282,13 +282,13 @@ if (isset($_POST['confirm_status_change'])) {
             <div class="space-y-2">
                 <label class="text-[9px] font-black text-blue-600/60 first-letter:uppercase tracking-[0.2em] ml-4">Role</label>
                 <select name="role" class="w-full px-6 py-4 rounded-2xl bg-white border-none focus:ring-2 focus:ring-blue-500 font-black text-xs first-letter:uppercase tracking-widest shadow-sm bg-white cursor-pointer">
-                    <option>Doctor</option>
-                    <option>Nurse</option>
-                    <option>Lab Technician</option>
-                    <option>Pharmacist</option>
-                    <option>Clerk</option>
-                    <option>Admin</option>
-                    <option>Radiologist</option>
+                    <option value="Doctor">TB Doctor</option>
+                    <option value="Nurse">TB Nurse</option>
+                    <option value="Lab Technician">TB Lab Technician</option>
+                    <option value="Pharmacist">TB Pharmacist</option>
+                    <option value="Clerk">TB Registration Clerk</option>
+                    <option value="Admin">TBMIS Admin</option>
+                    <option value="Radiologist">TB Radiology Focal</option>
                 </select>
             </div>
             <div class="md:col-span-4 flex justify-end pt-6 mt-2 border-t border-blue-100">

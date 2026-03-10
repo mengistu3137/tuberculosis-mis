@@ -1,18 +1,38 @@
 <?php
 /**
- * DYNAMIC ROLE-BASED DASHBOARD
- * Single dashboard that adapts based on logged-in user role
- * Shows role-specific stats, notifications, and recent activities
+ * TBMIS ROLE-BASED DASHBOARD
+ * The dashboard is specialized for tuberculosis workflows and metrics.
  */
 
 $userRole = $_SESSION['role'];
 $userId = $_SESSION['user_id'];
 
-// --- GLOBAL STATS (Used across roles) ---
+// --- Schema-safe helpers ---
+$tableExists = function ($tableName) use ($db) {
+    $stmt = $db->prepare("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ?");
+    $stmt->execute([$tableName]);
+    return (int) $stmt->fetchColumn() > 0;
+};
+
+$columnExists = function ($tableName, $columnName) use ($db) {
+    $stmt = $db->prepare("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?");
+    $stmt->execute([$tableName, $columnName]);
+    return (int) $stmt->fetchColumn() > 0;
+};
+
+// --- GLOBAL TB STATS (Used across roles) ---
 $totalPatients = $db->query("SELECT COUNT(*) FROM patients")->fetchColumn();
 $todayVisits = $db->query("SELECT COUNT(*) FROM medical_visits WHERE DATE(created_at) = CURRENT_DATE")->fetchColumn();
 $pendingLabs = $db->query("SELECT COUNT(*) FROM lab_requests WHERE status = 'pending'")->fetchColumn();
 $pendingMeds = $db->query("SELECT COUNT(*) FROM prescriptions WHERE is_dispensed = 0")->fetchColumn();
+$tbDiagnosed = $db->query("SELECT COUNT(*) FROM diagnoses WHERE LOWER(diagnosis_details) LIKE '%tb%' OR LOWER(diagnosis_details) LIKE '%tuberculosis%'")->fetchColumn();
+$activeTbPlans = $db->query("SELECT COUNT(*) FROM treatment_plans WHERE end_date IS NULL OR end_date >= CURRENT_DATE")->fetchColumn();
+$tbFollowupCount = $tableExists('tb_followups')
+    ? $db->query("SELECT COUNT(*) FROM tb_followups WHERE follow_up_date >= CURRENT_DATE")->fetchColumn()
+    : 0;
+$mdrCount = $columnExists('diagnoses', 'mdr_tb_status')
+    ? $db->query("SELECT COUNT(*) FROM diagnoses WHERE mdr_tb_status = 'Yes'")->fetchColumn()
+    : 0;
 
 // --- ROLE-SPECIFIC CONFIGURATION ---
 $roleConfig = [];
@@ -32,22 +52,22 @@ switch ($userRole) {
 
 
         $roleConfig = [
-            'welcome' => 'System Control',
+            'welcome' => 'TBMIS Control Hub',
             'icon' => 'shield-check',
             'quickActions' => [
-                ['label' => 'Manage Users', 'icon' => 'user-cog', 'page' => 'admin', 'color' => 'blue'],
-                ['label' => 'System Reports', 'icon' => 'file-bar-chart', 'page' => 'reports', 'color' => 'indigo'],
+                ['label' => 'Manage TB Staff', 'icon' => 'user-cog', 'page' => 'admin', 'color' => 'emerald'],
+                ['label' => 'TB Program Reports', 'icon' => 'file-bar-chart', 'page' => 'reports', 'color' => 'amber'],
 
             ],
             'stats' => [
-                ['label' => 'Medical Doctors', 'value' => $countDoctors, 'trend' => 'Active Staff', 'color' => 'blue', 'icon' => 'stethoscope'],
-                ['label' => 'Nursing Staff', 'value' => $countNurses, 'trend' => 'Clinical Support', 'color' => 'violet', 'icon' => 'heart-pulse'],
-                ['label' => 'Pharmacists', 'value' => $countPharmacists, 'trend' => 'Medical Dispensary', 'color' => 'emerald', 'icon' => 'pill'],
-                ['label' => 'Radiologists', 'value' => $countRadiologists, 'trend' => 'Imaging Dept', 'color' => 'fuchsia', 'icon' => 'scan'],
-                ['label' => 'Clerks', 'value' => $countClerks, 'trend' => 'Front Desk', 'color' => 'indigo', 'icon' => 'clipboard-list'],
-                ['label' => 'Lab Techs', 'value' => $countLabTechs, 'trend' => 'Laboratory', 'color' => 'orange', 'icon' => 'flask-conical'],
-                ['label' => 'Administrators', 'value' => $countAdmins, 'trend' => 'System Admins', 'color' => 'slate', 'icon' => 'shield-check'],
-                ['label' => 'Total Staff', 'value' => $countTotalStaff, 'trend' => 'System Staff', 'color' => 'gray', 'icon' => 'users']
+                ['label' => 'TB Physicians', 'value' => $countDoctors, 'trend' => 'Care Team', 'color' => 'emerald', 'icon' => 'stethoscope'],
+                ['label' => 'TB Nurses', 'value' => $countNurses, 'trend' => 'DOT Support', 'color' => 'teal', 'icon' => 'heart-pulse'],
+                ['label' => 'Pharmacists', 'value' => $countPharmacists, 'trend' => 'TB Drug Unit', 'color' => 'amber', 'icon' => 'pill'],
+                ['label' => 'Lab Analysts', 'value' => $countLabTechs, 'trend' => 'TB Laboratory', 'color' => 'orange', 'icon' => 'flask-conical'],
+                ['label' => 'MDR-TB Flags', 'value' => $mdrCount, 'trend' => 'Needs Oversight', 'color' => 'red', 'icon' => 'shield-alert'],
+                ['label' => 'Upcoming Follow-ups', 'value' => $tbFollowupCount, 'trend' => 'Adherence Desk', 'color' => 'cyan', 'icon' => 'calendar-check'],
+                ['label' => 'TB Diagnosed', 'value' => $tbDiagnosed, 'trend' => 'Case Registry', 'color' => 'lime', 'icon' => 'activity'],
+                ['label' => 'Total TB Staff', 'value' => $countTotalStaff, 'trend' => 'Program Team', 'color' => 'gray', 'icon' => 'users']
 
             ],
             'notifications' => [
@@ -63,18 +83,18 @@ switch ($userRole) {
 
     case 'Clerk':
         $roleConfig = [
-            'welcome' => 'Front Desk',
+            'welcome' => 'TB Registration Desk',
             'icon' => 'clipboard-list',
             'quickActions' => [
-                ['label' => 'New Patient', 'icon' => 'user-plus', 'page' => 'registration', 'color' => 'blue'],
-                ['label' => 'Patient Registry', 'icon' => 'users', 'page' => 'records', 'color' => 'indigo'],
-                ['label' => 'Today\'s Visits', 'icon' => 'calendar', 'page' => 'visit', 'color' => 'emerald']
+                ['label' => 'Register TB Patient', 'icon' => 'user-plus', 'page' => 'registration', 'color' => 'emerald'],
+                ['label' => 'TB Case Registry', 'icon' => 'users', 'page' => 'records', 'color' => 'teal'],
+                ['label' => 'TB Screening Queue', 'icon' => 'calendar', 'page' => 'visit', 'color' => 'amber']
             ],
             'stats' => [
-                ['label' => 'Total Patients', 'value' => $totalPatients, 'trend' => 'In Registry', 'color' => 'blue', 'icon' => 'users'],
-                ['label' => 'New Today', 'value' => $db->query("SELECT COUNT(*) FROM patients WHERE DATE(created_at) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Registrations', 'color' => 'emerald', 'icon' => 'user-plus'],
-                ['label' => 'Check-ins Today', 'value' => $todayVisits, 'trend' => 'Visits', 'color' => 'indigo', 'icon' => 'log-in'],
-                ['label' => 'Active Patients', 'value' => $db->query("SELECT COUNT(*) FROM medical_visits WHERE status = 'active'")->fetchColumn(), 'trend' => 'In Hospital', 'color' => 'amber', 'icon' => 'activity']
+                ['label' => 'Total TB Clients', 'value' => $totalPatients, 'trend' => 'Case Registry', 'color' => 'emerald', 'icon' => 'users'],
+                ['label' => 'New TB Suspects', 'value' => $db->query("SELECT COUNT(*) FROM patients WHERE DATE(created_at) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Today', 'color' => 'teal', 'icon' => 'user-plus'],
+                ['label' => 'TB Encounters', 'value' => $todayVisits, 'trend' => 'Today', 'color' => 'amber', 'icon' => 'log-in'],
+                ['label' => 'Diagnosed TB', 'value' => $tbDiagnosed, 'trend' => 'All Time', 'color' => 'red', 'icon' => 'activity']
             ],
             'notifications' => [
                 'doctor_requests' => "SELECT 'doctor' as source, d.diagnosis_id as id, CONCAT('Dr. ', u.full_name) as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, 'Follow-up appointment needed' as message, d.diagnosis_date as created_at, 'blue' as color, 'stethoscope' as icon FROM diagnoses d JOIN users u ON d.doctor_id = u.user_id JOIN medical_visits v ON d.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id WHERE d.diagnosis_date = CURRENT_DATE",
@@ -119,18 +139,18 @@ switch ($userRole) {
         $myTodayPatients->execute([$userId]);
         
         $roleConfig = [
-            'welcome' => 'Consultation',
+            'welcome' => 'TB Clinical Review',
             'icon' => 'stethoscope',
             'quickActions' => [
-                ['label' => 'My Queue', 'icon' => 'users', 'page' => 'consultation', 'color' => 'blue'],
-                ['label' => 'Lab Results', 'icon' => 'flask-conical', 'page' => 'lab-results', 'color' => 'orange'],
-                ['label' => 'Prescribe', 'icon' => 'pill', 'page' => 'prescribe', 'color' => 'emerald']
+                ['label' => 'TB Case Queue', 'icon' => 'users', 'page' => 'consultation', 'color' => 'emerald'],
+                ['label' => 'TB Lab Results', 'icon' => 'flask-conical', 'page' => 'lab-results', 'color' => 'orange'],
+                ['label' => 'TB Regimen', 'icon' => 'pill', 'page' => 'prescribe', 'color' => 'amber']
             ],
             'stats' => [
-                ['label' => 'My Patients', 'value' => $myTodayPatients->fetchColumn(), 'trend' => 'Today', 'color' => 'blue', 'icon' => 'stethoscope'],
-                ['label' => 'Waiting', 'value' => $db->query("SELECT COUNT(*) FROM medical_visits WHERE status = 'waiting_doctor' AND DATE(created_at) = CURRENT_DATE")->fetchColumn(), 'trend' => 'In Queue', 'color' => 'amber', 'icon' => 'clock'],
-                ['label' => 'Pending Labs', 'value' => $pendingLabs, 'trend' => 'Awaiting', 'color' => 'orange', 'icon' => 'flask-conical'],
-                ['label' => 'Discharges', 'value' => $db->query("SELECT COUNT(*) FROM discharges WHERE DATE(created_at) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Today', 'color' => 'purple', 'icon' => 'log-out']
+                ['label' => 'My TB Cases', 'value' => $myTodayPatients->fetchColumn(), 'trend' => 'Today', 'color' => 'emerald', 'icon' => 'stethoscope'],
+                ['label' => 'Awaiting Review', 'value' => $db->query("SELECT COUNT(*) FROM medical_visits WHERE DATE(created_at) = CURRENT_DATE AND status = 'active'")->fetchColumn(), 'trend' => 'Queue', 'color' => 'amber', 'icon' => 'clock'],
+                ['label' => 'Pending TB Labs', 'value' => $pendingLabs, 'trend' => 'Awaiting', 'color' => 'orange', 'icon' => 'flask-conical'],
+                ['label' => 'Active TB Plans', 'value' => $activeTbPlans, 'trend' => 'On Treatment', 'color' => 'teal', 'icon' => 'calendar-check']
             ],
             'notifications' => [
                 'lab_results' => "SELECT 'lab' as source, lr.request_id as id, 'Lab' as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, CONCAT('Results ready: ', lr.test_type) as message, lr.updated_at as created_at, 'orange' as color, 'flask-conical' as icon FROM lab_requests lr JOIN medical_visits v ON lr.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id WHERE lr.status = 'completed' AND lr.results_viewed = 0",
@@ -153,17 +173,16 @@ switch ($userRole) {
 
     case 'Lab Technician':
         $roleConfig = [
-            'welcome' => 'Laboratory',
+            'welcome' => 'TB Laboratory Unit',
             'icon' => 'flask-conical',
             'quickActions' => [
-                ['label' => 'Pending Tests', 'icon' => 'clock', 'page' => 'laboratory', 'color' => 'orange'],
-                ['label' => 'Enter Results', 'icon' => 'edit', 'page' => 'lab-results', 'color' => 'blue'],
-                ['label' => 'Emergency', 'icon' => 'alert-triangle', 'page' => 'emergency-lab', 'color' => 'red']
+                ['label' => 'TB Test Queue', 'icon' => 'clock', 'page' => 'laboratory', 'color' => 'orange'],
+                ['label' => 'Record TB Result', 'icon' => 'edit', 'page' => 'lab-results', 'color' => 'emerald']
             ],
             'stats' => [
-                ['label' => 'Pending', 'value' => $pendingLabs, 'trend' => 'To Process', 'color' => 'orange', 'icon' => 'clock'],
+                ['label' => 'Pending TB Tests', 'value' => $pendingLabs, 'trend' => 'To Process', 'color' => 'orange', 'icon' => 'clock'],
                 ['label' => 'Completed Today', 'value' => $db->query("SELECT COUNT(*) FROM lab_results WHERE DATE(performed_date) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Done', 'color' => 'emerald', 'icon' => 'check-circle'],
-                ['label' => 'Emergency', 'value' => $db->query("SELECT COUNT(*) FROM lab_requests r JOIN medical_visits v ON r.visit_id = v.visit_id WHERE v.visit_type='Emergency' AND r.status='pending'")->fetchColumn(), 'trend' => 'STAT', 'color' => 'red', 'icon' => 'zap'],
+                ['label' => 'Sputum Focus', 'value' => $db->query("SELECT COUNT(*) FROM lab_requests WHERE LOWER(test_type) LIKE '%sputum%' OR LOWER(test_type) LIKE '%gene%' OR LOWER(test_type) LIKE '%afb%'")->fetchColumn(), 'trend' => 'TB Diagnostics', 'color' => 'red', 'icon' => 'zap'],
                 ['label' => 'Total Today', 'value' => $db->query("SELECT COUNT(*) FROM lab_requests WHERE DATE(created_at) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Requests', 'color' => 'blue', 'icon' => 'flask-conical']
             ],
             'notifications' => [
@@ -205,16 +224,16 @@ switch ($userRole) {
 
     case 'Pharmacist':
         $roleConfig = [
-            'welcome' => 'Pharmacy',
+            'welcome' => 'TB Drug Dispensing',
             'icon' => 'pill',
             'quickActions' => [
-                ['label' => 'Pending Rx', 'icon' => 'clock', 'page' => 'pharmacy', 'color' => 'emerald']
+                ['label' => 'Pending TB Regimens', 'icon' => 'clock', 'page' => 'pharmacy', 'color' => 'emerald']
                
             ],
             'stats' => [
-                ['label' => 'Pending', 'value' => $pendingMeds, 'trend' => 'To Dispense', 'color' => 'emerald', 'icon' => 'clock'],
-                ['label' => 'Dispensed', 'value' => $db->query("SELECT COUNT(*) FROM dispensing_records WHERE DATE(dispense_date) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Today', 'color' => 'blue', 'icon' => 'package-check'],
-                ['label' => 'Emergency', 'value' => $db->query("SELECT COUNT(*) FROM prescriptions p JOIN medical_visits v ON p.visit_id = v.visit_id WHERE v.visit_type='Emergency' AND p.is_dispensed=0")->fetchColumn(), 'trend' => 'STAT', 'color' => 'red', 'icon' => 'zap'],
+                ['label' => 'Pending Regimens', 'value' => $pendingMeds, 'trend' => 'To Dispense', 'color' => 'emerald', 'icon' => 'clock'],
+                ['label' => 'Dispensed Today', 'value' => $db->query("SELECT COUNT(*) FROM dispensing_records WHERE DATE(dispense_date) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Today', 'color' => 'blue', 'icon' => 'package-check'],
+                ['label' => 'DOT Priority', 'value' => $db->query("SELECT COUNT(*) FROM prescriptions WHERE is_dispensed=0 AND (LOWER(medication_name) LIKE '%rif%' OR LOWER(medication_name) LIKE '%isoniazid%' OR LOWER(medication_name) LIKE '%ethambutol%' OR LOWER(medication_name) LIKE '%pyrazinamide%')")->fetchColumn(), 'trend' => 'TB Drugs', 'color' => 'red', 'icon' => 'zap'],
                 ['label' => 'New Orders', 'value' => $db->query("SELECT COUNT(*) FROM prescriptions WHERE created_at > NOW() - INTERVAL 1 HOUR")->fetchColumn(), 'trend' => 'Last Hour', 'color' => 'purple', 'icon' => 'bell']
             ],
             'notifications' => [
@@ -286,7 +305,7 @@ if (isset($roleConfig['recentActivity']['query'])) {
             <h1 class="text-2xl font-black text-gray-800 uppercase tracking-tight italic">
                 <?php echo $roleConfig['welcome']; ?> 
             </h1>
-            <p class="text-[10px] text-blue-600 font-bold uppercase tracking-widest mt-1">
+            <p class="text-[10px] text-emerald-700 font-bold uppercase tracking-widest mt-1">
                 <i data-lucide="<?php echo $roleConfig['icon']; ?>" class="w-3 h-3 inline mr-1"></i>
                 Welcome back, <?php echo explode(' ', $_SESSION['full_name'])[0]; ?> • <?php echo $userRole; ?>
             </p>
@@ -302,7 +321,7 @@ if (isset($roleConfig['recentActivity']['query'])) {
 
     <!-- 2. QUICK ACTIONS (if any for this role) -->
     <?php if (!empty($roleConfig['quickActions'])): ?>
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2rem] p-6 text-white shadow-xl">
+    <div class="bg-gradient-to-r from-emerald-700 to-amber-600 rounded-[2rem] p-6 text-white shadow-xl">
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
@@ -316,7 +335,7 @@ if (isset($roleConfig['recentActivity']['query'])) {
             <div class="flex flex-wrap gap-3">
                 <?php foreach ($roleConfig['quickActions'] as $action): ?>
                     <a href="index.php?page=<?php echo $action['page']; ?>" 
-                        class="px-5 py-2.5 bg-white text-<?php echo $action['color']; ?>-600 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-blue-50 transition-all flex items-center gap-2 shadow-lg">
+                        class="px-5 py-2.5 bg-white text-<?php echo $action['color']; ?>-700 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-emerald-50 transition-all flex items-center gap-2 shadow-lg">
                         <i data-lucide="<?php echo $action['icon']; ?>" class="w-4 h-4"></i>
                         <?php echo $action['label']; ?>
                     </a>

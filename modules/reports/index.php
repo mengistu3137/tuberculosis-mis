@@ -1,16 +1,16 @@
 <?php
 $reportTypes = [
-    ["title" => "Daily Patient Visit Summary", "desc" => "Total counts by department & age group", "icon" => "calendar", "color" => "blue"],
-    ["title" => "Disease Prevalence Report", "desc" => "Analysis of top diagnoses (ICD-10)", "icon" => "activity", "color" => "red"],
-    ["title" => "Pharmacy Stock Inventory", "desc" => "Current medication availability levels", "icon" => "pill", "color" => "emerald"],
-    ["title" => "Lab Turnaround Time", "desc" => "Efficiency analysis of result delivery", "icon" => "clock", "color" => "orange"]
+    ["title" => "Daily TB Intake Summary", "desc" => "TB suspect registrations and case entries", "icon" => "calendar", "color" => "emerald"],
+    ["title" => "TB Diagnosis Burden", "desc" => "Pulmonary, extrapulmonary, and MDR-TB trend", "icon" => "activity", "color" => "red"],
+    ["title" => "TB Drug Dispensing", "desc" => "Regimen dispatch and adherence risk monitoring", "icon" => "pill", "color" => "amber"],
+    ["title" => "TB Follow-up Outcomes", "desc" => "Missed visits, outcomes, and treatment continuity", "icon" => "clock", "color" => "teal"]
 ];
 ?>
 
 <div class="space-y-8">
     <div>
-        <h1 class="text-3xl font-black text-gray-800">Medical Intelligence & Reports</h1>
-        <p class="text-gray-500 font-medium italic">Generate data-driven documents for hospital administration</p>
+        <h1 class="text-3xl font-black text-gray-800">TB Program Intelligence & Reports</h1>
+        <p class="text-gray-500 font-medium italic">Generate data-driven outputs for tuberculosis program management</p>
     </div>
 
     <!-- Report Grid -->

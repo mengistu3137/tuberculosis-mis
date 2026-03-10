@@ -1,6 +1,6 @@
 <?php
 /**
- * MASTER PATIENT REGISTRY (Clerk Workspace)
+ * MASTER TB REGISTRY (Registration Desk)
  * Responsibilities:
  * 1. Patient Registration
  * 2. Patient Check-in (Encounter Initiation)
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
         // ONLY assign the Doctor at this stage
         $assignObj->autoAssignDoctor($visit_id);
 
-        $msg = "Check-in successful. Patient assigned to Physician.";
+        $msg = "TB intake successful. Client assigned to TB clinician.";
         $msgType = "emerald";
 
         echo "<script>
@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
     <!-- Header with Notifications -->
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-            <h1 class="text-xl font-black text-gray-800 tracking-tight uppercase text-blue-600">Patient Registry</h1>
+            <h1 class="text-xl font-black text-gray-800 tracking-tight uppercase text-emerald-700">TB Patient Registry</h1>
             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
                 <?php echo $total_records; ?> Total Records
             </p>
@@ -198,8 +198,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
 
         <div class="flex items-center gap-3">
             <button onclick="openRegistrationModal()"
-                class="px-5 py-3 bg-blue-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all flex items-center gap-2">
-                <i data-lucide="user-plus" class="w-4 h-4"></i> New Patient
+                class="px-5 py-3 bg-emerald-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100 hover:bg-emerald-800 transition-all flex items-center gap-2">
+                <i data-lucide="user-plus" class="w-4 h-4"></i> Register TB Patient
             </button>
             <a href="index.php?page=visit"
                 class="group relative px-4 py-2 bg-blue-600 text-white rounded-2xl font-black text-[11px] first-letter:uppercase tracking-wider hover:bg-blue-700 transition-all duration-300 flex items-center gap-3 shadow-xl shadow-blue-200 hover:shadow-blue-300 hover:scale-105 active:scale-95 overflow-hidden">
@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                 </span>
                 <span class="relative flex items-center gap-2">
                     <span class="relative">
-                        VIEW ENCOUNTERS
+                        TB CASE ENCOUNTERS
                         <span
                             class="absolute -bottom-1 left-0 w-0 group-hover:w-full h-0.5 bg-white/60 transition-all duration-300"></span>
                     </span>
@@ -227,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
         </div>
     </div>
 
-    <!-- Patient Registry Table -->
+    <!-- TB Patient Registry Table -->
     <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden transition-all">
         <table class="w-full text-left">
             <thead
@@ -339,7 +339,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                 </span>
                 <div class="flex gap-1.5">
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <a href="index.php?page=records&p=<?php echo $i; ?>&q=<?php echo $searchTerm; ?>"
+                        <a href="index.php?page=registration&p=<?php echo $i; ?>&q=<?php echo $searchTerm; ?>"
                             class="w-9 h-9 flex items-center justify-center rounded-xl font-black text-[10px] transition-all <?php echo ($i == $current_page) ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-white text-gray-400 border border-gray-100 hover:border-blue-200'; ?>">
                             <?php echo $i; ?>
                         </a>

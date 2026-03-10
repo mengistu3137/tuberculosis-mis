@@ -35,7 +35,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 
 $routes = [
     'dashboard' => 'modules/dashboard.php',
-    'registration' => 'modules/registration/index.php',
+    'registration' => 'modules/Registration/index.php',
     // 'record' => 'modules/registration/records.php',
  
     'records' => 'modules/medical-record/index.php',
@@ -43,8 +43,8 @@ $routes = [
 
     'consultation' => 'modules/medical-record/consultation.php',
     'referral' => 'modules/referral/index.php',
-    'laboratory' => 'modules/laboratory/index.php',
-    'lab-results' => 'modules/laboratory/results.php',
+    'laboratory' => 'modules/Laboratory/index.php',
+    'lab-results' => 'modules/Laboratory/results.php',
     'pharmacy' => 'modules/pharmacy/index.php',
     'admin' => 'modules/admin/index.php',
     'prescribe' => 'modules/medical-record/prescribe.php',
@@ -72,18 +72,21 @@ if (array_key_exists($page, $routes)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRMIS | Mattu Karl Hospital</title>
+    <title>TBMIS | Mettu Karl Referral Hospital</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- IMPORTANT: Load main.js HERE so functions are defined before HTML is rendered -->
-    <script src="assets/js/main.js"></script>
+    <script src="assets/Js/main.js"></script>
 
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
+            font-family: 'Sora', sans-serif;
+            background:
+                radial-gradient(circle at 12% 16%, rgba(16, 185, 129, 0.08), transparent 32%),
+                radial-gradient(circle at 85% 6%, rgba(245, 158, 11, 0.08), transparent 34%),
+                #f7faf9;
         }
 
         /* Custom scrollbar for horizontal scrolling containers */

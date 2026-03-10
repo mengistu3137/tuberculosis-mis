@@ -43,14 +43,14 @@ try {
     <!-- LEFT: Mobile Menu & Breadcrumbs -->
     <div class="flex items-center gap-3 md:gap-4">
         <button onclick="toggleSidebar()"
-            class="p-2 -ml-2 text-gray-400 hover:text-blue-600 md:hidden transition-colors">
+            class="p-2 -ml-2 text-gray-400 hover:text-emerald-700 md:hidden transition-colors">
             <i data-lucide="menu" class="w-6 h-6"></i>
         </button>
 
         <div class="flex items-center gap-2 text-sm">
             <span class="text-gray-400">System</span>
             <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i>
-            <span class="text-blue-600 font-semibold capitalize">
+            <span class="text-emerald-700 font-semibold capitalize">
                 <?php echo str_replace('-', ' ', $page); ?>
             </span>
         </div>
@@ -61,9 +61,9 @@ try {
     <div class="hidden lg:flex flex-1 justify-center px-8">
         <div class="relative w-full max-w-md group">
             <i data-lucide="search"
-                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-blue-500 transition-colors"></i>
-            <input type="text" onkeyup="searchPatients(this.value)" placeholder="Search patients, MRN, or files..."
-                class="w-full pl-11 pr-4 py-2.5 bg-gray-100/50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all text-sm text-gray-700 font-medium">
+                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-emerald-600 transition-colors"></i>
+            <input type="text" onkeyup="searchPatients(this.value)" placeholder="Search TB patient, TBMRN, regimen..."
+                class="w-full pl-11 pr-4 py-2.5 bg-gray-100/50 border-none rounded-2xl focus:ring-2 focus:ring-emerald-500/20 focus:bg-white transition-all text-sm text-gray-700 font-medium">
         </div>
     </div>
 <?php endif; ?>
@@ -72,10 +72,10 @@ try {
     <div class="flex items-center gap-3 md:gap-4 shrink-0">
 
         <!-- WORKLOAD INDICATOR -->
-        <div class="hidden md:flex items-center px-4 py-2 bg-blue-50 rounded-xl border border-blue-100">
+        <div class="hidden md:flex items-center px-4 py-2 bg-emerald-50 rounded-xl border border-emerald-100">
             <div class="flex flex-col items-end mr-3">
-                <span class="text-[8px] font-black text-blue-400 uppercase tracking-widest">Live Workload</span>
-                <span class="text-xs font-black text-blue-600"><?php echo $myLoad; ?> Active Cases</span>
+                <span class="text-[8px] font-black text-emerald-500 uppercase tracking-widest">TB Desk Load</span>
+                <span class="text-xs font-black text-emerald-700"><?php echo $myLoad; ?> Active TB Cases</span>
             </div>
             <div
                 class="w-2 h-2 rounded-full <?php echo ($myLoad > 0) ? 'bg-emerald-500 animate-pulse' : 'bg-gray-300'; ?>">
@@ -83,7 +83,7 @@ try {
         </div>
 
         <button
-            class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all hidden sm:block">
+            class="p-2 text-gray-400 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-all hidden sm:block">
             <i data-lucide="bell" class="w-4 h-4"></i>
         </button>
 
@@ -91,12 +91,12 @@ try {
             <div class="text-right hidden sm:block">
                 <p class="text-xs md:text-sm font-black text-gray-800 leading-tight">
                     <?php echo $_SESSION['full_name']; ?></p>
-                <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest">
+                <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
                     <?php echo $_SESSION['role']; ?></p>
             </div>
 
             <div
-                class="w-9 h-9 md:w-11 md:h-11 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 text-white flex items-center justify-center font-black text-sm md:text-base shadow-lg shadow-blue-100 border-2 border-white ring-1 ring-gray-100">
+                class="w-9 h-9 md:w-11 md:h-11 rounded-full bg-gradient-to-br from-emerald-700 to-emerald-900 text-white flex items-center justify-center font-black text-sm md:text-base shadow-lg shadow-emerald-100 border-2 border-white ring-1 ring-gray-100">
                 <?php echo strtoupper(substr($_SESSION['full_name'], 0, 1)); ?>
             </div>
         </div>

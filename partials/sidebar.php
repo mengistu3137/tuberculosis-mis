@@ -16,13 +16,13 @@
         ],
         [
             'id' => 'registration',
-            'label' => 'Clerk Workspace',
+            'label' => 'TB Registration Desk',
             'icon' => 'monitor',
             'roles' => ['Admin', 'Clerk']
         ],
         [
             'id' => 'records',
-            'label' => 'Medical Records',
+            'label' => 'TB Case Records',
             'icon' => 'clipboard-list',
             'roles' => ['Admin']
         ],
@@ -34,19 +34,19 @@
          ], 
         [
             'id' => 'laboratory',
-            'label' => 'Laboratory',
+            'label' => 'TB Laboratory',
             'icon' => 'test-tube',
             'roles' => ['Admin', 'Lab Technician']
         ],
         [
             'id' => 'pharmacy',
-            'label' => 'Pharmacy',
+            'label' => 'TB Drug Unit',
             'icon' => 'pill',
             'roles' => ['Admin', 'Pharmacist']
         ],
         [
             'id' => 'admin',
-            'label' => 'Administration',
+            'label' => 'TBMIS Administration',
             'icon' => 'settings',
             'roles' => ['Admin']
         ],
@@ -58,7 +58,7 @@
         ],
         [
             "id"=>"visit-history",
-            "label"=>"Visit History",
+            "label"=>"TB Follow-up History",
             "icon"=>"history",
             "roles"=>['Admin', 'Doctor', 'Nurse', 'Clerk']
         ]
@@ -67,7 +67,7 @@
 
   
     <aside id="main-sidebar"
-        class="w-72 bg-blue-700 text-white flex-col hidden md:flex h-screen sticky top-0 z-50 transition-all duration-300 shadow-2xl">
+        class="w-72 bg-emerald-900 text-white flex-col hidden md:flex h-screen sticky top-0 z-50 transition-all duration-300 shadow-2xl">
 
         <!-- BRAND SECTION -->
         <div class="p-8 mb-4">
@@ -77,8 +77,8 @@
                     <i data-lucide="activity" class="text-white w-6 h-6"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-black tracking-tighter leading-none">PRMIS</h1>
-                    <p class="text-[10px] font-bold text-blue-200 uppercase tracking-widest">Mattu Karl Hospital</p>
+                    <h1 class="text-lg font-black tracking-tighter leading-none">TBMIS</h1>
+                    <p class="text-[10px] font-bold text-emerald-200 uppercase tracking-widest">Mettu Karl Referral Hospital</p>
                 </div>
             </div>
         </div>
@@ -93,18 +93,18 @@
                     ?>
                     <a href="index.php?page=<?= $item['id'] ?>"
                         class="flex items-center justify-between group px-4 py-3.5 rounded-2xl transition-all duration-300 
-                    <?= $isActive ? 'bg-white text-blue-700 shadow-xl shadow-blue-900/20 translate-x-2' : 'hover:bg-blue-600/50 text-blue-100 hover:text-white' ?>">
+                    <?= $isActive ? 'bg-white text-emerald-800 shadow-xl shadow-emerald-900/20 translate-x-2' : 'hover:bg-emerald-800/70 text-emerald-100 hover:text-white' ?>">
 
                         <div class="flex items-center gap-3.5">
                             <i data-lucide="<?= $item['icon'] ?>"
-                                class="w-5 h-5 transition-transform duration-300 <?= $isActive ? 'text-blue-600' : 'group-hover:scale-110' ?>"></i>
+                                class="w-5 h-5 transition-transform duration-300 <?= $isActive ? 'text-emerald-700' : 'group-hover:scale-110' ?>"></i>
                             <span class="text-sm font-black first-letter:uppercase tracking-wider">
                                 <?= $item['label'] ?>
                             </span>
                         </div>
 
                         <?php if ($isActive): ?>
-                            <div class="w-1.5 h-1.5 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.8)]"></div>
+                            <div class="w-1.5 h-1.5 bg-emerald-600 rounded-full shadow-[0_0_8px_rgba(5,150,105,0.8)]"></div>
                         <?php endif; ?>
                     </a>
                 <?php endif; ?>

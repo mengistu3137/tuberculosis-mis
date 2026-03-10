@@ -8,6 +8,25 @@ class Clinical
         $this->conn = $db;
     }
 
+    private function hasColumn($tableName, $columnName)
+    {
+        $query = "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = :table_name AND column_name = :column_name";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([
+            ':table_name' => $tableName,
+            ':column_name' => $columnName
+        ]);
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
+    private function hasTable($tableName)
+    {
+        $query = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = :table_name";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([':table_name' => $tableName]);
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
     public function createDetailedReferral($data, $doctor_id)
     {
         // Prevent invalid visit IDs
@@ -364,7 +383,39 @@ class Clinical
         $date = date("Y-m-d");
         $stmt->bindParam(':ddate', $date);
 
-        return $stmt->execute();
+        $saved = $stmt->execute();
+        if (!$saved) {
+            return false;
+        }
+
+        // Persist TB-specific fields if migration columns exist.
+        $tbColumns = [];
+        $tbParams = [':id' => $id];
+
+        if ($this->hasColumn('diagnoses', 'tb_classification')) {
+            $tbColumns[] = "tb_classification = :tb_classification";
+            $tbParams[':tb_classification'] = $data['tb_classification'] ?? null;
+        }
+        if ($this->hasColumn('diagnoses', 'tb_treatment_status')) {
+            $tbColumns[] = "tb_treatment_status = :tb_treatment_status";
+            $tbParams[':tb_treatment_status'] = $data['tb_treatment_status'] ?? null;
+        }
+        if ($this->hasColumn('diagnoses', 'mdr_tb_status')) {
+            $tbColumns[] = "mdr_tb_status = :mdr_tb_status";
+            $tbParams[':mdr_tb_status'] = $data['mdr_tb_status'] ?? 'No';
+        }
+        if ($this->hasColumn('diagnoses', 'diagnosis_method')) {
+            $tbColumns[] = "diagnosis_method = :diagnosis_method";
+            $tbParams[':diagnosis_method'] = $data['diagnosis_method'] ?? null;
+        }
+
+        if (!empty($tbColumns)) {
+            $update = "UPDATE diagnoses SET " . implode(', ', $tbColumns) . " WHERE diagnosis_id = :id";
+            $updateStmt = $this->conn->prepare($update);
+            $updateStmt->execute($tbParams);
+        }
+
+        return true;
     }
 
     // --- NEW: Update Specific Diagnosis (for the Edit feature) ---
@@ -412,7 +463,57 @@ class Clinical
         $endDate = !empty($data['end_date']) ? $data['end_date'] : null;
         $stmt->bindValue(':edate', $endDate);
 
-        return $stmt->execute();
+        $saved = $stmt->execute();
+        if (!$saved) {
+            return false;
+        }
+
+        // Persist TB regimen metadata if columns are available.
+        $tbColumns = [];
+        $tbParams = [':id' => $id];
+
+        if ($this->hasColumn('treatment_plans', 'tb_phase')) {
+            $tbColumns[] = "tb_phase = :tb_phase";
+            $tbParams[':tb_phase'] = $data['tb_phase'] ?? null;
+        }
+        if ($this->hasColumn('treatment_plans', 'drug_regimen')) {
+            $tbColumns[] = "drug_regimen = :drug_regimen";
+            $tbParams[':drug_regimen'] = $data['drug_regimen'] ?? null;
+        }
+        if ($this->hasColumn('treatment_plans', 'adherence_status')) {
+            $tbColumns[] = "adherence_status = :adherence_status";
+            $tbParams[':adherence_status'] = $data['adherence_status'] ?? null;
+        }
+
+        if (!empty($tbColumns)) {
+            $update = "UPDATE treatment_plans SET " . implode(', ', $tbColumns) . " WHERE plan_id = :id";
+            $updateStmt = $this->conn->prepare($update);
+            $updateStmt->execute($tbParams);
+        }
+
+        if (!empty($data['next_follow_up_date'])) {
+            $this->createTbFollowup($data['visit_id'], $data['next_follow_up_date'], $data['follow_up_notes'] ?? null);
+        }
+
+        return true;
+    }
+
+    public function createTbFollowup($visit_id, $follow_up_date, $notes = null)
+    {
+        if (!$this->hasTable('tb_followups')) {
+            return false;
+        }
+
+        $followupId = "FUP-" . strtoupper(substr(md5(uniqid()), 0, 8));
+        $query = "INSERT INTO tb_followups (followup_id, visit_id, follow_up_date, adherence_note, created_by) VALUES (:id, :visit_id, :follow_up_date, :note, :created_by)";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([
+            ':id' => $followupId,
+            ':visit_id' => $visit_id,
+            ':follow_up_date' => $follow_up_date,
+            ':note' => $notes,
+            ':created_by' => $_SESSION['user_id']
+        ]);
     }
 
     // NEW: Fetch Treatment History for a Patient
@@ -480,7 +581,7 @@ class Clinical
     }
 
     // 4. prescription and discharge
-    public function addPrescription($visit_id, $med, $dose, $user_id)
+    public function addPrescription($visit_id, $med, $dose, $user_id, $tbPhase = null, $followupDate = null)
     {
         if ($visit_id === "NO_ACTIVE_VISIT" || empty($visit_id)) {
             return false;
@@ -491,6 +592,22 @@ class Clinical
 
         try {
             if ($stmt->execute([$id, $visit_id, $med, $dose, $user_id])) {
+                $tbColumns = [];
+                $tbParams = [':id' => $id];
+                if ($this->hasColumn('prescriptions', 'tb_phase')) {
+                    $tbColumns[] = "tb_phase = :tb_phase";
+                    $tbParams[':tb_phase'] = $tbPhase;
+                }
+                if ($this->hasColumn('prescriptions', 'next_followup_date')) {
+                    $tbColumns[] = "next_followup_date = :next_followup_date";
+                    $tbParams[':next_followup_date'] = $followupDate;
+                }
+                if (!empty($tbColumns)) {
+                    $update = "UPDATE prescriptions SET " . implode(', ', $tbColumns) . " WHERE prescription_id = :id";
+                    $updateStmt = $this->conn->prepare($update);
+                    $updateStmt->execute($tbParams);
+                }
+
                 return $id; // MODIFIED: Return the ID string for the Assignment Engine
             }
             return false;

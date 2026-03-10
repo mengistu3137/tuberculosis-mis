@@ -1,6 +1,6 @@
 <?php
 /**
- * LABORATORY WORKLIST MODULE
+ * TB LABORATORY WORKLIST MODULE
  * Refactored: Added Database Pagination
  */
 
@@ -27,16 +27,16 @@ $pendingCount = $db->query("SELECT COUNT(*) FROM lab_requests WHERE status = 'pe
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
             <h1 class="text-xl font-black text-gray-800 tracking-tight uppercase italic">Laboratory Worklist</h1>
-            <p class="text-[10px] text-blue-600 font-bold uppercase tracking-widest mt-1">Diagnostic Queue • Mattu Karl
-                Specialized Hospital</p>
+            <p class="text-[10px] text-emerald-700 font-bold uppercase tracking-widest mt-1">TB Diagnostic Queue • Mettu Karl
+                Referral Hospital</p>
         </div>
 
         <!-- Status Summary Badge -->
         <div
-            class="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-100 transition-all active:scale-95">
-            <i data-lucide="flask-conical" class="w-4 h-4 text-blue-200"></i>
+            class="flex items-center gap-2 px-5 py-2.5 bg-emerald-700 text-white rounded-2xl shadow-lg shadow-emerald-100 transition-all active:scale-95">
+            <i data-lucide="flask-conical" class="w-4 h-4 text-emerald-100"></i>
             <span class="text-[10px] font-black uppercase tracking-widest"><?php echo $pendingCount; ?> Global
-                Pending</span>
+                Pending TB Tests</span>
         </div>
     </div>
 

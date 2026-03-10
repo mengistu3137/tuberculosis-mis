@@ -1,7 +1,7 @@
 <?php
 /**
- * LIVE PRESCRIPTION MODULE
- * Fixed: Added proper status handling for success/failure feedback
+ * TB REGIMEN PRESCRIPTION MODULE
+ * Includes TB phase and follow-up scheduling metadata.
  */
 
 $statusMsg = "";
@@ -19,6 +19,7 @@ if (!$patient) {
 $hasActiveVisit = ($visit_id !== "NO_ACTIVE_VISIT" && !empty($visit_id));
 $frequencies = ["1x1 (Once Daily)", "1x2 (Twice Daily)", "1x3 (Three Daily)", "Before Meals", "Stat (Immediate)"];
 $routes = ["Oral", "IV Injection", "Topical", "Inhalation"];
+$tbPhases = ["Intensive Phase", "Continuation Phase", "MDR-TB Phase", "Preventive Therapy"];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_rx'])) {
     if (!$hasActiveVisit) {
@@ -27,7 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_rx'])) {
         exit;
     } else {
         $full_dosage = $_POST['dosage_amount'] . " - " . $_POST['frequency'];
-        $success = $clinicalObj->addPrescription($visit_id, $_POST['medication_name'], $full_dosage, $_SESSION['user_id']);
+        $success = $clinicalObj->addPrescription(
+            $visit_id,
+            $_POST['medication_name'],
+            $full_dosage,
+            $_SESSION['user_id'],
+            $_POST['tb_phase'] ?? null,
+            $_POST['next_followup_date'] ?? null
+        );
 
         if ($success) {
             // SUCCESS: Redirect back to consultation with specific status
@@ -51,8 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_rx'])) {
         </a>
         <div>
             <h1 class="text-2xl font-black text-gray-800 uppercase tracking-tighter leading-none italic">Electronic
-                Prescription</h1>
-            <p class="text-[10px] text-blue-600 font-bold uppercase tracking-widest mt-1">Pharmacy Information Link</p>
+                TB Regimen Prescription</h1>
+            <p class="text-[10px] text-emerald-700 font-bold uppercase tracking-widest mt-1">TB Drug Unit Integration</p>
         </div>
     </div>
 
@@ -123,6 +131,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_rx'])) {
                 </div>
 
                 <div class="space-y-2">
+                    <label class="text-[10px] font-black text-blue-600 uppercase tracking-widest ml-4">TB Treatment Phase</label>
+                    <select name="tb_phase" required
+                        class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-500 font-black text-xs uppercase tracking-widest bg-white cursor-pointer shadow-inner">
+                        <?php foreach ($tbPhases as $phase): ?>
+                            <option value="<?php echo $phase; ?>"><?php echo $phase; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-blue-600 uppercase tracking-widest ml-4">Next Follow-up Date</label>
+                    <input type="date" name="next_followup_date"
+                        class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-500 font-bold text-gray-700 shadow-inner transition-all">
+                </div>
+
+                <div class="space-y-2 md:col-span-2">
                     <label class="text-[10px] font-black text-blue-600 uppercase tracking-widest ml-4">Clinical
                         Instructions</label>
                     <textarea rows="3" name="instructions"

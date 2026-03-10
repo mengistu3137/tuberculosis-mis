@@ -14,6 +14,17 @@ class Lab
     {
         $this->conn = $db;
     }
+
+    private function hasColumn($tableName, $columnName)
+    {
+        $query = "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = :table_name AND column_name = :column_name";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([
+            ':table_name' => $tableName,
+            ':column_name' => $columnName
+        ]);
+        return (int) $stmt->fetchColumn() > 0;
+    }
     // 1. Count all requests (for pagination math)
     public function countAllRequests()
     {
@@ -47,7 +58,7 @@ class Lab
      * 1. Create a New Lab Request (Used by Doctors)
      */
 
-    public function requestTest($visit_id, $test_type)
+    public function requestTest($visit_id, $test_type, $tb_test_category = null, $specimen_type = null)
     {
         // Security check for empty inputs
         if (empty($visit_id) || empty($test_type))
@@ -67,7 +78,28 @@ class Lab
         $stmt->bindParam(':ttype', $test_type);
         $stmt->bindParam(':rdate', $date);
 
-        return $stmt->execute();
+        $saved = $stmt->execute();
+        if (!$saved) {
+            return false;
+        }
+
+        $tbColumns = [];
+        $tbParams = [':id' => $request_id];
+        if ($this->hasColumn($this->requestTable, 'tb_test_category')) {
+            $tbColumns[] = "tb_test_category = :tb_test_category";
+            $tbParams[':tb_test_category'] = $tb_test_category;
+        }
+        if ($this->hasColumn($this->requestTable, 'specimen_type')) {
+            $tbColumns[] = "specimen_type = :specimen_type";
+            $tbParams[':specimen_type'] = $specimen_type;
+        }
+        if (!empty($tbColumns)) {
+            $update = "UPDATE " . $this->requestTable . " SET " . implode(', ', $tbColumns) . " WHERE request_id = :id";
+            $updateStmt = $this->conn->prepare($update);
+            $updateStmt->execute($tbParams);
+        }
+
+        return $request_id;
     }
    
 
