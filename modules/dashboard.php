@@ -71,11 +71,11 @@ switch ($userRole) {
 
             ],
             'notifications' => [
-                'system_alerts' => "SELECT 'system' as source, user_id as id, 'Security' as from_name, full_name as patient_name, user_id as patient_id, user_id as medical_record_number, CONCAT('New user registered: ', email) as message, created_at, 'blue' as color, 'user-plus' as icon FROM users ORDER BY created_at DESC LIMIT 5"
+                'system_alerts' => "SELECT 'system' as source, user_id as id, 'Security' as from_name, full_name as patient_name, user_id as patient_id, user_id as medical_record_number, CONCAT('New user registered: ', email) as message, created_at, 'teal' as color, 'user-plus' as icon FROM users ORDER BY created_at DESC LIMIT 5"
             ],
             'recentActivity' => [
                 // Admin sees newest staff members
-                'query' => "SELECT full_name, user_id as medical_record_number, role as details, status, 'blue' as color, user_id as patient_id, email as contact_details, '' as address, 0 as age, 'N/A' as gender FROM users ORDER BY created_at DESC LIMIT 5",
+                'query' => "SELECT full_name, user_id as medical_record_number, role as details, status, 'teal' as color, user_id as patient_id, email as contact_details, '' as address, 0 as age, 'N/A' as gender FROM users ORDER BY created_at DESC LIMIT 5",
                 'columns' => ['Staff Name', 'Staff ID', 'System Role', 'Status']
             ]
         ];
@@ -97,7 +97,7 @@ switch ($userRole) {
                 ['label' => 'Diagnosed TB', 'value' => $tbDiagnosed, 'trend' => 'All Time', 'color' => 'red', 'icon' => 'activity']
             ],
             'notifications' => [
-                'doctor_requests' => "SELECT 'doctor' as source, d.diagnosis_id as id, CONCAT('Dr. ', u.full_name) as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, 'Follow-up appointment needed' as message, d.diagnosis_date as created_at, 'blue' as color, 'stethoscope' as icon FROM diagnoses d JOIN users u ON d.doctor_id = u.user_id JOIN medical_visits v ON d.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id WHERE d.diagnosis_date = CURRENT_DATE",
+                'doctor_requests' => "SELECT 'doctor' as source, d.diagnosis_id as id, CONCAT('Dr. ', u.full_name) as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, 'Follow-up appointment needed' as message, d.diagnosis_date as created_at, 'teal' as color, 'stethoscope' as icon FROM diagnoses d JOIN users u ON d.doctor_id = u.user_id JOIN medical_visits v ON d.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id WHERE d.diagnosis_date = CURRENT_DATE",
                 'discharge_requests' => "SELECT 'discharge' as source, d.discharge_id as id, CONCAT('Dr. ', u.full_name) as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, 'Ready for discharge' as message, d.discharged_at as created_at, 'purple' as color, 'log-out' as icon FROM discharges d JOIN users u ON d.discharged_by = u.user_id JOIN patients p ON d.patient_id = p.patient_id"
             ],
             'recentActivity' => [
@@ -114,17 +114,17 @@ switch ($userRole) {
             'icon' => 'heart-pulse',
             'quickActions' => [
                 ['label' => 'Triage Queue', 'icon' => 'gauge', 'page' => 'triage', 'color' => 'violet'],
-                ['label' => 'Record Vitals', 'icon' => 'activity', 'page' => 'vitals', 'color' => 'blue'],
+                ['label' => 'Record Vitals', 'icon' => 'activity', 'page' => 'vitals', 'color' => 'teal'],
                 ['label' => 'Emergency', 'icon' => 'alert-triangle', 'page' => 'emergency', 'color' => 'red']
             ],
             'stats' => [
                 ['label' => 'Waiting Triage', 'value' => $db->query("SELECT COUNT(*) FROM medical_visits WHERE status = 'waiting_triage' AND DATE(created_at) = CURRENT_DATE")->fetchColumn(), 'trend' => 'In Queue', 'color' => 'violet', 'icon' => 'gauge'],
                 ['label' => 'Seen Today', 'value' => $db->query("SELECT COUNT(*) FROM vital_signs WHERE DATE(recorded_at) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Completed', 'color' => 'emerald', 'icon' => 'check-circle'],
                 ['label' => 'Emergency Cases', 'value' => $db->query("SELECT COUNT(*) FROM medical_visits WHERE visit_type = 'Emergency' AND DATE(created_at) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Critical', 'color' => 'red', 'icon' => 'alert-triangle'],
-                ['label' => 'Total Patients', 'value' => $totalPatients, 'trend' => 'Registry', 'color' => 'blue', 'icon' => 'users']
+                ['label' => 'Total Patients', 'value' => $totalPatients, 'trend' => 'Registry', 'color' => 'teal', 'icon' => 'users']
             ],
             'notifications' => [
-                'doctor_calls' => "SELECT 'doctor' as source, d.diagnosis_id as id, CONCAT('Dr. ', u.full_name) as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, 'Requesting vitals review' as message, d.created_at, 'blue' as color, 'stethoscope' as icon FROM diagnoses d JOIN users u ON d.doctor_id = u.user_id JOIN medical_visits v ON d.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id WHERE d.needs_vitals_review = 1 AND d.vitals_reviewed = 0",
+                'doctor_calls' => "SELECT 'doctor' as source, d.diagnosis_id as id, CONCAT('Dr. ', u.full_name) as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, 'Requesting vitals review' as message, d.created_at, 'teal' as color, 'stethoscope' as icon FROM diagnoses d JOIN users u ON d.doctor_id = u.user_id JOIN medical_visits v ON d.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id WHERE d.needs_vitals_review = 1 AND d.vitals_reviewed = 0",
                 'emergency_alerts' => "SELECT 'emergency' as source, v.visit_id as id, 'ER Triage' as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, 'Emergency patient arrived' as message, v.created_at, 'red' as color, 'alert-triangle' as icon FROM medical_visits v JOIN patients p ON v.patient_id = p.patient_id WHERE v.visit_type = 'Emergency' AND v.triage_completed = 0 AND DATE(v.created_at) = CURRENT_DATE"
             ],
             'recentActivity' => [
@@ -155,10 +155,10 @@ switch ($userRole) {
             'notifications' => [
                 'lab_results' => "SELECT 'lab' as source, lr.request_id as id, 'Lab' as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, CONCAT('Results ready: ', lr.test_type) as message, lr.updated_at as created_at, 'orange' as color, 'flask-conical' as icon FROM lab_requests lr JOIN medical_visits v ON lr.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id WHERE lr.status = 'completed' AND lr.results_viewed = 0",
                 'critical_cases' => "SELECT 'critical' as source, v.visit_id as id, 'ER' as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, 'Critical patient needs attention' as message, v.created_at, 'red' as color, 'alert-triangle' as icon FROM medical_visits v JOIN patients p ON v.patient_id = p.patient_id WHERE v.visit_type = 'Emergency' AND v.doctor_assigned IS NULL",
-                'consult_requests' => "SELECT 'consult' as source, v.visit_id as id, 'Nurse' as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, 'Vitals recorded, ready for consultation' as message, v.created_at as created_at, 'blue' as color, 'heart-pulse' as icon FROM medical_visits v JOIN patients p ON v.patient_id = p.patient_id WHERE v.status = 'active' "
+                'consult_requests' => "SELECT 'consult' as source, v.visit_id as id, 'Nurse' as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, 'Vitals recorded, ready for consultation' as message, v.created_at as created_at, 'teal' as color, 'heart-pulse' as icon FROM medical_visits v JOIN patients p ON v.patient_id = p.patient_id WHERE v.status = 'active' "
             ],
             'recentActivity' => [
-                'query' => "SELECT p.*, d.diagnosis_details as details, d.created_at, 'Completed' as status, 'blue' as color 
+                'query' => "SELECT p.*, d.diagnosis_details as details, d.created_at, 'Completed' as status, 'teal' as color 
                 FROM diagnoses d 
                 JOIN medical_visits v ON d.visit_id = v.visit_id 
                 JOIN patients p ON v.patient_id = p.patient_id 
@@ -183,14 +183,14 @@ switch ($userRole) {
                 ['label' => 'Pending TB Tests', 'value' => $pendingLabs, 'trend' => 'To Process', 'color' => 'orange', 'icon' => 'clock'],
                 ['label' => 'Completed Today', 'value' => $db->query("SELECT COUNT(*) FROM lab_results WHERE DATE(performed_date) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Done', 'color' => 'emerald', 'icon' => 'check-circle'],
                 ['label' => 'Sputum Focus', 'value' => $db->query("SELECT COUNT(*) FROM lab_requests WHERE LOWER(test_type) LIKE '%sputum%' OR LOWER(test_type) LIKE '%gene%' OR LOWER(test_type) LIKE '%afb%'")->fetchColumn(), 'trend' => 'TB Diagnostics', 'color' => 'red', 'icon' => 'zap'],
-                ['label' => 'Total Today', 'value' => $db->query("SELECT COUNT(*) FROM lab_requests WHERE DATE(created_at) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Requests', 'color' => 'blue', 'icon' => 'flask-conical']
+                ['label' => 'Total Today', 'value' => $db->query("SELECT COUNT(*) FROM lab_requests WHERE DATE(created_at) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Requests', 'color' => 'teal', 'icon' => 'flask-conical']
             ],
             'notifications' => [
                 'stat_requests' => "SELECT 'stat' as source, lr.request_id as id, 'ER' as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, CONCAT('STAT: ', lr.test_type) as message, lr.created_at, 'red' as color, 'zap' as icon FROM lab_requests lr JOIN medical_visits v ON lr.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id WHERE lr.priority = 'STAT' AND lr.status = 'pending'",
-                'new_requests' => "SELECT 'new' as source, lr.request_id as id, CONCAT('Dr. ', u.full_name) as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, CONCAT('New: ', lr.test_type) as message, lr.created_at, 'blue' as color, 'flask-conical' as icon FROM lab_requests lr JOIN medical_visits v ON lr.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id JOIN users u ON lr.doctor_id = u.user_id WHERE lr.status = 'pending' AND lr.priority != 'STAT'"
+                'new_requests' => "SELECT 'new' as source, lr.request_id as id, CONCAT('Dr. ', u.full_name) as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, CONCAT('New: ', lr.test_type) as message, lr.created_at, 'teal' as color, 'flask-conical' as icon FROM lab_requests lr JOIN medical_visits v ON lr.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id JOIN users u ON lr.doctor_id = u.user_id WHERE lr.status = 'pending' AND lr.priority != 'STAT'"
             ],
             'recentActivity' => [
-                'query' => "SELECT p.*, lr.test_type as details, lr.status, CASE lr.status WHEN 'pending' THEN 'orange' WHEN 'processing' THEN 'blue' ELSE 'emerald' END as color FROM lab_requests lr JOIN medical_visits v ON lr.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id WHERE lr.status IN ('pending', 'processing') ORDER BY lr.created_at ASC LIMIT 5",
+                'query' => "SELECT p.*, lr.test_type as details, lr.status, CASE lr.status WHEN 'pending' THEN 'orange' WHEN 'processing' THEN 'teal' ELSE 'emerald' END as color FROM lab_requests lr JOIN medical_visits v ON lr.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id WHERE lr.status IN ('pending', 'processing') ORDER BY lr.created_at ASC LIMIT 5",
                 'columns' => ['Patient', 'MRN', 'Test', 'Status']
             ]
         ];
@@ -202,14 +202,14 @@ switch ($userRole) {
             'icon' => 'scan',
             'quickActions' => [
                 ['label' => 'Imaging Queue', 'icon' => 'clock', 'page' => 'radiology', 'color' => 'fuchsia'],
-                ['label' => 'Upload Images', 'icon' => 'upload', 'page' => 'upload-images', 'color' => 'blue'],
+                ['label' => 'Upload Images', 'icon' => 'upload', 'page' => 'upload-images', 'color' => 'teal'],
                 ['label' => 'Reports', 'icon' => 'file-text', 'page' => 'radiology-reports', 'color' => 'emerald']
             ],
             'stats' => [
                 ['label' => 'Pending Scans', 'value' => $db->query("SELECT COUNT(*) FROM radiology_requests WHERE status = 'pending'")->fetchColumn(), 'trend' => 'In Queue', 'color' => 'fuchsia', 'icon' => 'clock'],
                 ['label' => 'Completed', 'value' => $db->query("SELECT COUNT(*) FROM radiology_results WHERE DATE(performed_date) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Today', 'color' => 'emerald', 'icon' => 'check-circle'],
                 ['label' => 'Emergency', 'value' => $db->query("SELECT COUNT(*) FROM radiology_requests r JOIN medical_visits v ON r.visit_id = v.visit_id WHERE v.visit_type='Emergency' AND r.status='pending'")->fetchColumn(), 'trend' => 'STAT', 'color' => 'red', 'icon' => 'zap'],
-                ['label' => 'Total', 'value' => $db->query("SELECT COUNT(*) FROM radiology_requests WHERE DATE(created_at) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Requests', 'color' => 'blue', 'icon' => 'scan']
+                ['label' => 'Total', 'value' => $db->query("SELECT COUNT(*) FROM radiology_requests WHERE DATE(created_at) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Requests', 'color' => 'teal', 'icon' => 'scan']
             ],
             'notifications' => [
                 'stat_imaging' => "SELECT 'stat' as source, rr.request_id as id, 'ER' as from_name, p.full_name as patient_name, p.patient_id, p.medical_record_number, CONCAT('STAT: ', rr.exam_type) as message, rr.created_at, 'red' as color, 'zap' as icon FROM radiology_requests rr JOIN medical_visits v ON rr.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id WHERE rr.priority = 'STAT' AND rr.status = 'pending'",
@@ -232,7 +232,7 @@ switch ($userRole) {
             ],
             'stats' => [
                 ['label' => 'Pending Regimens', 'value' => $pendingMeds, 'trend' => 'To Dispense', 'color' => 'emerald', 'icon' => 'clock'],
-                ['label' => 'Dispensed Today', 'value' => $db->query("SELECT COUNT(*) FROM dispensing_records WHERE DATE(dispense_date) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Today', 'color' => 'blue', 'icon' => 'package-check'],
+                ['label' => 'Dispensed Today', 'value' => $db->query("SELECT COUNT(*) FROM dispensing_records WHERE DATE(dispense_date) = CURRENT_DATE")->fetchColumn(), 'trend' => 'Today', 'color' => 'teal', 'icon' => 'package-check'],
                 ['label' => 'DOT Priority', 'value' => $db->query("SELECT COUNT(*) FROM prescriptions WHERE is_dispensed=0 AND (LOWER(medication_name) LIKE '%rif%' OR LOWER(medication_name) LIKE '%isoniazid%' OR LOWER(medication_name) LIKE '%ethambutol%' OR LOWER(medication_name) LIKE '%pyrazinamide%')")->fetchColumn(), 'trend' => 'TB Drugs', 'color' => 'red', 'icon' => 'zap'],
                 ['label' => 'New Orders', 'value' => $db->query("SELECT COUNT(*) FROM prescriptions WHERE created_at > NOW() - INTERVAL 1 HOUR")->fetchColumn(), 'trend' => 'Last Hour', 'color' => 'purple', 'icon' => 'bell']
             ],
@@ -254,14 +254,14 @@ switch ($userRole) {
             'icon' => 'layout-dashboard',
             'quickActions' => [],
             'stats' => [
-                ['label' => 'Total Patients', 'value' => $totalPatients, 'trend' => 'Registry', 'color' => 'blue', 'icon' => 'users'],
+                ['label' => 'Total Patients', 'value' => $totalPatients, 'trend' => 'Registry', 'color' => 'teal', 'icon' => 'users'],
                 ['label' => 'Visits Today', 'value' => $todayVisits, 'trend' => 'Check-ins', 'color' => 'indigo', 'icon' => 'calendar'],
                 ['label' => 'Pending Labs', 'value' => $pendingLabs, 'trend' => 'Lab', 'color' => 'orange', 'icon' => 'flask-conical'],
                 ['label' => 'Pending Rx', 'value' => $pendingMeds, 'trend' => 'Pharmacy', 'color' => 'emerald', 'icon' => 'pill']
             ],
             'notifications' => [],
             'recentActivity' => [
-                'query' => "SELECT *, full_name as name, medical_record_number as id, address as details, 'Active' as status, 'blue' as color FROM patients ORDER BY created_at DESC LIMIT 5",
+                'query' => "SELECT *, full_name as name, medical_record_number as id, address as details, 'Active' as status, 'teal' as color FROM patients ORDER BY created_at DESC LIMIT 5",
                 'columns' => ['Name', 'MRN', 'Address', 'Status']
             ]
         ];
@@ -370,17 +370,17 @@ if (isset($roleConfig['recentActivity']['query'])) {
     <!-- 4. NOTIFICATIONS SECTION (if any for this role) -->
     <?php if (!empty($recentNotifications)): ?>
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-blue-50/80 to-indigo-50/80">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-teal-50/80 to-teal-50/40">
             <div>
                 <h4 class="font-bold text-gray-800 text-sm flex items-center gap-2">
-                    <i data-lucide="bell" class="w-4 h-4 text-blue-600"></i>
+                    <i data-lucide="bell" class="w-4 h-4 text-teal-600"></i>
                     Notifications & Alerts
                 </h4>
                 <p class="text-xs text-gray-500 font-medium mt-0.5">
                     Action items requiring attention
                 </p>
             </div>
-            <span class="px-2.5 py-1 bg-blue-600 text-white text-[10px] font-semibold rounded-full">
+            <span class="px-2.5 py-1 bg-teal-600 text-white text-[10px] font-semibold rounded-full">
                 <?php echo count($recentNotifications); ?> New
             </span>
         </div>
@@ -464,7 +464,7 @@ if (isset($roleConfig['recentActivity']['query'])) {
 
 <!-- PATIENT DETAIL MODAL (reused for all roles) -->
 <div id="pDetailModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-gray-900/40 backdrop-blur-md transition-all duration-300">
-    <div id="pDetailCard" class="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl border border-gray-100 transform scale-95 transition-all duration-300">
+    <div id="pDetailCard" class="bg-white rounded-2xl w-full max-w-lg p-8 shadow-xl border border-gray-100 transform scale-95 transition-all duration-300">
         <div class="flex justify-between items-start mb-6">
             <div id="mInitials" class="w-14 h-14 bg-gradient-to-br from-primary-600 to-primary-800 text-white rounded-2xl flex items-center justify-center font-bold text-xl shadow-lg shadow-primary-200/40">--</div>
             <button onclick="closePModal()" class="text-gray-400 hover:text-red-500 transition-colors p-1 hover:bg-gray-100 rounded-lg"><i data-lucide="x" class="w-5 h-5"></i></button>

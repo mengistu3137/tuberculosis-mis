@@ -1,7 +1,7 @@
 <?php
 // Access control
 if (!in_array($_SESSION['role'], ['Radiologist', 'Admin'])) {
-    echo "<div class='p-10 text-red-500 font-black uppercase tracking-widest text-center'>Access Denied</div>";
+    echo "<div class='p-10 text-red-500 font-bold uppercase tracking-widest text-center'>Access Denied</div>";
     exit;
 }
 
@@ -21,12 +21,12 @@ $stmt->execute([$request_id]);
 $request = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$request) {
-    echo "<div class='p-10 text-center font-black text-gray-400'>Request not found</div>";
+    echo "<div class='p-10 text-center font-medium text-gray-400'>Request not found</div>";
     exit;
 }
 
 $msg = "";
-$msgType = "blue";
+$msgType = "teal";
 
 // Handle result submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_result'])) {
@@ -91,47 +91,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_result'])) {
     <?php endif; ?>
 
     <!-- Patient Info Card -->
-    <div class="bg-gradient-to-r from-fuchsia-600 to-purple-600 rounded-[2.5rem] p-8 text-white shadow-xl">
+    <div class="bg-gradient-to-r from-fuchsia-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-black mb-2">Radiology Results Entry</h1>
+                <h1 class="text-2xl font-bold mb-2">Radiology Results Entry</h1>
                 <p class="text-white/80 text-sm"><?php echo $request['patient_name']; ?> •
                     <?php echo $request['medical_record_number']; ?></p>
             </div>
             <div class="text-right">
-                <span class="px-4 py-2 bg-white/20 rounded-xl text-xs font-black uppercase">Request
+                <span class="px-4 py-2 bg-white/20 rounded-xl text-xs font-semibold uppercase">Request
                     #<?php echo $request_id; ?></span>
             </div>
         </div>
     </div>
 
     <!-- Request Details -->
-    <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm">
+    <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div class="bg-gray-50 p-4 rounded-xl">
-                <p class="text-[8px] font-black text-gray-400 uppercase">Exam Type</p>
-                <p class="font-black text-gray-800"><?php echo $request['exam_type']; ?></p>
+                <p class="text-[8px] font-medium text-gray-400 uppercase">Exam Type</p>
+                <p class="font-bold text-gray-800"><?php echo $request['exam_type']; ?></p>
             </div>
             <div class="bg-gray-50 p-4 rounded-xl">
-                <p class="text-[8px] font-black text-gray-400 uppercase">Body Part</p>
-                <p class="font-black text-gray-800"><?php echo $request['body_part'] ?? 'Not specified'; ?></p>
+                <p class="text-[8px] font-medium text-gray-400 uppercase">Body Part</p>
+                <p class="font-bold text-gray-800"><?php echo $request['body_part'] ?? 'Not specified'; ?></p>
             </div>
             <div class="bg-gray-50 p-4 rounded-xl">
-                <p class="text-[8px] font-black text-gray-400 uppercase">Priority</p>
+                <p class="text-[8px] font-medium text-gray-400 uppercase">Priority</p>
                 <p
-                    class="font-black <?php echo ($request['priority'] == 'STAT') ? 'text-red-600' : 'text-gray-800'; ?>">
+                    class="font-bold <?php echo ($request['priority'] == 'STAT') ? 'text-red-600' : 'text-gray-800'; ?>">
                     <?php echo $request['priority']; ?>
                 </p>
             </div>
             <div class="bg-gray-50 p-4 rounded-xl">
-                <p class="text-[8px] font-black text-gray-400 uppercase">Requested By</p>
-                <p class="font-black text-gray-800">Dr. <?php echo $request['doctor_name']; ?></p>
+                <p class="text-[8px] font-medium text-gray-400 uppercase">Requested By</p>
+                <p class="font-bold text-gray-800">Dr. <?php echo $request['doctor_name']; ?></p>
             </div>
         </div>
 
         <?php if ($request['clinical_history']): ?>
-            <div class="mb-6 p-4 bg-blue-50 rounded-xl">
-                <p class="text-[8px] font-black text-blue-600 uppercase mb-1">Clinical History</p>
+            <div class="mb-6 p-4 bg-teal-50 rounded-xl">
+                <p class="text-[8px] font-semibold text-teal-600 uppercase mb-1">Clinical History</p>
                 <p class="text-sm text-gray-700"><?php echo $request['clinical_history']; ?></p>
             </div>
         <?php endif; ?>
@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_result'])) {
         <form method="POST" enctype="multipart/form-data" class="space-y-6">
             <div class="space-y-4">
                 <div>
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 block mb-2">
+                    <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider ml-2 block mb-2">
                         Findings <span class="text-red-400">*</span>
                     </label>
                     <textarea name="findings" rows="4" required
@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_result'])) {
                 </div>
 
                 <div>
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 block mb-2">
+                    <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider ml-2 block mb-2">
                         Impression / Conclusion <span class="text-red-400">*</span>
                     </label>
                     <textarea name="impression" rows="3" required
@@ -158,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_result'])) {
                 </div>
 
                 <div>
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 block mb-2">
+                    <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider ml-2 block mb-2">
                         Upload Image (Optional)
                     </label>
                     <input type="file" name="image" accept="image/*"
@@ -168,11 +168,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_result'])) {
 
             <div class="flex sticky -bottom-10 justify-end gap-4 pt-4 border-t border-gray-100">
                 <a href="index.php?page=radiology"
-                    class="px-8 py-4 bg-gray-100 text-gray-600 rounded-xl font-black text-[10px] uppercase hover:bg-gray-200 transition-all">
+                    class="px-8 py-4 bg-gray-100 text-gray-600 rounded-xl font-semibold text-[10px] uppercase hover:bg-gray-200 transition-all">
                     Cancel
                 </a>
                 <button type="submit" name="save_result"
-                    class="px-8 py-4 bg-fuchsia-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg hover:bg-fuchsia-700 transition-all flex items-center gap-2">
+                    class="px-8 py-4 bg-fuchsia-600 text-white rounded-xl font-semibold text-[10px] uppercase tracking-widest shadow-lg hover:bg-fuchsia-700 transition-all flex items-center gap-2">
                     <i data-lucide="save" class="w-4 h-4"></i> Save Results
                 </button>
             </div>

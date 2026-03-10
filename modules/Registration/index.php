@@ -9,7 +9,7 @@
 
 // Handle Patient Update
 $update_msg = "";
-$update_msgType = "blue";
+$update_msgType = "teal";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_patient_btn'])) {
     if ($patientObj->updatePatient($_POST)) {
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_patient_confirm
 
 // Handle Patient Registration
 $reg_msg = $reg_msg ?? "";
-$reg_msgType = $reg_msgType ?? "blue";
+$reg_msgType = $reg_msgType ?? "teal";
 $form_data = [
     'full_name' => '',
     'age' => '',
@@ -145,7 +145,7 @@ $stmt = $patientObj->searchPaginated($searchTerm, $limit, $offset);
 
 // Handle POST Check-in (Encounter Initiation)
 $msg = "";
-$msgType = "blue";
+$msgType = "teal";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
     $visit_id = $visitObj->create($_POST['patient_id'], $_POST['visit_type'], $_POST['clinical_notes']);
@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                 <div
                     class="mt-2 flex items-center gap-2 text-<?php echo $msgType; ?>-600 bg-<?php echo $msgType; ?>-50 px-3 py-1.5 rounded-xl w-fit border border-<?php echo $msgType; ?>-100 shadow-sm animate-in fade-in zoom-in">
                     <i data-lucide="info" class="w-4 h-4"></i>
-                    <span class="text-[10px] font-black uppercase tracking-widest"><?php echo $msg; ?></span>
+                    <span class="text-xs font-semibold uppercase tracking-wide"><?php echo $msg; ?></span>
                 </div>
             <?php endif; ?>
 
@@ -191,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                 <div
                     class="mt-2 flex items-center gap-2 text-<?php echo $reg_msgType; ?>-600 bg-<?php echo $reg_msgType; ?>-50 px-3 py-1.5 rounded-xl w-fit border border-<?php echo $reg_msgType; ?>-100 shadow-sm animate-in fade-in zoom-in">
                     <i data-lucide="info" class="w-4 h-4"></i>
-                    <span class="text-[10px] font-black uppercase tracking-widest"><?php echo $reg_msg; ?></span>
+                    <span class="text-xs font-semibold uppercase tracking-wide"><?php echo $reg_msg; ?></span>
                 </div>
             <?php endif; ?>
         </div>
@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                     </span>
                 </span>
                 <span
-                    class="relative -mr-2 ml-2 px-2 py-1 bg-white/20 rounded-lg text-[9px] font-black backdrop-blur-sm border border-white/20">
+                    class="relative -mr-2 ml-2 px-2 py-1 bg-white/20 rounded-lg text-[9px] font-semibold backdrop-blur-sm border border-white/20">
                     <?php echo $visitObj->countAll() ?? 0; ?>
                 </span>
             </a>
@@ -263,7 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                                         <?php echo $p['medical_record_number']; ?>
                                     </p>
                                     <?php if ($canEdit): ?>
-                                        <span class="text-[7px] text-emerald-500 font-black uppercase mt-1 block">
+                                        <span class="text-[7px] text-emerald-500 font-semibold uppercase mt-1 block">
                                             <i data-lucide="clock" class="w-2 h-2 inline"></i> <?php echo $diffMinutes; ?> min
                                             old
                                         </span>
@@ -307,7 +307,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                                             '<?php echo $p['gender']; ?>',
                                             '<?php echo $p['contact_details']; ?>',
                                             '<?php echo addslashes($p['address']); ?>')"
-                                                class="w-full text-left px-4 py-3 text-[10px] font-bold text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2">
+                                                class="w-full text-left px-4 py-3 text-[10px] font-bold text-gray-700 hover:bg-teal-50 hover:text-teal-600 flex items-center gap-2">
                                                 <i data-lucide="edit-2" class="w-3 h-3"></i> Edit
                                             </button>
 
@@ -354,7 +354,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
         <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity" onclick="closeEditPatientModal()">
         </div>
         <div
-            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-7 animate-in zoom-in-95 duration-200">
+            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-2xl shadow-xl p-7 animate-in zoom-in-95 duration-200">
 
             <!-- Modal Header -->
             <div class="flex justify-between items-start mb-5">
@@ -429,7 +429,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
     <div id="checkinModal"
         class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-md transition-all duration-300">
         <div id="checkinCard"
-            class="bg-white rounded-2xl w-full max-w-md p-7 shadow-2xl border border-gray-100 transform scale-95 transition-all duration-300">
+            class="bg-white rounded-2xl w-full max-w-md p-7 shadow-xl border border-gray-100 transform scale-95 transition-all duration-300">
 
             <!-- Modal Header -->
             <div class="flex justify-between items-start mb-5">
@@ -491,18 +491,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
     <div id="registrationModal"
         class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md transition-all duration-300 overflow-y-auto">
         <div id="registrationCard"
-            class="bg-white rounded-[3rem] w-full max-w-2xl p-8 shadow-2xl border border-gray-100 transform scale-95 transition-all duration-300 my-8">
+            class="bg-white rounded-2xl w-full max-w-2xl p-8 shadow-xl border border-gray-100 transform scale-95 transition-all duration-300 my-8">
 
             <!-- Modal Header -->
             <div class="flex justify-between items-start mb-6">
                 <div class="flex items-center gap-4">
                     <div
-                        class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-100">
+                        class="w-12 h-12 bg-teal-600 text-white rounded-xl flex items-center justify-center shadow-md">
                         <i data-lucide="user-plus" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-black text-gray-800 tracking-tight">Patient Enrollment</h2>
-                        <p class="text-[9px] text-gray-400 font-bold tracking-[0.2em] mt-1">Mattu Karl Specialized
+                        <h2 class="text-xl font-bold text-gray-800 tracking-tight">Patient Enrollment</h2>
+                        <p class="text-[9px] text-gray-400 font-bold tracking-wide mt-1">Mattu Karl Specialized
                             Hospital</p>
                     </div>
                 </div>
@@ -516,26 +516,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
             <form method="POST" class="space-y-6" novalidate>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                     <div class="md:col-span-2 space-y-1">
-                        <label class="text-[9px] font-black text-blue-600/60 uppercase tracking-widest ml-4">Full
+                        <label class="text-[9px] font-semibold text-teal-600/60 uppercase tracking-widest ml-4">Full
                             Patient Name</label>
                         <input type="text" name="full_name" required placeholder="Full Name"
                             value="<?php echo $form_data['full_name']; ?>"
-                            class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-gray-700 text-sm shadow-inner transition-all">
+                            class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-teal-500 font-bold text-gray-700 text-sm shadow-inner transition-all">
                     </div>
 
                     <div class="space-y-1">
-                        <label class="text-[9px] font-black text-blue-600/60 uppercase tracking-widest ml-4">Age
+                        <label class="text-[9px] font-semibold text-teal-600/60 uppercase tracking-widest ml-4">Age
                             (0-120)</label>
                         <input type="number" name="age" id="ageInput" required placeholder="Years"
                             value="<?php echo $form_data['age']; ?>"
-                            class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-gray-700 text-sm shadow-inner transition-all">
+                            class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-teal-500 font-bold text-gray-700 text-sm shadow-inner transition-all">
                     </div>
 
                     <div class="space-y-1">
-                        <label class="text-[9px] font-black text-blue-600/60 uppercase tracking-widest ml-4">Biological
+                        <label class="text-[9px] font-semibold text-teal-600/60 uppercase tracking-widest ml-4">Biological
                             Sex</label>
                         <select name="gender" required
-                            class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-xs uppercase tracking-widest cursor-pointer shadow-inner">
+                            class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-teal-500 font-bold text-xs uppercase tracking-widest cursor-pointer shadow-inner">
                             <option value="">Select</option>
                             <option value="Male" <?php echo ($form_data['gender'] == 'Male') ? 'selected' : ''; ?>>Male
                             </option>
@@ -545,23 +545,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                     </div>
 
                     <div class="space-y-1">
-                        <label class="text-[9px] font-black text-blue-600/60 uppercase tracking-widest ml-4">Contact
+                        <label class="text-[9px] font-semibold text-teal-600/60 uppercase tracking-widest ml-4">Contact
                             Phone</label>
                         <div class="relative">
                             <input type="text" name="contact_details" id="phoneInput" required placeholder="0912345678"
                                 maxlength="10" value="<?php echo $form_data['contact_details']; ?>"
-                                class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-gray-700 text-sm shadow-inner transition-all">
+                                class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-teal-500 font-bold text-gray-700 text-sm shadow-inner transition-all">
                             <span id="phoneCount"
-                                class="absolute right-4 top-1/2 -translate-y-1/2 text-[8px] font-black text-gray-300"><?php echo strlen($form_data['contact_details']); ?>/10</span>
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-[8px] font-medium text-gray-300"><?php echo strlen($form_data['contact_details']); ?>/10</span>
                         </div>
                     </div>
 
                     <div class="space-y-1">
-                        <label class="text-[9px] font-black text-blue-600/60 uppercase tracking-widest ml-4">Residential
+                        <label class="text-[9px] font-semibold text-teal-600/60 uppercase tracking-widest ml-4">Residential
                             Address</label>
                         <input type="text" name="address" required placeholder="Sub-city, Town"
                             value="<?php echo $form_data['address']; ?>"
-                            class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-gray-700 text-sm shadow-inner transition-all">
+                            class="w-full px-5 py-3.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-teal-500 font-bold text-gray-700 text-sm shadow-inner transition-all">
                     </div>
                 </div>
 
@@ -575,7 +575,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                         Reset
                     </button>
                     <button type="submit" name="register_btn"
-                        class="px-8 py-3 bg-blue-600 text-white rounded-xl font-black text-[9px] uppercase tracking-[0.2em] shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95">
+                        class="px-8 py-3 bg-teal-600 text-white rounded-xl font-semibold text-[9px] uppercase tracking-wide shadow-md hover:bg-teal-700 hover:shadow-lg transition-all active:scale-95">
                         Register Patient
                     </button>
                 </div>
@@ -650,7 +650,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
             phoneInput.addEventListener('input', function () {
                 this.value = this.value.replace(/\D/g, '');
                 phoneCount.innerText = `${this.value.length}/10`;
-                phoneCount.classList.toggle('text-blue-500', this.value.length === 10);
+                phoneCount.classList.toggle('text-teal-500', this.value.length === 10);
             });
         }
 

@@ -10,7 +10,7 @@ if ($_SESSION['role'] !== 'Admin') {
 }
 
  $message = "";
- $messageType = "blue"; 
+ $messageType = "teal"; 
 
 // --- PAGINATION SETTINGS ---
  $limit = 7; 
@@ -46,7 +46,7 @@ if (isset($_POST['confirm_bulk_delete']) && !empty($_POST['selected_users'])) {
 if (isset($_POST['update_role_btn'])) {
     $userObj->updateRole($_POST['user_id'], $_POST['role']);
     $message = "Role updated for " . $_POST['user_id'];
-    $messageType = "blue";
+    $messageType = "teal";
 }
 
 // A. Catch the success status after redirect
@@ -220,13 +220,13 @@ if (isset($_POST['confirm_status_change'])) {
     <!-- Header Section -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-black text-gray-800 tracking-tighter first-letter:uppercase ">TBMIS Staff Command Center</h1>
+            <h1 class="text-3xl font-bold text-gray-800 tracking-tight first-letter:uppercase ">TBMIS Staff Command Center</h1>
         <?php if ($message): ?>
             <div id="notification-message"
                 class="mt-2 flex items-center justify-between gap-2 text-<?php echo $messageType; ?>-600 bg-<?php echo $messageType; ?>-50 px-3 py-1.5 rounded-xl w-fit border border-<?php echo $messageType; ?>-100">
                 <div class="flex items-center gap-2">
                     <i data-lucide="bell" class="w-4 h-4"></i>
-                    <span class="text-[10px] font-black first-letter:uppercase tracking-widest"><?php echo $message; ?></span>
+                    <span class="text-[10px] font-semibold tracking-wide"><?php echo $message; ?></span>
                 </div>
                 <button onclick="this.parentElement.remove()"
                     class="ml-3 text-<?php echo $messageType; ?>-600 hover:text-<?php echo $messageType; ?>-800">
@@ -242,46 +242,46 @@ if (isset($_POST['confirm_status_change'])) {
                 <input type="hidden" name="import_btn">
             </form>
 
-            <button onclick="document.getElementById('fileInput').click()" class="px-5 py-3 bg-white border border-gray-200 text-gray-400 rounded-2xl font-bold text-[10px] first-letter:uppercase tracking-widest hover:bg-gray-50 transition-all">
+            <button onclick="document.getElementById('fileInput').click()" class="px-5 py-3 bg-white border border-gray-200 text-gray-400 rounded-2xl font-bold text-[10px] tracking-wide hover:bg-gray-50 transition-all">
                 <i data-lucide="file-up" class="w-4 h-4 inline mr-2"></i> Import CSV
             </button>
 
-            <button onclick="document.getElementById('addModal').classList.toggle('hidden')" class="px-5 py-3 bg-blue-600 text-white rounded-2xl font-bold text-[10px] first-letter:uppercase tracking-widest shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all flex items-center">
+            <button onclick="document.getElementById('addModal').classList.toggle('hidden')" class="px-5 py-3 bg-teal-600 text-white rounded-2xl font-bold text-[10px] tracking-wide shadow-md hover:bg-teal-700 hover:shadow-lg transition-all flex items-center">
                 <i data-lucide="plus" class="w-4 h-4 mr-2"></i> New Staff
             </button>
         </div>
     </div>
 
     <!-- ADD USER FORM (Collapsible) -->
-    <div id="addModal" class="hidden bg-blue-50/50 border border-blue-100 p-10 rounded-[3.5rem] mb-8 shadow-sm animate-in fade-in zoom-in duration-300">
+    <div id="addModal" class="hidden bg-teal-50/50 border border-teal-100 p-10 rounded-2xl mb-8 shadow-sm animate-in fade-in zoom-in duration-300">
         <div class="flex items-center gap-3 mb-8 ml-2">
-            <div class="w-1.5 h-6 bg-blue-600 rounded-full"></div>
-            <h2 class="text-xl font-black text-gray-800 first-letter:uppercase tracking-tight">Provision TB Department Staff</h2>
+            <div class="w-1.5 h-6 bg-teal-600 rounded-full"></div>
+            <h2 class="text-xl font-bold text-gray-800 first-letter:uppercase tracking-tight">Provision TB Department Staff</h2>
         </div>
         
         <form method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div class="space-y-2">
-                <label class="text-[9px] font-black text-blue-600/60 first-letter:uppercase tracking-[0.2em] ml-4">Full Name</label>
-                <input type="text" name="full_name" placeholder="E.g. Dr. Abel Tesfaye" required class="w-full px-6 py-4 rounded-2xl bg-white border-none focus:ring-2 focus:ring-blue-500 font-bold text-sm shadow-sm transition-all">
+                <label class="text-[9px] font-semibold text-teal-600/60 first-letter:uppercase tracking-wide ml-4">Full Name</label>
+                <input type="text" name="full_name" placeholder="E.g. Dr. Abel Tesfaye" required class="w-full px-6 py-4 rounded-2xl bg-white border-none focus:ring-2 focus:ring-teal-500 font-bold text-sm shadow-sm transition-all">
             </div>
             <div class="space-y-2">
-                <label class="text-[9px] font-black text-blue-600/60 first-letter:uppercase tracking-[0.2em] ml-4">Email</label>
-                <input type="email" name="email" placeholder="name@mattu.edu" required class="w-full px-6 py-4 rounded-2xl bg-white border-none focus:ring-2 focus:ring-blue-500 font-bold text-sm shadow-sm transition-all">
+                <label class="text-[9px] font-semibold text-teal-600/60 first-letter:uppercase tracking-wide ml-4">Email</label>
+                <input type="email" name="email" placeholder="name@mattu.edu" required class="w-full px-6 py-4 rounded-2xl bg-white border-none focus:ring-2 focus:ring-teal-500 font-bold text-sm shadow-sm transition-all">
             </div>
           <div class="space-y-2">
-            <label class="text-[9px] font-black text-blue-600/60 first-letter:uppercase tracking-[0.2em] ml-4">Security Password</label>
+            <label class="text-[9px] font-semibold text-teal-600/60 first-letter:uppercase tracking-wide ml-4">Security Password</label>
             <div class="relative">
                 <input type="password" name="password" id="password" required placeholder="••••••••"
-                    class="w-full px-6 py-4 bg-white border-none rounded-2xl focus:ring-2 focus:ring-blue-500 font-bold text-sm shadow-sm transition-all pr-12">
+                    class="w-full px-6 py-4 bg-white border-none rounded-2xl focus:ring-2 focus:ring-teal-500 font-bold text-sm shadow-sm transition-all pr-12">
                 <button type="button" onclick="togglePassword()"
-                    class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors">
+                    class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-teal-600 transition-colors">
                     <i id="eye-icon" data-lucide="eye" class="w-5 h-5"></i>
                 </button>
             </div>
         </div>
             <div class="space-y-2">
-                <label class="text-[9px] font-black text-blue-600/60 first-letter:uppercase tracking-[0.2em] ml-4">Role</label>
-                <select name="role" class="w-full px-6 py-4 rounded-2xl bg-white border-none focus:ring-2 focus:ring-blue-500 font-black text-xs first-letter:uppercase tracking-widest shadow-sm bg-white cursor-pointer">
+                <label class="text-[9px] font-semibold text-teal-600/60 first-letter:uppercase tracking-wide ml-4">Role</label>
+                <select name="role" class="w-full px-6 py-4 rounded-2xl bg-white border-none focus:ring-2 focus:ring-teal-500 font-semibold text-xs tracking-wide shadow-sm bg-white cursor-pointer">
                     <option value="Doctor">TB Doctor</option>
                     <option value="Nurse">TB Nurse</option>
                     <option value="Lab Technician">TB Lab Technician</option>
@@ -291,8 +291,8 @@ if (isset($_POST['confirm_status_change'])) {
                     <option value="Radiologist">TB Radiology Focal</option>
                 </select>
             </div>
-            <div class="md:col-span-4 flex justify-end pt-6 mt-2 border-t border-blue-100">
-                <button type="submit" name="create_user" class="px-12 py-4 bg-blue-600 text-white font-black rounded-2xl first-letter:uppercase text-[10px] tracking-[0.3em] hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-200 transition-all scale-100 active:scale-95">
+            <div class="md:col-span-4 flex justify-end pt-6 mt-2 border-t border-teal-100">
+                <button type="submit" name="create_user" class="px-12 py-4 bg-teal-600 text-white font-bold rounded-2xl first-letter:uppercase text-[10px] tracking-wider hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-200 transition-all scale-100 active:scale-95">
                     Save  Profile
                 </button>
             </div>
@@ -303,12 +303,12 @@ if (isset($_POST['confirm_status_change'])) {
     <div class="hidden lg:flex flex-1 justify-center px-8">
         <div class="relative w-full max-w-md group">
             <i data-lucide="search"
-                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-blue-500 transition-colors"></i>
+                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-teal-500 transition-colors"></i>
             
             <!-- UPDATED: Added ID and value to keep state -->
             <input type="text" id="staffSearchInput" value="<?php echo htmlspecialchars($searchTerm); ?>" 
                 onkeyup="searchStaff(this.value)" placeholder="Search staff by name, email or ID..."
-                class="w-full pl-11 pr-4 py-2.5 bg-gray-100/50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all text-sm text-gray-700 font-medium">
+                class="w-full pl-11 pr-4 py-2.5 bg-gray-100/50 border-none rounded-2xl focus:ring-2 focus:ring-teal-500/20 focus:bg-white transition-all text-sm text-gray-700 font-medium">
                 
             <!-- Clear 'X' button if there is a search term -->
             <?php if (!empty($searchTerm)): ?>
@@ -321,23 +321,23 @@ if (isset($_POST['confirm_status_change'])) {
 
     <!-- MAIN DATA MANAGEMENT TABLE -->
     <form method="POST" id="mainStaffForm">
-        <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden transition-all">
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all">
             
             <div id="bulkActionBar" class="hidden px-8 py-4 bg-red-600 border-b border-red-700 flex justify-between items-center animate-in slide-in-from-top duration-300">
                 <div class="flex items-center gap-3 text-white">
                     <i data-lucide="users" class="w-5 h-5"></i>
-                    <span id="selectionCount" class="text-xs font-black uppercase tracking-widest">0 Selected</span>
+                    <span id="selectionCount" class="text-xs font-semibold uppercase tracking-widest">0 Selected</span>
                 </div>
-                <button type="button" onclick="triggerBulkDelete()" class="px-6 py-2 bg-white text-red-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-red-50 transition-all shadow-md">
+                <button type="button" onclick="triggerBulkDelete()" class="px-6 py-2 bg-white text-red-600 rounded-xl font-semibold text-[10px] uppercase tracking-widest hover:bg-red-50 transition-all shadow-md">
                     Delete  Selected
                 </button>
             </div>
 
             <table class="w-full text-left">
-                <thead class="bg-gray-50 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
+                <thead class="bg-gray-50 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
                     <tr>
                         <th class="px-8 py-6 w-10">
-                            <input type="checkbox" id="selectAll" class="w-5 h-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                            <input type="checkbox" id="selectAll" class="w-5 h-5 rounded-lg border-gray-300 text-teal-600 focus:ring-teal-500 cursor-pointer">
                         </th>
                         <th class="px-4 py-6">Staff Member</th>
                         <th class="px-8 py-6">Role</th>
@@ -347,18 +347,18 @@ if (isset($_POST['confirm_status_change'])) {
                 </thead>
                 <tbody class="divide-y divide-gray-50">
                     <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
-                        <tr class="hover:bg-blue-50/20 transition-colors group">
+                        <tr class="hover:bg-teal-50/20 transition-colors group">
                             <td class="px-8 py-5">
                                 <input type="checkbox" name="selected_users[]" value="<?php echo $row['user_id']; ?>" 
-                                       class="user-checkbox w-5 h-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                       class="user-checkbox w-5 h-5 rounded-lg border-gray-300 text-teal-600 focus:ring-teal-500 cursor-pointer">
                             </td>
                             <td class="px-4 py-5">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center font-black group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                                    <div class="w-12 h-12 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center font-semibold group-hover:bg-teal-600 group-hover:text-white transition-all duration-300">
                                         <?php echo strtoupper(substr($row['full_name'], 0, 1)); ?>
                                     </div>
                                     <div>
-                                        <p class="text-[9px] font-black text-blue-400 tracking-tighter uppercase mb-0.5"><?php echo $row['user_id']; ?></p>
+                                        <p class="text-[9px] font-semibold text-teal-400 tracking-tighter uppercase mb-0.5"><?php echo $row['user_id']; ?></p>
                                         <p class="font-bold text-gray-800 leading-none"><?php echo $row['full_name']; ?></p>
                                         <p class="text-[10px] text-gray-400 font-medium mt-1 italic"><?php echo $row['email']; ?></p>
                                     </div>
@@ -367,7 +367,7 @@ if (isset($_POST['confirm_status_change'])) {
                             <td class="px-8 py-5">
                                 <div class="relative w-fit">
                                     <select name="role" onchange="updateRowRole('<?php echo $row['user_id']; ?>', this.value)" 
-                                            class="bg-blue-50 text-blue-600 text-[10px] font-black uppercase rounded-xl border-none focus:ring-1 focus:ring-blue-500 py-2 pl-3 pr-8 appearance-none transition-all cursor-pointer">
+                                            class="bg-teal-50 text-teal-600 text-[10px] font-semibold uppercase rounded-xl border-none focus:ring-1 focus:ring-teal-500 py-2 pl-3 pr-8 appearance-none transition-all cursor-pointer">
                                         <?php 
                                         $roles = ['Admin', 'Doctor', 'Nurse', 'Lab Technician', 'Pharmacist', 'Clerk', 'Radiologist'];
                                         foreach($roles as $r):
@@ -376,16 +376,16 @@ if (isset($_POST['confirm_status_change'])) {
                                         endforeach;
                                         ?>
                                     </select>
-                                    <i data-lucide="chevron-down" class="w-3 h-3 absolute right-3 top-1/2 -translate-y-1/2 text-blue-300 pointer-events-none"></i>
+                                    <i data-lucide="chevron-down" class="w-3 h-3 absolute right-3 top-1/2 -translate-y-1/2 text-teal-300 pointer-events-none"></i>
                                 </div>
                             </td>
                             <td class="px-8 py-5">
                                 <div class="flex flex-col items-start gap-1">
                                     <button type="button" 
                                        onclick="openStatusModal('<?php echo $row['user_id']; ?>', '<?php echo addslashes($row['full_name']); ?>', '<?php echo $row['status']; ?>', <?php echo $userObj->getActiveLoadCount($row['user_id'], $row['role']); ?>)"
-                                        class="inline-flex items-center gap-2 px-3 py-1 bg-white border border-gray-100 rounded-full text-[9px] font-black uppercase text-gray-500 hover:border-blue-200 transition-all shadow-sm group">
+                                        class="inline-flex items-center gap-2 px-3 py-1 bg-white border border-gray-100 rounded-full text-[9px] font-semibold uppercase text-gray-500 hover:border-teal-200 transition-all shadow-sm group">
                                         <span class="w-2 h-2 rounded-full <?php echo ($row['status'] == 'active') ? 'bg-emerald-500 animate-pulse' : 'bg-red-400'; ?>"></span>
-                                        <span class="group-hover:text-blue-600"><?php echo $row['status']; ?></span>
+                                        <span class="group-hover:text-teal-600"><?php echo $row['status']; ?></span>
                                     </button>
                                     
                                     <?php if ($row['status'] == 'disabled' && !empty($row['status_reason'])): ?>
@@ -411,18 +411,18 @@ if (isset($_POST['confirm_status_change'])) {
 
             <!-- PAGINATION FOOTER -->
             <div class="px-8 py-4 bg-gray-50/50 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest italic">
+                <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider italic">
                     <?php echo $total_users; ?> Global Staff Accounts
                     <?php if(!empty($searchTerm)): ?> 
-                        <span class="text-blue-500 normal-case ml-2">(Filtered)</span>
+                        <span class="text-teal-500 normal-case ml-2">(Filtered)</span>
                     <?php endif; ?>
                 </span>
                 <div class="flex gap-1">
                     <?php if($total_pages > 1): ?>
                         <?php for($i=1; $i<=$total_pages; $i++): ?>
                             <a href="index.php?page=admin&p=<?php echo $i; ?>&q=<?php echo urlencode($searchTerm); ?>" 
-                            class="w-9 h-9 flex items-center justify-center rounded-xl font-black text-[10px] transition-all 
-                            <?php echo ($i==$page_num)?'bg-blue-600 text-white shadow-lg':'bg-white text-gray-400 border border-gray-100 hover:bg-gray-100'; ?>">
+                            class="w-9 h-9 flex items-center justify-center rounded-xl font-semibold text-[10px] transition-all 
+                            <?php echo ($i==$page_num)?'bg-teal-600 text-white shadow-lg':'bg-white text-gray-400 border border-gray-100 hover:bg-gray-100'; ?>">
                             <?php echo $i; ?>
                             </a>
                         <?php endfor; ?>

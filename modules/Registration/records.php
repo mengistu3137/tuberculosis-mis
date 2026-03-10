@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
     <!-- Header -->
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-            <h1 class="text-xl font-black text-gray-800 tracking-tight uppercase italic text-blue-600">Master Patient
+            <h1 class="text-xl font-bold text-gray-800 tracking-tight italic text-teal-600">Master Patient
                 Registry</h1>
             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Hospital Database •
                 <?php echo $total_records; ?> Total Records
@@ -50,22 +50,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
            <!--  <form method="GET" class="relative group w-64">
                 <input type="hidden" name="page" value="records">
                 <i data-lucide="search"
-                    class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-500 transition-colors w-4 h-4"></i>
+                    class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-teal-500 transition-colors w-4 h-4"></i>
                 <input type="text" name="q" value="<?php echo htmlspecialchars($searchTerm); ?>"
                     placeholder="Search Registry..."
-                    class="w-full pl-11 pr-4 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500/20 outline-none text-xs font-bold text-gray-600 transition-all">
+                    class="w-full pl-11 pr-4 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-teal-500/20 outline-none text-xs font-bold text-gray-600 transition-all">
             </form> -->
             <a href="index.php?page=registration"
-                class="px-5 py-3 bg-blue-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all">+
+                class="px-5 py-3 bg-teal-600 text-white rounded-2xl font-semibold text-[10px] uppercase tracking-widest shadow-md hover:bg-teal-700 hover:shadow-lg transition-all">+
                 New Patient</a>
         </div>
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden transition-all">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all">
         <table class="w-full text-left">
             <thead
-                class="bg-gray-50/50 text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] border-b border-blue-100">
+                class="bg-gray-50/50 text-[10px] font-semibold text-teal-600 uppercase tracking-wide border-b border-teal-100">
                 <tr>
                     <th class="px-8 py-6">Patient Identity</th>
                     <th class="px-8 py-6 text-center">Bio Stats</th>
@@ -77,18 +77,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                 <?php while ($p = $stmt->fetch(PDO::FETCH_ASSOC)):
                     $initials = strtoupper(substr($p['full_name'], 0, 1));
                     ?>
-                    <tr class="hover:bg-blue-50/20 transition-colors group">
+                    <tr class="hover:bg-teal-50/20 transition-colors group">
                         <td class="px-8 py-6">
                             <div class="flex items-center gap-4">
                                 <div
-                                    class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black shadow-md">
+                                    class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold shadow-md">
                                     <?php echo $initials; ?>
                                 </div>
                                 <div>
-                                    <p class="font-black text-gray-800 text-sm">
+                                    <p class="font-semibold text-gray-800 text-sm">
                                         <?php echo $p['full_name']; ?>
                                     </p>
-                                    <p class="text-[9px] font-black text-blue-400 uppercase tracking-tighter mt-1">
+                                    <p class="text-[9px] font-semibold text-teal-400 tracking-wide mt-1">
                                         <?php echo $p['medical_record_number']; ?>
                                     </p>
                                 </div>
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                         </td>
                         <td class="px-8 py-6 text-center">
                             <span
-                                class="px-3 py-1 bg-white border border-gray-100 rounded-lg text-[10px] font-black text-gray-500 uppercase">
+                                class="px-3 py-1 bg-white border border-gray-100 rounded-lg text-[10px] font-semibold text-gray-500 uppercase">
                                 <?php echo $p['age']; ?>Y
                                 •
                                 <?php echo $p['gender']; ?>
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                             <!-- THE CHECK-IN TRIGGER -->
                             <button
                                 onclick="openCheckinModal('<?php echo $p['patient_id']; ?>', '<?php echo addslashes($p['full_name']); ?>')"
-                                class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-blue-600 transition-all shadow-md">
+                                class="inline-flex items-center gap-2 px-5 py-2.5 bg-teal-600 text-white rounded-xl font-semibold text-[9px] uppercase tracking-wide hover:bg-teal-700 transition-all shadow-md">
                                 <i data-lucide="log-in" class="w-3 h-3"></i> Check-in Visit
                             </button>
                         </td>
@@ -120,13 +120,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
 
         <!-- PAGINATION -->
         <div class="px-8 py-6 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
-            <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest italic">Registry Page
+            <span class="text-[9px] font-semibold text-gray-400 uppercase tracking-wider italic">Registry Page
                 <?php echo $current_page; ?>
             </span>
             <div class="flex gap-1.5">
                 <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                     <a href="index.php?page=records&p=<?php echo $i; ?>&q=<?php echo $searchTerm; ?>"
-                        class="w-9 h-9 flex items-center justify-center rounded-xl font-black text-[10px] transition-all <?php echo ($i == $current_page) ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-white text-gray-400 border border-gray-100'; ?>">
+                        class="w-9 h-9 flex items-center justify-center rounded-xl font-semibold text-[10px] transition-all <?php echo ($i == $current_page) ? 'bg-teal-600 text-white shadow-lg shadow-teal-100' : 'bg-white text-gray-400 border border-gray-100'; ?>">
                         <?php echo $i; ?>
                     </a>
                 <?php endfor; ?>
@@ -139,33 +139,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
 <div id="checkinModal"
     class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md transition-all duration-300">
     <div id="checkinCard"
-        class="bg-white rounded-[3rem] w-full max-w-md p-10 shadow-2xl border border-gray-100 transform scale-95 transition-all duration-300">
+        class="bg-white rounded-2xl w-full max-w-md p-10 shadow-xl border border-gray-100 transform scale-95 transition-all duration-300">
         <div class="flex justify-between items-start mb-8">
             <div
-                class="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black shadow-lg shadow-blue-100 italic">
+                class="w-14 h-14 bg-teal-600 text-white rounded-2xl flex items-center justify-center font-bold shadow-md">
                 Checkin</div>
             <button onclick="closeCheckinModal()" class="text-gray-300 hover:text-red-500 transition-colors"><i
                     data-lucide="x-circle"></i></button>
         </div>
 
-        <h3 id="checkinPatientName" class="text-xl font-black text-gray-800 uppercase italic mb-6">--</h3>
+        <h3 id="checkinPatientName" class="text-xl font-bold text-gray-800 mb-6">--</h3>
 
         <form method="POST" class="space-y-6">
             <input type="hidden" name="patient_id" id="checkinID">
             <input type="hidden" name="perform_checkin" value="1">
 
             <div class="space-y-2">
-                <label class="text-[10px] font-black text-blue-600 uppercase tracking-widest ml-4">Visit
+                <label class="text-[10px] font-semibold text-teal-600 uppercase tracking-wide ml-4">Visit
                     Classification</label>
                 <select name="visit_type" required
-                    class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 font-black text-xs uppercase tracking-widest bg-white shadow-inner">
+                    class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-teal-500 font-semibold text-xs uppercase tracking-widest bg-white shadow-inner">
                     <option value="Outpatient">Outpatient Visit</option>
                     <option value="Emergency">Emergency Triage</option>
                 </select>
             </div>
 
             <div class="space-y-2">
-                <label class="text-[10px] font-black text-blue-600 uppercase tracking-widest ml-4">Administrative
+                <label class="text-[10px] font-semibold text-teal-600 uppercase tracking-wide ml-4">Administrative
                     Notes</label>
                 <textarea name="clinical_notes" rows="3"
                     class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm font-medium shadow-inner"
@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
             </div>
 
             <button type="submit"
-                class="w-full py-5 bg-blue-600 text-white rounded-[2rem] font-black text-[10px] uppercase tracking-[0.3em] shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all flex items-center justify-center gap-3">
+                class="w-full py-5 bg-teal-600 text-white rounded-xl font-semibold text-[10px] uppercase tracking-wider shadow-md hover:bg-teal-700 hover:shadow-lg transition-all flex items-center justify-center gap-3">
                 <i data-lucide="check-circle" class="w-5 h-5"></i> Confirm Check-in
             </button>
         </form>

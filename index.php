@@ -114,7 +114,7 @@ if (array_key_exists($page, $routes)) {
             top: 0; left: 0; right: 0; bottom: 0;
             background:
                 radial-gradient(circle at 10% 15%, rgba(15, 118, 110, 0.06), transparent 40%),
-                radial-gradient(circle at 85% 5%, rgba(37, 99, 235, 0.04), transparent 40%),
+                radial-gradient(circle at 85% 5%, rgba(13, 148, 136, 0.04), transparent 40%),
                 radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.03), transparent 50%);
             pointer-events: none;
             z-index: 0;

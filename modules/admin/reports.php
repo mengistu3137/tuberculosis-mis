@@ -1,7 +1,7 @@
 <?php
 $diseaseStats = [
     ['name' => 'Malaria', 'count' => 450, 'color' => 'bg-red-500'],
-    ['name' => 'Gastritis', 'count' => 320, 'color' => 'bg-blue-500'],
+    ['name' => 'Gastritis', 'count' => 320, 'color' => 'bg-teal-500'],
     ['name' => 'Respiratory Infection', 'count' => 280, 'color' => 'bg-emerald-500'],
     ['name' => 'Typhoid', 'count' => 150, 'color' => 'bg-orange-500']
 ];
@@ -43,21 +43,21 @@ $diseaseStats = [
         </div>
 
         <!-- Service Utilization -->
-        <div class="bg-blue-600 rounded-3xl p-8 text-white shadow-xl shadow-blue-100">
-            <h3 class="font-bold text-blue-200 mb-8 uppercase text-[10px] tracking-widest">Service Utilization</h3>
+        <div class="bg-teal-600 rounded-3xl p-8 text-white shadow-xl shadow-teal-100">
+            <h3 class="font-bold text-teal-200 mb-8 uppercase text-[10px] tracking-widest">Service Utilization</h3>
             <div class="space-y-8">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center font-bold">85%</div>
+                    <div class="w-12 h-12 bg-teal-500 rounded-2xl flex items-center justify-center font-bold">85%</div>
                     <div>
                         <p class="font-bold">Bed Occupancy</p>
-                        <p class="text-xs text-blue-300">Inpatient Ward</p>
+                        <p class="text-xs text-teal-300">Inpatient Ward</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center font-bold">12m</div>
+                    <div class="w-12 h-12 bg-teal-500 rounded-2xl flex items-center justify-center font-bold">12m</div>
                     <div>
                         <p class="font-bold">Avg. Wait Time</p>
-                        <p class="text-xs text-blue-300">Registration Desk</p>
+                        <p class="text-xs text-teal-300">Registration Desk</p>
                     </div>
                 </div>
             </div>

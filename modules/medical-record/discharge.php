@@ -7,7 +7,7 @@ $visit_id = $_GET['vid'] ?? "";
 $patient = $patientObj->getById($id);
 
 if (!$patient) {
-    echo "<div class='p-10 text-center font-black text-gray-400 uppercase tracking-widest'>Patient Record Not Found</div>";
+    echo "<div class='p-10 text-center font-semibold text-gray-400 uppercase tracking-wider'>Patient Record Not Found</div>";
     exit;
 }
 
@@ -20,7 +20,7 @@ if (empty($visit_id)) {
 }
 
 $msg = "";
-$msgType = "blue";
+$msgType = "teal";
 
 // Handle discharge submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['process_discharge'])) {
@@ -70,21 +70,21 @@ $visit = $visitDetails->fetch(PDO::FETCH_ASSOC);
     <?php endif; ?>
 
     <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-black text-gray-800 uppercase tracking-tighter">Clinical Discharge Summary</h1>
-        <div class="px-4 py-2 bg-red-50 text-red-600 rounded-xl text-xs font-black uppercase">Final Report</div>
+        <h1 class="text-2xl font-bold text-gray-800 uppercase tracking-tighter">Clinical Discharge Summary</h1>
+        <div class="px-4 py-2 bg-red-50 text-red-600 rounded-xl text-xs font-semibold uppercase">Final Report</div>
     </div>
 
-    <div class="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
-        <div class="bg-blue-600 p-10 text-white flex justify-between items-center">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="bg-teal-600 p-10 text-white flex justify-between items-center">
             <div>
-                <h2 class="text-3xl font-black mb-1"><?php echo $patient['full_name']; ?></h2>
+                <h2 class="text-3xl font-bold mb-1"><?php echo $patient['full_name']; ?></h2>
                 <p class="text-gray-400 text-xs font-bold uppercase tracking-widest">
                     MRN: <?php echo $patient['medical_record_number']; ?>
                 </p>
             </div>
             <div class="text-right">
                 <p class="text-gray-400 text-[10px] font-bold uppercase">Visit Date</p>
-                <p class="font-black"><?php echo date('M d, Y', strtotime($visit['visit_date'] ?? 'now')); ?></p>
+                <p class="font-bold"><?php echo date('M d, Y', strtotime($visit['visit_date'] ?? 'now')); ?></p>
                 <p class="text-gray-400 text-[8px] mt-1"><?php echo $visit['visit_type'] ?? 'Outpatient'; ?></p>
             </div>
         </div>
@@ -93,7 +93,7 @@ $visit = $visitDetails->fetch(PDO::FETCH_ASSOC);
             <div class="space-y-4">
                 <div class="flex items-center gap-3">
                     <div class="w-1.5 h-6 bg-red-600 rounded-full"></div>
-                    <label class="text-xs font-black uppercase text-gray-400 tracking-widest">Summary of Care</label>
+                    <label class="text-xs font-semibold uppercase text-gray-400 tracking-widest">Summary of Care</label>
                 </div>
                 <textarea name="summary" rows="3" required
                     class="w-full bg-gray-50 border-none rounded-2xl px-6 py-5 focus:ring-2 focus:ring-red-500 outline-none transition-all placeholder:text-gray-300"
@@ -103,7 +103,7 @@ $visit = $visitDetails->fetch(PDO::FETCH_ASSOC);
             <div class="space-y-4">
                 <div class="flex items-center gap-3">
                     <div class="w-1.5 h-6 bg-red-600 rounded-full"></div>
-                    <label class="text-xs font-black uppercase text-gray-400 tracking-widest">Condition at
+                    <label class="text-xs font-semibold uppercase text-gray-400 tracking-widest">Condition at
                         Discharge</label>
                 </div>
                 <textarea name="condition" rows="3" required
@@ -114,7 +114,7 @@ $visit = $visitDetails->fetch(PDO::FETCH_ASSOC);
             <div class="space-y-4">
                 <div class="flex items-center gap-3">
                     <div class="w-1.5 h-6 bg-red-600 rounded-full"></div>
-                    <label class="text-xs font-black uppercase text-gray-400 tracking-widest">Post-Discharge
+                    <label class="text-xs font-semibold uppercase text-gray-400 tracking-widest">Post-Discharge
                         Instructions</label>
                 </div>
                 <textarea name="instructions" rows="3" required
@@ -125,7 +125,7 @@ $visit = $visitDetails->fetch(PDO::FETCH_ASSOC);
             <div class="grid grid-cols-2 gap-6 pt-6">
                 <div class="space-y-2">
                     <label
-                        class="text-[10px] font-black text-gray-400 tracking-widest uppercase ml-2 text-center block">
+                        class="text-[10px] font-semibold text-gray-400 tracking-wide uppercase ml-2 text-center block">
                         Follow-up Appointment
                     </label>
                     <input type="date" name="follow_up"
@@ -133,7 +133,7 @@ $visit = $visitDetails->fetch(PDO::FETCH_ASSOC);
                 </div>
                 <div class="flex items-end">
                     <button type="submit" name="process_discharge"
-                        class="w-full py-4 bg-red-600 text-white rounded-2xl font-black shadow-xl shadow-red-100 hover:bg-red-700 transition-all flex items-center justify-center gap-2">
+                        class="w-full py-4 bg-red-600 text-white rounded-2xl font-bold shadow-md hover:bg-red-700 hover:shadow-lg transition-all flex items-center justify-center gap-2">
                         <i data-lucide="check-circle-2" class="w-5 h-5"></i> Finalize & Discharge
                     </button>
                 </div>

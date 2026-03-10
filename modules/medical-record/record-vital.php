@@ -8,7 +8,7 @@ $patient = $patientObj->getById($id);
 $role = $_SESSION['role'];
 
 if (!$patient) {
-    echo "<div class='p-10 text-center font-black text-gray-400 uppercase tracking-widest'>Patient Record Not Found</div>";
+    echo "<div class='p-10 text-center font-semibold text-gray-400 uppercase tracking-wider'>Patient Record Not Found</div>";
     exit;
 }
 
@@ -22,7 +22,7 @@ if (empty($visit_id)) {
 
 // Handle POST requests
 $msg = "";
-$msgType = "blue";
+$msgType = "teal";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Save new vital signs
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($stmt->execute()) {
             $msg = "Vital signs updated successfully.";
-            $msgType = "blue";
+            $msgType = "teal";
         } else {
             $msg = "Failed to update vital signs.";
             $msgType = "red";
@@ -119,29 +119,29 @@ $exitPath = "visit";
 
     <!-- Patient Context Bar -->
     <div
-        class="sticky -top-10 z-20 bg-white/90 backdrop-blur-md border border-blue-100 p-5 rounded-[2.5rem] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        class="sticky -top-10 z-20 bg-white/90 backdrop-blur-md border border-teal-100 p-5 rounded-2xl shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-4">
             <div
-                class="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-xl shadow-lg shadow-blue-100">
+                class="w-14 h-14 bg-teal-600 text-white rounded-2xl flex items-center justify-center font-bold text-xl shadow-md">
                 <?php echo strtoupper(substr($patient['full_name'], 0, 1)); ?>
             </div>
             <div>
                 <div class="flex items-center gap-2">
-                    <h2 class="text-xl font-black text-gray-800 tracking-tight leading-none">
+                    <h2 class="text-xl font-bold text-gray-800 tracking-tight leading-none">
                         <?php echo $patient['full_name']; ?></h2>
                     <span
-                        class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-black uppercase rounded-md border border-blue-100 italic">
+                        class="px-2 py-0.5 bg-teal-50 text-teal-600 text-[10px] font-semibold uppercase rounded-md border border-teal-100 italic">
                         <?php echo $patient['medical_record_number']; ?>
                     </span>
                 </div>
-                <p class="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mt-2 italic">
-                    <span class="text-blue-500">Recording Vital Signs</span>
+                <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-wide mt-2 italic">
+                    <span class="text-teal-500">Recording Vital Signs</span>
                 </p>
             </div>
         </div>
         <div class="flex items-center gap-3">
             <a href="index.php?page=<?php echo $exitPath; ?>"
-                class="px-6 py-3 bg-gray-100 text-gray-600 rounded-xl font-black text-[10px] uppercase hover:bg-gray-200 transition-all flex items-center gap-2">
+                class="px-6 py-3 bg-gray-100 text-gray-600 rounded-xl font-semibold text-[10px] uppercase hover:bg-gray-200 transition-all flex items-center gap-2">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
                 Back to Consultation
             </a>
@@ -149,13 +149,13 @@ $exitPath = "visit";
     </div>
 
     <?php if ($visit_id === "NO_ACTIVE_VISIT"): ?>
-        <div class="p-12 bg-blue-50 border-2 border-dashed border-blue-200 rounded-[3rem] text-center">
-            <i data-lucide="calendar-clock" class="w-12 h-12 text-blue-600 mx-auto mb-4"></i>
-            <h3 class="text-blue-700 font-black uppercase tracking-widest mb-2">No Active Visit</h3>
-            <p class="text-xs text-blue-500 font-medium max-w-sm mx-auto mb-6">This patient doesn't have an active visit.
+        <div class="p-12 bg-teal-50 border-2 border-dashed border-teal-200 rounded-2xl text-center">
+            <i data-lucide="calendar-clock" class="w-12 h-12 text-teal-600 mx-auto mb-4"></i>
+            <h3 class="text-teal-700 font-semibold uppercase tracking-widest mb-2">No Active Visit</h3>
+            <p class="text-xs text-teal-500 font-medium max-w-sm mx-auto mb-6">This patient doesn't have an active visit.
                 Please check-in the patient first.</p>
             <a href="index.php?page=records"
-                class="inline-block px-8 py-3 bg-blue-600 text-white rounded-xl font-black text-[10px] uppercase shadow-lg hover:bg-blue-700 transition-all">Go
+                class="inline-block px-8 py-3 bg-teal-600 text-white rounded-xl font-semibold text-[10px] uppercase shadow-lg hover:bg-teal-700 transition-all">Go
                 to Registry</a>
         </div>
     <?php else: ?>
@@ -163,10 +163,10 @@ $exitPath = "visit";
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
             <!-- Column 1: Vital Signs Form -->
             <div class="xl:col-span-1">
-                <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm">
+                <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
                     <div class="flex items-center gap-3 mb-8">
-                        <div class="w-1.5 h-6 bg-blue-600 rounded-full shadow-lg"></div>
-                        <h3 class="text-lg font-black text-gray-800 uppercase italic">Record New Vitals</h3>
+                        <div class="w-1.5 h-6 bg-teal-600 rounded-full shadow-lg"></div>
+                        <h3 class="text-lg font-bold text-gray-800">Record New Vitals</h3>
                     </div>
 
                     <form method="POST" class="space-y-6">
@@ -174,49 +174,49 @@ $exitPath = "visit";
 
                         <div class="space-y-4">
                             <div>
-                                <label class="text-[9px] font-black text-gray-400 uppercase ml-4 block mb-2">Temperature
+                                <label class="text-[10px] font-medium text-gray-500 ml-4 block mb-2">Temperature
                                     (°C)</label>
                                 <input type="number" step="0.1" name="temperature" placeholder="36.5" required
-                                    class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl font-bold text-sm shadow-inner focus:ring-2 focus:ring-blue-500">
+                                    class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl font-bold text-sm shadow-inner focus:ring-2 focus:ring-teal-500">
                             </div>
 
                             <div>
-                                <label class="text-[9px] font-black text-gray-400 uppercase ml-4 block mb-2">Heart Rate
+                                <label class="text-[10px] font-medium text-gray-500 ml-4 block mb-2">Heart Rate
                                     (BPM)</label>
                                 <input type="number" name="pulse" placeholder="72" required
-                                    class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl font-bold text-sm shadow-inner focus:ring-2 focus:ring-blue-500">
+                                    class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl font-bold text-sm shadow-inner focus:ring-2 focus:ring-teal-500">
                             </div>
 
                             <div>
-                                <label class="text-[9px] font-black text-gray-400 uppercase ml-4 block mb-2">Blood
+                                <label class="text-[10px] font-medium text-gray-500 ml-4 block mb-2">Blood
                                     Pressure</label>
                                 <input type="text" name="blood_pressure" placeholder="120/80" required
-                                    class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl font-bold text-sm shadow-inner focus:ring-2 focus:ring-blue-500">
+                                    class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl font-bold text-sm shadow-inner focus:ring-2 focus:ring-teal-500">
                             </div>
                         </div>
 
                         <button type="submit" name="save_triage"
-                            class="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3">
+                            class="w-full py-5 bg-teal-600 text-white rounded-2xl font-semibold text-xs uppercase tracking-wide hover:bg-teal-700 transition-all shadow-md active:scale-95 flex items-center justify-center gap-3">
                             <i data-lucide="heart-pulse" class="w-5 h-5"></i>
                             Record Vital Signs
                         </button>
                     </form>
 
                     <!-- Quick reference guide -->
-                    <div class="mt-8 p-5 bg-blue-50/50 rounded-2xl border border-blue-100">
-                        <h4 class="text-[9px] font-black text-blue-600 uppercase tracking-wider mb-3">Normal Ranges</h4>
+                    <div class="mt-8 p-5 bg-teal-50/50 rounded-2xl border border-teal-100">
+                        <h4 class="text-[9px] font-semibold text-teal-600 uppercase tracking-wider mb-3">Normal Ranges</h4>
                         <div class="grid grid-cols-3 gap-2 text-center">
                             <div class="bg-white p-2 rounded-xl">
-                                <p class="text-[8px] font-black text-gray-400">TEMP</p>
-                                <p class="text-xs font-black text-gray-700">36.5-37.5</p>
+                                <p class="text-[8px] font-medium text-gray-400">TEMP</p>
+                                <p class="text-xs font-semibold text-gray-700">36.5-37.5</p>
                             </div>
                             <div class="bg-white p-2 rounded-xl">
-                                <p class="text-[8px] font-black text-gray-400">PULSE</p>
-                                <p class="text-xs font-black text-gray-700">60-100</p>
+                                <p class="text-[8px] font-medium text-gray-400">PULSE</p>
+                                <p class="text-xs font-semibold text-gray-700">60-100</p>
                             </div>
                             <div class="bg-white p-2 rounded-xl">
-                                <p class="text-[8px] font-black text-gray-400">BP</p>
-                                <p class="text-xs font-black text-gray-700">120/80</p>
+                                <p class="text-[8px] font-medium text-gray-400">BP</p>
+                                <p class="text-xs font-semibold text-gray-700">120/80</p>
                             </div>
                         </div>
                     </div>
@@ -225,13 +225,13 @@ $exitPath = "visit";
 
             <!-- Column 2-3: Vital Signs History -->
             <div class="xl:col-span-2">
-                <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm">
+                <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-8">
                         <div class="flex items-center gap-3">
                             <div class="w-1.5 h-6 bg-emerald-500 rounded-full shadow-lg"></div>
-                            <h3 class="text-lg font-black text-gray-800 uppercase italic">Vital Signs History</h3>
+                            <h3 class="text-lg font-bold text-gray-800">Vital Signs History</h3>
                         </div>
-                        <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-[9px] font-black rounded-full">
+                        <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-[9px] font-semibold rounded-full">
                             <?php echo count($vitalsHistory); ?> Records
                         </span>
                     </div>
@@ -239,28 +239,28 @@ $exitPath = "visit";
                     <?php if (empty($vitalsHistory)): ?>
                         <div class="text-center py-16">
                             <i data-lucide="activity" class="w-16 h-16 text-gray-200 mx-auto mb-4"></i>
-                            <p class="text-sm font-black text-gray-300 uppercase tracking-[0.2em]">No vital signs recorded</p>
+                            <p class="text-sm font-semibold text-gray-400 tracking-wide">No vital signs recorded</p>
                             <p class="text-[9px] text-gray-300 mt-2">Use the form to record patient's vital signs</p>
                         </div>
                     <?php else: ?>
 
                         <!-- Current Vitals Summary Card -->
-                        <div class="mb-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-[2rem] p-6 text-white">
-                            <h4 class="text-[9px] font-black uppercase tracking-wider text-blue-200 mb-4">Latest Reading</h4>
+                        <div class="mb-8 bg-gradient-to-br from-teal-600 to-teal-800 rounded-xl p-6 text-white">
+                            <h4 class="text-[9px] font-semibold uppercase tracking-wider text-teal-200 mb-4">Latest Reading</h4>
                             <div class="grid grid-cols-3 gap-4">
                                 <div>
-                                    <p class="text-[10px] text-blue-200 font-black mb-1">Temperature</p>
-                                    <p class="text-md font-black"><?php echo $currentVitals['temperature'] ?? '--'; ?>°C</p>
-                                    <p class="text-sm text-blue-200 mt-1">Recorded at
+                                    <p class="text-[10px] text-teal-200 font-semibold mb-1">Temperature</p>
+                                    <p class="text-md font-bold"><?php echo $currentVitals['temperature'] ?? '--'; ?>°C</p>
+                                    <p class="text-sm text-teal-200 mt-1">Recorded at
                                         <?php echo $currentVitals['record_time'] ?? '--'; ?></p>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] text-blue-200 font-black mb-1">Heart Rate</p>
-                                    <p class="text-md font-black"><?php echo $currentVitals['pulse'] ?? '--'; ?> BPM</p>
+                                    <p class="text-[10px] text-teal-200 font-semibold mb-1">Heart Rate</p>
+                                    <p class="text-md font-bold"><?php echo $currentVitals['pulse'] ?? '--'; ?> BPM</p>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] text-blue-200 font-black mb-1">Blood Pressure</p>
-                                    <p class="text-md font-black"><?php echo $currentVitals['blood_pressure'] ?? '--/--'; ?>
+                                    <p class="text-[10px] text-teal-200 font-semibold mb-1">Blood Pressure</p>
+                                    <p class="text-md font-bold"><?php echo $currentVitals['blood_pressure'] ?? '--/--'; ?>
                                     </p>
                                 </div>
                             </div>
@@ -278,15 +278,15 @@ $exitPath = "visit";
                                 if ($index == 0)
                                     continue;
                                 ?>
-                                <div class="relative pl-5 border-l-2 border-gray-100 group hover:border-blue-300 transition-colors">
+                                <div class="relative pl-5 border-l-2 border-gray-100 group hover:border-teal-300 transition-colors">
                                     <div
-                                        class="absolute -left-[5px] top-0 w-2 h-2 bg-gray-300 rounded-full border-2 border-white shadow-sm group-hover:bg-blue-500">
+                                        class="absolute -left-[5px] top-0 w-2 h-2 bg-gray-300 rounded-full border-2 border-white shadow-sm group-hover:bg-teal-500">
                                     </div>
 
                                     <div class="flex justify-between items-start">
                                         <div class="flex-1">
                                             <div class="flex items-center gap-3 mb-2">
-                                                <p class="text-[9px] font-black text-gray-400 uppercase">
+                                                <p class="text-[10px] font-medium text-gray-500">
                                                     <?php echo $vital['record_date']; ?> • <?php echo $vital['record_time']; ?>
                                                 </p>
                                                 <span class="text-[8px] text-gray-300">by
@@ -295,18 +295,18 @@ $exitPath = "visit";
 
                                             <div class="grid grid-cols-3 gap-4 bg-gray-50 p-4 rounded-2xl">
                                                 <div>
-                                                    <p class="text-[8px] font-black text-gray-400 uppercase">Temp</p>
-                                                    <p class="text-sm font-black text-gray-700">
+                                                    <p class="text-[8px] font-medium text-gray-400 uppercase">Temp</p>
+                                                    <p class="text-sm font-semibold text-gray-700">
                                                         <?php echo $vital['temperature']; ?>°C</p>
                                                 </div>
                                                 <div>
-                                                    <p class="text-[8px] font-black text-gray-400 uppercase">Pulse</p>
-                                                    <p class="text-sm font-black text-gray-700"><?php echo $vital['pulse']; ?> BPM
+                                                    <p class="text-[8px] font-medium text-gray-400 uppercase">Pulse</p>
+                                                    <p class="text-sm font-semibold text-gray-700"><?php echo $vital['pulse']; ?> BPM
                                                     </p>
                                                 </div>
                                                 <div>
-                                                    <p class="text-[8px] font-black text-gray-400 uppercase">BP</p>
-                                                    <p class="text-sm font-black text-gray-700">
+                                                    <p class="text-[8px] font-medium text-gray-400 uppercase">BP</p>
+                                                    <p class="text-sm font-semibold text-gray-700">
                                                         <?php echo $vital['blood_pressure']; ?></p>
                                                 </div>
                                             </div>
@@ -316,7 +316,7 @@ $exitPath = "visit";
                                         <?php if ($canEdit): ?>
                                             <div class="relative ml-4">
                                                 <button onclick="toggleMenu('vit-<?php echo $vital['vital_id']; ?>')"
-                                                    class="text-gray-400 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-gray-100">
+                                                    class="text-gray-400 hover:text-teal-600 transition-colors p-2 rounded-full hover:bg-gray-100">
                                                     <i data-lucide="more-vertical" class="w-4 h-4"></i>
                                                 </button>
 
@@ -330,7 +330,7 @@ $exitPath = "visit";
                                         '<?php echo $vital['pulse']; ?>',
                                         '<?php echo $vital['blood_pressure']; ?>'
                                     )"
-                                                        class="w-full text-left px-4 py-3 text-[10px] font-bold text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2">
+                                                        class="w-full text-left px-4 py-3 text-[10px] font-bold text-gray-700 hover:bg-teal-50 hover:text-teal-600 flex items-center gap-2">
                                                         <i data-lucide="edit-2" class="w-3 h-3"></i> Edit
                                                     </button>
 
@@ -361,9 +361,9 @@ $exitPath = "visit";
 <div id="editVitalModal" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeEditVitalModal()"></div>
     <div
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-[2rem] shadow-2xl p-8 animate-in zoom-in-95 duration-200">
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-xl shadow-xl p-8 animate-in zoom-in-95 duration-200">
         <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-black text-gray-800 uppercase italic">Edit Vital Signs</h3>
+            <h3 class="text-lg font-bold text-gray-800">Edit Vital Signs</h3>
             <button onclick="closeEditVitalModal()" class="text-gray-400 hover:text-red-500 transition-colors">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
@@ -373,30 +373,30 @@ $exitPath = "visit";
             <input type="hidden" name="vital_id" id="edit_vital_id">
 
             <div>
-                <label class="text-[9px] font-black text-gray-400 uppercase ml-2 block mb-2">Temperature (°C)</label>
+                <label class="text-[10px] font-medium text-gray-500 ml-2 block mb-2">Temperature (°C)</label>
                 <input type="number" step="0.1" name="temperature" id="edit_temperature" required
-                    class="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm focus:ring-2 focus:ring-blue-500">
+                    class="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm focus:ring-2 focus:ring-teal-500">
             </div>
 
             <div>
-                <label class="text-[9px] font-black text-gray-400 uppercase ml-2 block mb-2">Heart Rate (BPM)</label>
+                <label class="text-[10px] font-medium text-gray-500 ml-2 block mb-2">Heart Rate (BPM)</label>
                 <input type="number" name="pulse" id="edit_pulse" required
-                    class="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm focus:ring-2 focus:ring-blue-500">
+                    class="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm focus:ring-2 focus:ring-teal-500">
             </div>
 
             <div>
-                <label class="text-[9px] font-black text-gray-400 uppercase ml-2 block mb-2">Blood Pressure</label>
+                <label class="text-[10px] font-medium text-gray-500 ml-2 block mb-2">Blood Pressure</label>
                 <input type="text" name="blood_pressure" id="edit_blood_pressure" required
-                    class="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm focus:ring-2 focus:ring-blue-500">
+                    class="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm focus:ring-2 focus:ring-teal-500">
             </div>
 
             <div class="flex justify-end gap-3 pt-4">
                 <button type="button" onclick="closeEditVitalModal()"
-                    class="px-6 py-3 rounded-xl font-black text-[10px] uppercase text-gray-500 hover:bg-gray-100">
+                    class="px-6 py-3 rounded-xl font-semibold text-[10px] uppercase text-gray-500 hover:bg-gray-100">
                     Cancel
                 </button>
                 <button type="submit" name="update_vital"
-                    class="px-8 py-3 bg-blue-600 text-white rounded-xl font-black text-[10px] uppercase hover:bg-blue-700 shadow-lg">
+                    class="px-8 py-3 bg-teal-600 text-white rounded-xl font-semibold text-[10px] uppercase hover:bg-teal-700 shadow-lg">
                     Update Record
                 </button>
             </div>

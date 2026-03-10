@@ -2,7 +2,7 @@
 <div id="statusModal"
     class="hidden fixed inset-0 z-[110] flex items-center justify-center p-6 bg-gray-900/40 backdrop-blur-md transition-all">
     <div id="statusCard"
-        class="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl border border-gray-100 transform scale-95 transition-all">
+        class="bg-white rounded-2xl w-full max-w-md p-8 shadow-xl border border-gray-100 transform scale-95 transition-all">
 
         <div class="flex justify-between items-start mb-5">
             <div id="statusIconBox" class="w-12 h-12 rounded-xl flex items-center justify-center">
@@ -56,7 +56,7 @@
     class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-gray-900/40 backdrop-blur-md transition-all duration-300">
 
     <!-- Modal Card -->
-    <div class="bg-white rounded-2xl w-full max-w-[340px] p-6 md:p-8 shadow-2xl border border-gray-100 transform scale-95 transition-transform duration-300"
+    <div class="bg-white rounded-2xl w-full max-w-[340px] p-6 md:p-8 shadow-xl border border-gray-100 transform scale-95 transition-transform duration-300"
         id="modalCard">
 
         <!-- Icon Section -->
@@ -108,11 +108,11 @@
                 iconBox.className = "w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center";
                 icon.setAttribute('data-lucide', 'alert-triangle');
             } else {
-                box.className = "mb-6 p-4 rounded-xl border bg-blue-50 border-blue-200 text-blue-700";
+                box.className = "mb-6 p-4 rounded-xl border bg-teal-50 border-teal-200 text-teal-700";
                 loadText.innerText = "Status: Idle (0 Active Tasks)";
                 loadDesc.innerText = "This staff member currently has no tasks assignments. Deactivation will be instant.";
-                btn.className = "w-full py-3.5 bg-blue-600 text-white rounded-xl font-semibold text-sm hover:bg-blue-700 shadow-lg transition-all duration-200 active:scale-[0.98]";
-                iconBox.className = "w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center";
+                btn.className = "w-full py-3.5 bg-teal-600 text-white rounded-xl font-semibold text-sm hover:bg-teal-700 shadow-lg transition-all duration-200 active:scale-[0.98]";
+                iconBox.className = "w-12 h-12 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center";
                 icon.setAttribute('data-lucide', 'user-cog');
             }
         } else {

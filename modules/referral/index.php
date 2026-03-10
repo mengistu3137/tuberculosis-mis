@@ -5,7 +5,7 @@ $visit_id = $_GET['vid'] ?? "";
 $patient = $patientObj->getById($id);
 
 if (!$patient) {
-    echo "<div class='p-10 text-center font-black text-gray-400 uppercase tracking-widest'>Patient Record Not Found</div>";
+    echo "<div class='p-10 text-center font-semibold text-gray-400 uppercase tracking-wider'>Patient Record Not Found</div>";
     exit;
 }
 
@@ -31,7 +31,7 @@ $doctor = $doctorQuery->fetch(PDO::FETCH_ASSOC);
 $doctorPhone = $_SESSION['phone'] ?? '';
 
 $msg = "";
-$msgType = "blue";
+$msgType = "teal";
 
 // Handle referral submission
 // Handle referral submission
@@ -188,6 +188,17 @@ $referrals = $clinicalObj->getPatientReferrals($id);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TB Referral Form - Mettu Karl Referral Hospital</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {"50":"#f0fdfa","100":"#ccfbf1","200":"#99f6e4","300":"#5eead4","400":"#2dd4bf","500":"#14b8a6","600":"#0d9488","700":"#0f766e","800":"#115e59","900":"#134e4a","950":"#042f2e"}
+                    }
+                }
+            }
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -243,14 +254,14 @@ $referrals = $clinicalObj->getPatientReferrals($id);
         <!-- Print Controls -->
         <div class="no-print flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-black text-gray-800">Patient Referral Form</h1>
+                <h1 class="text-2xl font-bold text-gray-800">Patient Referral Form</h1>
                 <p class="text-sm text-gray-500">WHO-compliant referral documentation</p>
             </div>
            <!-- Update the print button section -->
 <div class="flex gap-3">
     <?php if (isset($showPrint) && $showPrint && !empty($referral_id)): ?>
                 <a href="modules/referral/print.php?id=<?php echo urlencode($referral_id); ?>" target="_blank"
-                    class="px-6 py-3 bg-blue-600 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all flex items-center gap-2">
+                    class="px-6 py-3 bg-teal-600 text-white rounded-xl font-semibold text-xs uppercase tracking-widest hover:bg-teal-700 transition-all flex items-center gap-2">
                     <i data-lucide="file-text" class="w-4 h-4"></i> View Referral PDF
                 </a>
             <?php endif; ?>
@@ -258,13 +269,13 @@ $referrals = $clinicalObj->getPatientReferrals($id);
             <!-- Also add a button to view recent referrals if they exist -->
             <?php if (!isset($showPrint) && !empty($referrals) && count($referrals) > 0): ?>
                 <a href="modules/referral/print.php?id=<?php echo urlencode($referrals[0]['referral_id']); ?>" target="_blank"
-                    class="px-6 py-3 bg-green-600 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-green-700 transition-all flex items-center gap-2">
+                    class="px-6 py-3 bg-green-600 text-white rounded-xl font-semibold text-xs uppercase tracking-widest hover:bg-green-700 transition-all flex items-center gap-2">
                     <i data-lucide="file-text" class="w-4 h-4"></i> View Latest Referral
                 </a>
             <?php endif; ?>
         
             <a href="index.php?page=consultation&id=<?php echo urlencode($id); ?>"
-                class="px-6 py-3 bg-gray-100 text-gray-600 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-gray-200 transition-all">
+                class="px-6 py-3 bg-gray-100 text-gray-600 rounded-xl font-semibold text-xs uppercase tracking-widest hover:bg-gray-200 transition-all">
                 Back to Consultation
             </a>
         </div>
@@ -273,8 +284,8 @@ $referrals = $clinicalObj->getPatientReferrals($id);
         <!-- Main Form -->
          <!-- Recent Referrals List -->
 <?php if (!empty($referrals)): ?>
-            <div class="bg-white rounded-[2.5rem] shadow-lg border border-gray-200 p-8 mt-6">
-                <h2 class="text-lg font-black text-blue-600 uppercase tracking-wider mb-4">Recent Referrals</h2>
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mt-6">
+                <h2 class="text-lg font-semibold text-teal-600 uppercase tracking-wider mb-4">Recent Referrals</h2>
                 <div class="space-y-3">
                     <?php foreach ($referrals as $ref): ?>
                         <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
@@ -290,7 +301,7 @@ $referrals = $clinicalObj->getPatientReferrals($id);
                                 </p>
                             </div>
                             <a href="modules/referral/print.php?id=<?php echo urlencode($ref['referral_id']); ?>" target="_blank"
-                                class="px-4 py-2 bg-blue-100 text-blue-600 rounded-xl font-bold text-xs hover:bg-blue-200 transition-all flex items-center gap-2">
+                                class="px-4 py-2 bg-teal-100 text-teal-600 rounded-xl font-bold text-xs hover:bg-teal-200 transition-all flex items-center gap-2">
                                 <i data-lucide="file-text" class="w-4 h-4"></i> View PDF
                             </a>
                         </div>
@@ -298,19 +309,19 @@ $referrals = $clinicalObj->getPatientReferrals($id);
                 </div>
             </div>
         <?php endif; ?>
-        <div class="bg-white rounded-[2.5rem] shadow-lg border border-gray-200 p-8 print-card">
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 print-card">
             <form method="POST" class="space-y-8" id="referralForm">
                 <!-- Patient Information Header -->
                 <div class="border-b border-gray-200 pb-6">
-                    <h2 class="text-lg font-black text-blue-600 uppercase tracking-wider mb-4">Patient Information</h2>
+                    <h2 class="text-lg font-semibold text-teal-600 uppercase tracking-wider mb-4">Patient Information</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <p class="text-xs font-bold text-gray-500">Full Name</p>
-                            <p class="font-black text-gray-800 text-lg"><?php echo $patient['full_name']; ?></p>
+                            <p class="font-bold text-gray-800 text-lg"><?php echo $patient['full_name']; ?></p>
                         </div>
                         <div>
                             <p class="text-xs font-bold text-gray-500">Medical Record Number</p>
-                            <p class="font-black text-blue-600"><?php echo $patient['medical_record_number']; ?></p>
+                            <p class="font-semibold text-teal-600"><?php echo $patient['medical_record_number']; ?></p>
                         </div>
                         <div>
                             <label class="text-xs font-bold text-gray-500 block mb-1">Date of Birth</label>
@@ -318,7 +329,7 @@ $referrals = $clinicalObj->getPatientReferrals($id);
                             $estimatedDob = date('Y-m-d', strtotime("-" . $patient['age'] . " years"));
                             ?>
                             <input type="date" name="date_of_birth" value="<?php echo $estimatedDob; ?>" required
-                                class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500">
+                                class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500">
                         </div>
                         <div>
                             <label class="text-xs font-bold text-gray-500 block mb-1">Age / Gender</label>
@@ -342,7 +353,7 @@ $referrals = $clinicalObj->getPatientReferrals($id);
               <!-- Referring Facility -->
 
 <div class="border-b border-gray-200 pb-6">
-    <h2 class="text-lg font-black text-blue-600 uppercase tracking-wider mb-4">Referring From</h2>
+    <h2 class="text-lg font-semibold text-teal-600 uppercase tracking-wider mb-4">Referring From</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="md:col-span-2">
             <label class="text-xs font-bold text-gray-500 block mb-1">Facility Name</label>
@@ -365,7 +376,7 @@ $referrals = $clinicalObj->getPatientReferrals($id);
 
                 <!-- Target Facility -->
                 <div class="border-b border-gray-200 pb-6">
-                    <h2 class="text-lg font-black text-blue-600 uppercase tracking-wider mb-4">Referral To</h2>
+                    <h2 class="text-lg font-semibold text-teal-600 uppercase tracking-wider mb-4">Referral To</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2">
                             <label class="text-xs font-bold text-gray-500 block mb-1">Facility Name</label>
@@ -387,7 +398,7 @@ $referrals = $clinicalObj->getPatientReferrals($id);
 
                 <!-- Referral Details -->
                 <div class="border-b border-gray-200 pb-6">
-                    <h2 class="text-lg font-black text-blue-600 uppercase tracking-wider mb-4">Referral Details</h2>
+                    <h2 class="text-lg font-semibold text-teal-600 uppercase tracking-wider mb-4">Referral Details</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
                             <label class="text-xs font-bold text-gray-500 block mb-1">Target Department</label>
@@ -436,7 +447,7 @@ $referrals = $clinicalObj->getPatientReferrals($id);
 
                 <!-- Diagnoses - Dynamic -->
                 <div class="border-b border-gray-200 pb-6">
-                    <h2 class="text-lg font-black text-blue-600 uppercase tracking-wider mb-4">Diagnoses</h2>
+                    <h2 class="text-lg font-semibold text-teal-600 uppercase tracking-wider mb-4">Diagnoses</h2>
                     <div class="space-y-4">
                         <div id="diagnoses-container">
                             <label class="text-xs font-bold text-gray-500 block mb-2">Diagnosis List</label>
@@ -473,7 +484,7 @@ $referrals = $clinicalObj->getPatientReferrals($id);
                         </div>
                         
                         <button type="button" onclick="addDiagnosisField()" 
-                            class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                            class="text-xs font-bold text-teal-600 hover:text-teal-800 flex items-center gap-1">
                             <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Another Diagnosis
                         </button>
                         
@@ -487,7 +498,7 @@ $referrals = $clinicalObj->getPatientReferrals($id);
 
                 <!-- Treatments - Dynamic -->
                 <div class="border-b border-gray-200 pb-6">
-                    <h2 class="text-lg font-black text-blue-600 uppercase tracking-wider mb-4">Treatments</h2>
+                    <h2 class="text-lg font-semibold text-teal-600 uppercase tracking-wider mb-4">Treatments</h2>
                     <div class="space-y-4">
                         <div>
                             <label class="text-xs font-bold text-gray-500 block mb-1">Treatments Initiated</label>
@@ -530,7 +541,7 @@ $referrals = $clinicalObj->getPatientReferrals($id);
                         </div>
                         
                         <button type="button" onclick="addTreatmentField()" 
-                            class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                            class="text-xs font-bold text-teal-600 hover:text-teal-800 flex items-center gap-1">
                             <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Another Treatment
                         </button>
                         
@@ -543,7 +554,7 @@ $referrals = $clinicalObj->getPatientReferrals($id);
 
                 <!-- Transportation & Follow-up -->
                 <div class="border-b border-gray-200 pb-6">
-                    <h2 class="text-lg font-black text-blue-600 uppercase tracking-wider mb-4">Logistics</h2>
+                    <h2 class="text-lg font-semibold text-teal-600 uppercase tracking-wider mb-4">Logistics</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="text-xs font-bold text-gray-500 block mb-1">Transportation Needs</label>
@@ -562,7 +573,7 @@ $referrals = $clinicalObj->getPatientReferrals($id);
 
                 <!-- Functional Status -->
                 <div class="border-b border-gray-200 pb-6">
-                    <h2 class="text-lg font-black text-blue-600 uppercase tracking-wider mb-4">Functional Status</h2>
+                    <h2 class="text-lg font-semibold text-teal-600 uppercase tracking-wider mb-4">Functional Status</h2>
                     <div class="space-y-6">
                         <div>
                             <label class="text-xs font-bold text-gray-500 block mb-2">Mobility</label>
@@ -615,7 +626,7 @@ $referrals = $clinicalObj->getPatientReferrals($id);
 
                 <!-- Compiled By -->
                 <div class="border-b border-gray-200 pb-6">
-                    <h2 class="text-lg font-black text-blue-600 uppercase tracking-wider mb-4">Compiled By</h2>
+                    <h2 class="text-lg font-semibold text-teal-600 uppercase tracking-wider mb-4">Compiled By</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="text-xs font-bold text-gray-500 block mb-1">Name</label>
@@ -641,7 +652,7 @@ $referrals = $clinicalObj->getPatientReferrals($id);
                 <!-- Submit Button -->
                 <div class="flex justify-end gap-4 pt-4">
                     <button type="submit" name="submit_referral"
-                        class="px-10 py-4 bg-blue-600 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all flex items-center gap-2">
+                        class="px-10 py-4 bg-teal-600 text-white rounded-xl font-semibold text-xs uppercase tracking-widest hover:bg-teal-700 transition-all flex items-center gap-2">
                         <i data-lucide="send" class="w-4 h-4"></i> Generate Referral
                     </button>
                 </div>
