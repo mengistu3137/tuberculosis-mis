@@ -1,4 +1,10 @@
 full_name,email,password,role
 Sis.Nurse Abebech Alemu,nurse.test@hospital.com,password123,Nurse
-Mr.Teka Gemechu,admin.test@hospital.com,password123,Admin
-
+Teka Gemechu,admin.test@hospital.com,password123,Admin
+Mekonnen Haile,doctor.test@hospital.com,password123,Doctor
+Kebede Tesfaye,clerk.test@hospital.com,password123,Clerk
+Hailu Bekele,lab.test@hospital.com,password123,Lab Technician
+Ruth Wondimu,radiologist.test@hospital.com,password123,Radiologist
+Amanuel Fikadu,pharmacy.test@hospital.com,password123,Pharmacist
+Lily Tadesse,doctor.test@hospital2.com,password123,Doctor
+Yohannes Gebremedhin,pharmacist.test@hospital.com,password123,Pharmacist

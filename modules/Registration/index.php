@@ -202,14 +202,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                 <i data-lucide="user-plus" class="w-4 h-4"></i> Register TB Patient
             </button>
             <a href="index.php?page=visit"
-                class="group relative px-4 py-2.5 bg-secondary-600 text-white rounded-xl font-semibold text-xs hover:bg-secondary-700 transition-all duration-200 flex items-center gap-2.5 shadow-md hover:shadow-lg active:scale-[0.98] overflow-hidden">
+                class="group relative px-4 py-2.5 bg-primary-600 text-white rounded-xl font-semibold text-xs hover:bg-white hover:text-primary-600 hover:border-primary-600 transition-all duration-200 flex items-center gap-2.5 shadow-md hover:shadow-lg active:scale-[0.98] overflow-hidden">
                 <span class="absolute inset-0 bg-white/10 group-hover:animate-pulse rounded-2xl"></span>
                 <span class="relative flex items-center justify-center">
                     <i data-lucide="list"
                         class="w-4 h-4 text-white/90 group-hover:scale-110 transition-transform duration-300"></i>
                     <span class="absolute -top-1 -right-1 w-2 h-2">
-                        <span class="absolute inset-0 rounded-full bg-emerald-400 animate-ping"></span>
-                        <span class="absolute inset-0 rounded-full bg-emerald-400"></span>
+                        <span class="absolute inset-0 rounded-full bg-gray-400 animate-ping"></span>
+                        <span class="absolute inset-0 rounded-full bg-green-400"></span>
                     </span>
                 </span>
                 <span class="relative flex items-center gap-2">
@@ -285,7 +285,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                                 <!-- CHECK-IN BUTTON -->
                                 <button
                                     onclick="openCheckinModal('<?php echo $p['patient_id']; ?>', '<?php echo addslashes($p['full_name']); ?>')"
-                                    class="inline-flex items-center gap-2 px-4 py-2 bg-secondary-600 text-white rounded-lg font-semibold text-xs hover:bg-secondary-700 transition-all duration-200 shadow-sm">
+                                    class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg font-semibold text-xs hover:bg-secondary-700 transition-all duration-200 shadow-sm">
                                     <i data-lucide="log-in" class="w-3 h-3"></i> Check-in
                                 </button>
 
@@ -435,7 +435,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
             <div class="flex justify-between items-start mb-5">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-11 h-11 bg-gradient-to-br from-secondary-600 to-secondary-700 text-white rounded-xl flex items-center justify-center font-bold shadow-md">
+                        class="w-11 h-11 bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-xl flex items-center justify-center font-bold shadow-md">
                         <i data-lucide="log-in" class="w-5 h-5"></i>
                     </div>
                     <div>
@@ -479,7 +479,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                         Cancel
                     </button>
                     <button type="submit"
-                        class="px-6 py-2.5 bg-gradient-to-r from-secondary-600 to-secondary-700 text-white rounded-xl font-semibold text-sm shadow-md hover:shadow-lg transition-all active:scale-[0.98] flex items-center gap-2">
+                        class="px-6 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl font-semibold text-sm shadow-md hover:shadow-lg transition-all active:scale-[0.98] flex items-center gap-2">
                         <i data-lucide="check-circle" class="w-4 h-4"></i> Confirm Check-in
                     </button>
                 </div>

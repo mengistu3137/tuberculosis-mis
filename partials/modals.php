@@ -152,4 +152,11 @@
         card.classList.add('scale-95');
         setTimeout(() => modal.classList.add('hidden'), 200);
     }
+
+    function closeStatusModal() {
+        const modal = document.getElementById('statusModal');
+        const card = document.getElementById('statusCard');
+        card.classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+    }
 </script>

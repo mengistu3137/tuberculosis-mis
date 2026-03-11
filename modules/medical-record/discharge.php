@@ -133,7 +133,7 @@ $visit = $visitDetails->fetch(PDO::FETCH_ASSOC);
                 </div>
                 <div class="flex items-end">
                     <button type="submit" name="process_discharge"
-                        class="w-full py-4 bg-red-600 text-white rounded-2xl font-bold shadow-md hover:bg-red-700 hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                        class="w-full py-4 bg-red-600 text-white rounded-2xl font-bold shadow-md hover:bg-red-700/60 hover:shadow-lg transition-all flex items-center justify-center gap-2">
                         <i data-lucide="check-circle-2" class="w-5 h-5"></i> Finalize & Discharge
                     </button>
                 </div>

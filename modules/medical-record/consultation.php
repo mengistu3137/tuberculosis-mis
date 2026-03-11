@@ -391,36 +391,55 @@ $actions = [
                        
                     </div>
 
-                     <!-- Radiology ORDERS  -->
+                   <!-- RADIOLOGY ORDERS -->
 <div class="grid grid-cols-1 gap-8 <?php echo ($role != 'Doctor' && $role != 'Admin') ? 'opacity-40 pointer-events-none' : ''; ?>">
-                        <div
-                            class="bg-fuchsia-50/50 rounded-2xl p-8 border border-fuchsia-100 shadow-sm flex flex-col justify-between">
-                            <h3 class="text-sm font-bold text-gray-800 mb-6 flex items-center gap-2">
-                                <i data-lucide="scan" class="w-4 h-4 text-fuchsia-600"></i> Radiology Order
-                            </h3>
-                            <form method="POST" class="space-y-4">
-                                <input type="text" name="exam_type" required placeholder="Exam Type (e.g. Chest X-Ray, CT Head)"
-                                    class="w-full px-6 py-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm focus:ring-2 focus:ring-fuchsia-500">
-                    
-                                <input type="text" name="body_part" placeholder="Body Part (e.g. Chest, Brain)"
-                                    class="w-full px-6 py-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm focus:ring-2 focus:ring-fuchsia-500">
-                    
-                                <textarea name="clinical_history" rows="2" placeholder="Clinical History/Indication"
-                                    class="w-full px-6 py-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm focus:ring-2 focus:ring-fuchsia-500"></textarea>
-                    
-                                <select name="priority"
-                                    class="w-full px-6 py-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm focus:ring-2 focus:ring-fuchsia-500">
-                                    <option value="normal">Normal Priority</option>
-                                    <option value="STAT">STAT (Emergency)</option>
-                                </select>
-                    
-                                <button name="order_radiology_btn"
-                                    class="w-full py-3 bg-fuchsia-600 text-white rounded-xl font-semibold text-[9px] uppercase tracking-widest shadow-lg hover:bg-fuchsia-700">
-                                    Transmit Order
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+
+<div class="bg-teal-50/60 rounded-2xl p-8 border border-teal-100 shadow-sm flex flex-col justify-between">
+
+<h3 class="text-sm font-bold text-gray-800 mb-6 flex items-center gap-2">
+<i data-lucide="scan" class="w-4 h-4 text-teal-600"></i>
+Radiology Order
+</h3>
+
+<form method="POST" class="space-y-4">
+
+<input type="text"
+name="exam_type"
+required
+placeholder="Exam Type (e.g. Chest X-Ray, CT Head)"
+class="w-full px-6 py-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm focus:ring-2 focus:ring-teal-500">
+
+<input type="text"
+name="body_part"
+placeholder="Body Part (e.g. Chest, Brain)"
+class="w-full px-6 py-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm focus:ring-2 focus:ring-teal-500">
+
+<textarea
+name="clinical_history"
+rows="2"
+placeholder="Clinical History / Indication"
+class="w-full px-6 py-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm focus:ring-2 focus:ring-teal-500"></textarea>
+
+<select
+name="priority"
+class="w-full px-6 py-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm focus:ring-2 focus:ring-teal-500">
+
+<option value="normal">Normal Priority</option>
+<option value="STAT">STAT (Emergency)</option>
+
+</select>
+
+<button
+name="order_radiology_btn"
+class="w-full py-3 bg-teal-600 text-white rounded-xl font-semibold text-[9px] uppercase tracking-widest shadow-lg hover:bg-teal-700 transition-all active:scale-95">
+
+Transmit Order
+
+</button>
+
+</form>
+</div>
+</div>
 
                  </div>
                 
@@ -437,183 +456,177 @@ $actions = [
     // Merge or display both
     if (!empty($labResults) || !empty($pendingLabRequests)):
         ?>
-        <div class="bg-indigo-600/90 rounded-2xl p-8 text-white shadow-xl shadow-indigo-200 relative overflow-hidden animate-in zoom-in duration-500">
-            <div class="flex items-center justify-between mb-6 relative z-10">
-                <div class="flex items-center gap-3">
-                    <h3 class="text-lg font-bold uppercase italic tracking-tighter">Laboratory Findings</h3>
-                    <?php
-                    $totalItems = count($labResults) + count($pendingLabRequests);
-                    if ($totalItems > 1):
-                        ?>
-                            <span class="bg-white/20 text-white text-[8px] font-medium px-2 py-1 rounded-full uppercase tracking-wider">
-                                <?php echo $totalItems; ?> tests
-                            </span>
-                    <?php endif; ?>
-                </div>
-                <div class="flex items-center gap-2">
-                    <?php if (!empty($pendingLabRequests)): ?>
-                            <span class="bg-amber-400/20 text-amber-200 text-[8px] font-medium px-2 py-1 rounded-full flex items-center gap-1">
-                                <span class="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse"></span>
-                                <?php echo count($pendingLabRequests); ?> pending
-                            </span>
-                    <?php endif; ?>
-                </div>
+    <!-- LAB RESULTS BANNER -->
+    <div
+        class="bg-gradient-to-r from-teal-600 to-teal-500 rounded-2xl p-8 text-white shadow-xl shadow-teal-200 relative overflow-hidden animate-in zoom-in duration-500">
+    
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6 relative z-10">
+            <div class="flex items-center gap-3">
+                <h3 class="text-lg font-bold uppercase italic tracking-tighter">Laboratory Findings</h3>
+
+<?php
+            $totalItems = count($labResults) + count($pendingLabRequests);
+            if ($totalItems > 1):
+                ?>
+    <span class="bg-white/20 text-white text-[8px] font-medium px-2 py-1 rounded-full uppercase tracking-wider">
+        <?php echo $totalItems; ?> tests
+    </span>
+<?php endif; ?>
+
+</div>
+
+<div class="flex items-center gap-2">
+<?php if (!empty($pendingLabRequests)): ?>
+            <span class="bg-amber-400/20 text-amber-100 text-[8px] font-medium px-2 py-1 rounded-full flex items-center gap-1">
+                <span class="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse"></span>
+    <?php echo count($pendingLabRequests); ?> pending
+</span>
+<?php endif; ?>
+</div>
+</div>
+
+<!-- Content: Completed results and pending requests -->
+<div class="relative z-10 -mx-2 px-2">
+    <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-white/30" style="-webkit-overflow-scrolling: touch;">
+        <?php if (!empty($labResults)): ?>
+            <?php foreach ($labResults as $lr): ?>
+                <div class="flex-none w-[320px] snap-start bg-white/10 p-4 rounded-2xl border border-white/10">
+                    <div class="flex items-center justify-between mb-2">
+                        <span
+                            class="text-xs font-semibold uppercase tracking-wide text-teal-200"><?php echo $lr['test_type']; ?></span>
+                        <?php if (!empty($lr['performed_date'])): ?>
+                            <span class="text-[8px] font-medium bg-emerald-400 text-white px-2 py-0.5 rounded-full">Done</span>
+                        <?php endif; ?>
             </div>
-        
-            <!-- Horizontal scrollable container -->
-            <div class="relative z-10 -mx-2 px-2">
-                <div class="flex overflow-x-auto gap-4 pb-4 scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-white/30" 
-                     style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
-                
-                    <!-- Show pending lab requests first -->
-                    <?php foreach ($pendingLabRequests as $pending): ?>
-                            <div class="flex-none w-[300px] snap-start" style="scroll-snap-align: start;">
-                                <div class="bg-white/10 p-5 rounded-2xl border border-white/10 backdrop-blur-sm h-full relative overflow-hidden">
-                                    <!-- Animated pulse background for pending items -->
-                                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse"></div>
-                            
-                                    <div class="flex justify-between items-center mb-2">
-                                        <span class="text-xs font-semibold uppercase tracking-wide text-indigo-200">
-                                            <?php echo $pending['test_type']; ?>
-                                        </span>
-                                        <span class="text-[9px] font-bold text-white/40">
-                                            <?php echo date("H:i", strtotime($pending['created_at'])); ?>
-                                        </span>
-                                    </div>
-                            
-                                    <!-- Pending indicator -->
-                                    <div class="flex items-center gap-2 mb-3">
-                                        <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
-                                        <span class="text-[8px] font-medium uppercase tracking-wider text-amber-200">Results Pending</span>
-                                    </div>
-                            
-                                    <p class="text-sm font-bold text-white/50 italic break-words">Awaiting lab processing...</p>
-                            
-                                    <?php if ($pending['priority'] == 'STAT'): ?>
-                                            <span class="absolute top-2 right-2 text-[8px] font-medium bg-red-500 text-white px-2 py-0.5 rounded-full">
-                                                STAT
-                                            </span>
-                                    <?php endif; ?>
-                            
-                                    <p class="text-[9px] text-indigo-300 mt-3 font-semibold uppercase tracking-tighter italic">
-                                        Ordered by: Dr. <?php echo $pending['doctor_name'] ?? 'Pending'; ?>
-                                    </p>
+                    <p class="text-xs font-bold text-white/90 mb-2"><?php echo $lr['result_details']; ?></p>
+                    <p class="text-[8px] text-teal-200 mt-3 font-semibold uppercase">Technician: <?php echo $lr['tech_name'] ?? 'N/A'; ?>
+                    </p>
+                    <?php if (!empty($lr['performed_date'])): ?>
+                        <p class="text-[8px] text-teal-200 mt-2">Performed: <?php echo date('M d, Y', strtotime($lr['performed_date'])); ?></p>
+                    <?php endif; ?>
                                 </div>
-                            </div>
-                    <?php endforeach; ?>
-                
-                    <!-- Show completed lab results -->
-                    <?php foreach ($labResults as $res): ?>
-                            <div class="flex-none w-[300px] snap-start" style="scroll-snap-align: start;">
-                                <div class="bg-white/10 p-5 rounded-2xl border border-white/10 backdrop-blur-sm h-full">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <span class="text-xs font-semibold uppercase tracking-wide text-indigo-200">
-                                            <?php echo $res['test_type']; ?>
-                                        </span>
-                                        <span class="text-[9px] font-bold text-white/40">
-                                            <?php echo date("H:i", strtotime($res['performed_date'])); ?>
-                                        </span>
-                                    </div>
-                            
-                                    <!-- Completed indicator -->
-                                    <span class="text-[8px] font-medium bg-emerald-500/20 text-emerald-200 px-2 py-0.5 rounded-full mb-2 inline-block">
-                                        ✓ Results Ready
-                                    </span>
-                            
-                                    <p class="text-sm font-bold text-white leading-relaxed break-words">
-                                        "<?php echo $res['result_details']; ?>"
-                                    </p>
-                                    <p class="text-[9px] text-indigo-300 mt-3 font-semibold uppercase tracking-tighter italic truncate">
-                                        Validated by: <?php echo $res['tech_name']; ?>
-                                    </p>
-                                </div>
-                            </div>
-                    <?php endforeach; ?>
-                </div>
+                <?php endforeach; ?>
+        <?php endif; ?>
+
+        <?php if (!empty($pendingLabRequests)): ?>
+            <?php foreach ($pendingLabRequests as $pr): ?>
+                <div class="flex-none w-[320px] snap-start bg-white/6 p-4 rounded-2xl border border-white/6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wide text-teal-200"><?php echo $pr['test_type']; ?></span>
+                <span class="text-[8px] font-medium bg-amber-400 text-white px-2 py-0.5 rounded-full">Pending</span>
             </div>
-        
-            <!-- Gradient fade indicators -->
-            <div class="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-indigo-600 to-transparent pointer-events-none z-20"></div>
-            <div class="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-indigo-600 to-transparent pointer-events-none z-20"></div>
-        </div>
+                    <p class="text-xs text-white/80 mb-2">Requested: <?php echo date('M d, Y', strtotime($pr['created_at'] ?? $pr['request_date'] ?? 'now')); ?></p>
+                    <p class="text-[8px] text-teal-200 mt-3 font-semibold uppercase">Requested By:
+                        <?php echo $pr['doctor_name'] ?? 'N/A'; ?></p>
+                    </div>
+                    <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+    </div>
+
+<!-- Fade indicators -->
+<div class="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-teal-600 to-transparent pointer-events-none z-20"></div>
+<div class="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-teal-600 to-transparent pointer-events-none z-20"></div>
+
+</div>
 <?php endif; ?>
     <!-- RADIOLOGY RESULTS BANNER - Add this after lab results -->
 <?php
     $radiologyResults = $clinicalObj->getRadiologyResults($visit_id);
     if (!empty($radiologyResults)):
         ?>
-        <div
-            class="bg-fuchsia-600/90 rounded-2xl p-8 text-white shadow-xl shadow-fuchsia-200 relative overflow-hidden animate-in zoom-in duration-500 mt-4">
-            <div class="flex items-center justify-between mb-6 relative z-10">
-                <div class="flex items-center gap-3">
-                    <h3 class="text-lg font-bold uppercase italic tracking-tighter">Radiology Findings</h3>
-                    <?php if (count($radiologyResults) > 1): ?>
-                        <span class="bg-white/20 text-white text-[8px] font-medium px-2 py-1 rounded-full uppercase tracking-wider">
-                            <?php echo count($radiologyResults); ?> studies
-                        </span>
-                    <?php endif; ?>
-                </div>
-            </div>
+    <!-- RADIOLOGY RESULTS BANNER -->
+    <div
+        class="bg-gradient-to-r from-teal-600 to-teal-500 rounded-2xl p-8 text-white shadow-xl shadow-teal-200 relative overflow-hidden animate-in zoom-in duration-500 mt-4">
     
-            <!-- Horizontal scrollable container -->
-            <div class="relative z-10 -mx-2 px-2">
-                <div class="flex overflow-x-auto gap-4 pb-4 scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-white/30"
-                    style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
-                    <?php foreach ($radiologyResults as $rad): ?>
-                        <div class="flex-none w-[350px] snap-start" style="scroll-snap-align: start;">
-                            <div class="bg-white/10 p-5 rounded-2xl border border-white/10 backdrop-blur-sm h-full">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-semibold uppercase tracking-wide text-fuchsia-200">
-                                        <?php echo $rad['exam_type']; ?>
-                                        <?php if ($rad['body_part']): ?>(
-                                            <?php echo $rad['body_part']; ?>)
-                                        <?php endif; ?>
-                                    </span>
-                                    <?php if ($rad['priority'] == 'STAT'): ?>
-                                        <span class="text-[8px] font-medium bg-red-500 text-white px-2 py-0.5 rounded-full">STAT</span>
-                                    <?php endif; ?>
-                                </div>
+        <div class="flex items-center justify-between mb-6 relative z-10">
+            <div class="flex items-center gap-3">
+                <h3 class="text-lg font-bold uppercase italic tracking-tighter">Radiology Findings</h3>
+
+<?php if (count($radiologyResults) > 1): ?>
+    <span class="bg-white/20 text-white text-[8px] font-medium px-2 py-1 rounded-full uppercase tracking-wider">
+        <?php echo count($radiologyResults); ?> studies
+    </span>
+<?php endif; ?>
     
-                                <?php if ($rad['findings']): ?>
-                                    <p class="text-xs font-bold text-white/90 mb-2">Findings:
-                                        <?php echo $rad['findings']; ?>
-                                    </p>
-                                    <p class="text-xs font-bold text-white/90 mb-2">Impression:
-                                        <?php echo $rad['impression']; ?>
-                                    </p>
-                                    <?php if ($rad['image_path']): ?>
-                                        <a href="<?php echo $rad['image_path']; ?>" target="_blank"
-                                            class="inline-flex items-center gap-1 text-[8px] font-medium text-fuchsia-200 hover:text-white transition-colors">
-                                            <i data-lucide="image" class="w-3 h-3"></i> View Image
-                                        </a>
-                                    <?php endif; ?>
-                                    <p class="text-[8px] text-fuchsia-300 mt-3 font-semibold uppercase">
-                                        Radiologist:
-                                        <?php echo $rad['radiologist_name'] ?? 'Pending'; ?>
-                                    </p>
-                                <?php else: ?>
-                                    <p class="text-sm font-bold text-white/50 italic">Results pending...</p>
-                                <?php endif; ?>
-    
-                                <?php if ($rad['performed_date']): ?>
-                                    <p class="text-[8px] text-fuchsia-300 mt-2">Performed:
-                                        <?php echo date('M d, Y', strtotime($rad['performed_date'])); ?>
-                                    </p>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-    
-            <!-- Gradient fade indicators -->
-            <div
-                class="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-fuchsia-600 to-transparent pointer-events-none z-20">
-            </div>
-            <div
-                class="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-fuchsia-600 to-transparent pointer-events-none z-20">
             </div>
         </div>
+    
+        <!-- Horizontal Scroll -->
+        <div class="relative z-10 -mx-2 px-2">
+            <div class="flex overflow-x-auto gap-4 pb-4 scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-white/30"
+                style="scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;">
+    
+                <?php foreach ($radiologyResults as $rad): ?>
+                    <div class="flex-none w-[350px] snap-start">
+                    
+                        <div class="bg-white/10 p-5 rounded-2xl border border-white/10 backdrop-blur-sm h-full">
+    
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-semibold uppercase tracking-wide text-teal-200">
+                                    <?php echo $rad['exam_type']; ?>
+                                    <?php if ($rad['body_part']): ?>
+                                        (<?php echo $rad['body_part']; ?>)
+                                    <?php endif; ?>
+                                    </span>
+    
+                                <?php if ($rad['priority'] == 'STAT'): ?>
+                                                    <span class="text-[8px] font-medium bg-red-500 text-white px-2 py-0.5 rounded-full">
+                                                        STAT
+                                                    </span>
+                                    <?php endif; ?>
+                                    </div>
+    
+                            <?php if ($rad['findings']): ?>
+                    <p class="text-xs font-bold text-white/90 mb-2">
+                        Findings: <?php echo $rad['findings']; ?>
+    </p>
+    
+                                <p class="text-xs font-bold text-white/90 mb-2">
+                                    Impression: <?php echo $rad['impression']; ?>
+    </p>
+    
+                                <?php if ($rad['image_path']): ?>
+                                    <a href="<?php echo $rad['image_path']; ?>" target="_blank"
+                                        class="inline-flex items-center gap-1 text-[8px] font-medium text-teal-200 hover:text-white transition-colors">
+                                        <i data-lucide="image" class="w-3 h-3"></i> View Image
+                                    </a>
+                                <?php endif; ?>
+                    <p class="text-[8px] text-teal-200 mt-3 font-semibold uppercase">
+                        Radiologist: <?php echo $rad['radiologist_name'] ?? 'Pending'; ?>
+    </p>
+    
+                            <?php else: ?>
+                    <p class="text-sm font-bold text-white/50 italic">
+                        Results pending...
+                    </p>
+    
+    <?php endif; ?>
+    
+                            <?php if ($rad['performed_date']): ?>
+                    <p class="text-[8px] text-teal-200 mt-2">
+                        Performed: <?php echo date('M d, Y', strtotime($rad['performed_date'])); ?>
+    </p>
+    
+                            <?php endif; ?>
+    
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+    
+            </div>
+        </div>
+    
+        <!-- Fade indicators -->
+        <div
+            class="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-teal-600 to-transparent pointer-events-none z-20">
+        </div>
+        <div
+            class="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-teal-600 to-transparent pointer-events-none z-20">
+        </div>
+    
+    </div>
  <?php endif; ?>
 
                   

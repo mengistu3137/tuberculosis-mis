@@ -52,7 +52,7 @@ switch ($userRole) {
 
 
         $roleConfig = [
-            'welcome' => 'TBMIS Control Hub',
+            'welcome' => 'TB  Control Hub',
             'icon' => 'shield-check',
             'quickActions' => [
                 ['label' => 'Manage TB Staff', 'icon' => 'user-cog', 'page' => 'admin', 'color' => 'emerald'],
