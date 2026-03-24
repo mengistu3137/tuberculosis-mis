@@ -2,7 +2,7 @@
 class Database
 {
     private $host = "localhost";
-    private $db_name = "mattu_tbmis";
+    private $db_name = "mattu_tbmis_db";
     private $username = "root";
     private $password = "";
     public $conn;

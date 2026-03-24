@@ -54,6 +54,7 @@ $routes = [
     'radiology' => 'modules/radiology/index.php',
     'radiology-result' => 'modules/radiology/result.php',
     'referral-print' => 'modules/referral/print.php',
+    'reports' => 'modules/reports/index.php',
    
 ];
 
