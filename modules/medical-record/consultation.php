@@ -41,8 +41,22 @@ $msgType = "teal";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['request_nurse'])) {
-        if ($assignObj->autoAssignNurse($visit_id)) {
-            $msg = "Nursing support requested. A staff member has been assigned to this encounter.";
+        $assignedNurse = $assignObj->autoAssignNurse($visit_id);
+
+        if ($assignedNurse) {
+            $nurseLabel = $assignedNurse['full_name'] ?? 'Assigned Nurse';
+            $nurseId = $assignedNurse['user_id'] ?? '';
+            $nurseEmail = $assignedNurse['email'] ?? '';
+
+            $nurseSummary = $nurseLabel;
+            if (!empty($nurseId)) {
+                $nurseSummary .= " (" . $nurseId . ")";
+            }
+            if (!empty($nurseEmail)) {
+                $nurseSummary .= " • " . $nurseEmail;
+            }
+
+            $msg = "Nursing support assigned -> " . $nurseSummary . ".";
             $msgType = "indigo";
         } else {
             $msg = "No nurses available at the moment.";

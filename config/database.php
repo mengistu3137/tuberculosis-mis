@@ -4,7 +4,7 @@ class Database
     private $host = "localhost";
     private $db_name = "mattu_tbmis_db";
     private $username = "root";
-    private $password = "";
+    private $password = "S7m21m12";
     public $conn;
 
     public function getConnection()

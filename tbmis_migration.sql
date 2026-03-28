@@ -379,13 +379,13 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `email`, `phone`, `password_hash`, `full_name`, `role`, `status`, `status_reason`, `created_at`) VALUES
-('STF-100', 'demo.admin@mattu.edu', NULL, '$2y$10$.tHoZQwoU/SfVG7eIlxwQuSuy5zmAPsgkhhGK0fk9rUHlv0MF4n6i', '', 'Admin', 'active', NULL, '2026-03-10 14:06:23'),
-('STF-101', 'demo.doctor@mattu.edu', NULL, '$2y$10$dev4OsycQFWS3bDVFq5OzuhM2dd2b9SgolKMik7U1bTBCj1ZxH6qi', '', 'Doctor', 'active', NULL, '2026-03-10 14:06:23'),
-('STF-102', 'demo.nurse@mattu.edu', NULL, '$2y$10$dev4OsycQFWS3bDVFq5OzuhM2dd2b9SgolKMik7U1bTBCj1ZxH6qi', '', 'Nurse', 'active', NULL, '2026-03-10 14:06:23'),
-('STF-103', 'demo.lab@mattu.edu', NULL, '$2y$10$dev4OsycQFWS3bDVFq5OzuhM2dd2b9SgolKMik7U1bTBCj1ZxH6qi', '', 'Lab Technician', 'active', NULL, '2026-03-10 14:06:23'),
-('STF-104', 'demo.pharmacist@mattu.edu', NULL, '$2y$10$dev4OsycQFWS3bDVFq5OzuhM2dd2b9SgolKMik7U1bTBCj1ZxH6qi', '', 'Pharmacist', 'active', NULL, '2026-03-10 14:06:23'),
-('STF-105', 'demo.clerk@mattu.edu', NULL, '$2y$10$dev4OsycQFWS3bDVFq5OzuhM2dd2b9SgolKMik7U1bTBCj1ZxH6qi', '', 'Clerk', 'active', NULL, '2026-03-10 14:06:23'),
-('STF-106', 'demo.radiologist@mattu.edu', NULL, '$2y$10$dev4OsycQFWS3bDVFq5OzuhM2dd2b9SgolKMik7U1bTBCj1ZxH6qi', '', 'Radiologist', 'active', NULL, '2026-03-10 14:06:23');
+('STF-100', 'demo.admin@mattu.edu', NULL, '$2y$10$.tHoZQwoU/SfVG7eIlxwQuSuy5zmAPsgkhhGK0fk9rUHlv0MF4n6i', 'Admin Admaasu', 'Admin', 'active', NULL, '2026-03-10 14:06:23'),
+('STF-101', 'demo.doctor@mattu.edu', NULL, '$2y$10$dev4OsycQFWS3bDVFq5OzuhM2dd2b9SgolKMik7U1bTBCj1ZxH6qi', 'Dr. John Doe', 'Doctor', 'active', NULL, '2026-03-10 14:06:23'),
+('STF-102', 'demo.nurse@mattu.edu', NULL, '$2y$10$dev4OsycQFWS3bDVFq5OzuhM2dd2b9SgolKMik7U1bTBCj1ZxH6qi', 'Nurse Jane Smith', 'Nurse', 'active', NULL, '2026-03-10 14:06:23'),
+('STF-103', 'demo.lab@mattu.edu', NULL, '$2y$10$dev4OsycQFWS3bDVFq5OzuhM2dd2b9SgolKMik7U1bTBCj1ZxH6qi', 'Lab Tech Mike Johnson', 'Lab Technician', 'active', NULL, '2026-03-10 14:06:23'),
+('STF-104', 'demo.pharmacist@mattu.edu', NULL, '$2y$10$dev4OsycQFWS3bDVFq5OzuhM2dd2b9SgolKMik7U1bTBCj1ZxH6qi', 'Pharmacist Lisa Williams', 'Pharmacist', 'active', NULL, '2026-03-10 14:06:23'),
+('STF-105', 'demo.clerk@mattu.edu', NULL, '$2y$10$dev4OsycQFWS3bDVFq5OzuhM2dd2b9SgolKMik7U1bTBCj1ZxH6qi', 'Clerk Tom Brown', 'Clerk', 'active', NULL, '2026-03-10 14:06:23'),
+('STF-106', 'demo.radiologist@mattu.edu', NULL, '$2y$10$dev4OsycQFWS3bDVFq5OzuhM2dd2b9SgolKMik7U1bTBCj1ZxH6qi', 'Radiologist Sarah Davis', 'Radiologist', 'active', NULL, '2026-03-10 14:06:23');
 
 -- --------------------------------------------------------
 

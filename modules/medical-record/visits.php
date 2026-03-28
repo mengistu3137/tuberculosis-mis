@@ -28,6 +28,11 @@ $total_pages = ceil($total_records / $limit);
 $logs = $visitObj->getPaginated($limit, $offset, $userRole, $userId);
  // This now gets only active
 
+// Pull flash message (e.g., assignment details after check-in)
+$flashMsg = $_SESSION['flash_msg'] ?? '';
+$flashType = $_SESSION['flash_type'] ?? 'teal';
+unset($_SESSION['flash_msg'], $_SESSION['flash_type']);
+
 ?>
 
 <div class="space-y-6">
@@ -46,6 +51,14 @@ $logs = $visitObj->getPaginated($limit, $offset, $userRole, $userId);
             View All History
         </a>
     </div>
+
+    <?php if (!empty($flashMsg)): ?>
+        <div
+            class="flex items-center gap-3 px-4 py-3 bg-<?php echo $flashType; ?>-50 text-<?php echo $flashType; ?>-700 border border-<?php echo $flashType; ?>-100 rounded-xl shadow-sm">
+            <i data-lucide="info" class="w-4 h-4"></i>
+            <span class="text-xs font-semibold uppercase tracking-wide"><?php echo $flashMsg; ?></span>
+        </div>
+    <?php endif; ?>
 
     <!-- Live Feed Table -->
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all">

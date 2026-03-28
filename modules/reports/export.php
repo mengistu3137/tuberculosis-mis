@@ -1,13 +1,27 @@
 <?php
 // Export endpoint for reports (CSV / XLSX)
 session_start();
-
+require_once '../../config/database.php';
 // Basic auth: ensure user logged in and allowed
 if (!isset($_SESSION['user_id'])) {
     header('HTTP/1.1 302 Found');
     header('Location: ../../login.php');
     exit;
 }
+$database = new Database();
+$db = $database->getConnection();
+
+$type = $_GET['type'] ?? 'patient-visits';
+$format = $_GET['export'] ?? 'csv';
+$start = $_GET['start_date'] ?? '';
+$end = $_GET['end_date'] ?? '';
+$status = $_GET['status'] ?? '';
+$search = $_GET['q'] ?? '';
+
+$params = [];
+$where = " WHERE 1=1 ";
+
+
 
 $allowedRoles = ['Admin','Clerk','Doctor','Nurse','Lab Technician','Pharmacist','Radiologist'];
 $userRole = $_SESSION['role'] ?? '';
@@ -17,7 +31,6 @@ if (!in_array($userRole, $allowedRoles)) {
     exit;
 }
 
-require_once '../../config/database.php';
 
 $database = new Database();
 $db = $database->getConnection();
@@ -149,62 +162,38 @@ switch ($type) {
     default:
         $rows = [];
 }
+$stmt = $db->prepare($sql);
+foreach ($params as $k => $v)
+    $stmt->bindValue($k, $v);
+$stmt->execute();
+$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$filename = "report_" . $type . "_" . date('Ymd_His');
 // Output
 if ($format === 'xlsx') {
-    if (!class_exists('\PhpOffice\PhpSpreadsheet\Spreadsheet')) {
-        http_response_code(500);
-        echo 'PhpSpreadsheet is not installed. Run composer require phpoffice/phpspreadsheet';
-        exit;
+    // XLSX Strategy: Using the Tab-Separated Method (More reliable without Composer)
+    header("Content-Type: application/vnd.ms-excel; charset=UTF-8");
+    header("Content-Disposition: attachment; filename=\"$filename.xls\"");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+
+    echo implode("\t", $headers) . "\n";
+    foreach ($rows as $row) {
+        $cleanRow = array_map(function($v) { 
+            return str_replace(["\t", "\r", "\n"], ' ', (string)$v); 
+        }, array_values($row));
+        echo implode("\t", $cleanRow) . "\n";
     }
-
-    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
-
-    // helper: numeric column to letters
-    $colLetter = function($col) {
-        $letters = '';
-        while ($col > 0) {
-            $mod = ($col - 1) % 26;
-            $letters = chr(65 + $mod) . $letters;
-            $col = (int)(($col - $mod - 1) / 26);
-        }
-        return $letters;
-    };
-
-    $col = 1;
-    foreach ($headers as $h) {
-        $sheet->setCellValue($colLetter($col) . '1', $h);
-        $col++;
-    }
-    $rowNum = 2;
-    foreach ($rows as $r) {
-        $col = 1;
-        foreach ($r as $c) {
-            $sheet->setCellValue($colLetter($col) . $rowNum, $c);
-            $col++;
-        }
-        $rowNum++;
-    }
-
-    $filename = 'report_' . $type . '_' . date('Ymd_His') . '.xlsx';
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
-    $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
-    $writer->save('php://output');
-    exit;
 } else {
-    // CSV output
-    $filename = 'report_' . $type . '_' . date('Ymd_His') . '.csv';
-    header('Content-Type: text/csv; charset=UTF-8');
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    // CSV Strategy
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="' . $filename . '.csv"');
     $out = fopen('php://output', 'w');
     fputcsv($out, $headers);
-    foreach ($rows as $r) {
-        fputcsv($out, array_values($r));
-    }
+    foreach ($rows as $r) fputcsv($out, array_values($r));
     fclose($out);
-    exit;
 }
+exit;
+
 
 ?>

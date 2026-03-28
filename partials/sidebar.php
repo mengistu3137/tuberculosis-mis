@@ -50,17 +50,18 @@
             'icon' => 'settings',
             'roles' => ['Admin']
         ],
-        [
-            'id' => 'reports',
-            'label' => 'Reports',
-            'icon' => 'bar-chart-2',
-            'roles' => ['Admin', 'Clerk', 'Doctor', 'Nurse', 'Lab Technician', 'Pharmacist', 'Radiologist']
-        ],
+        
         [
             'id'=>"radiology",
             'label'=>"Radiology",
             'icon'=>"scan",
             'roles'=>['Admin', 'Radiologist']
+        ],
+        [
+            'id' => 'reports',
+            'label' => 'Reports',
+            'icon' => 'bar-chart-2',
+            'roles' => ['Admin', 'Clerk', 'Doctor', 'Nurse', 'Lab Technician', 'Pharmacist', 'Radiologist']
         ],
         [
             "id"=>"visit-history",

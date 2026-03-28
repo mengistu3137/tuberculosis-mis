@@ -462,102 +462,143 @@ switch ($type) {
 
 ?>
 
-<div class="space-y-6">
-    <div class="flex items-center justify-between">
-        <h1 class="text-xl font-bold text-gray-800"><?= htmlspecialchars($reportTypes[$type]) ?></h1>
-        <div class="flex items-center gap-2">
-            <a href="modules/reports/export.php?type=<?= urlencode($type) ?>&format=csv&<?= http_build_query(array_merge($_GET, ['format' => 'csv'])) ?>"
-                class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm font-semibold flex items-center gap-2 hover:bg-gray-50">
-                <i data-lucide="download" class="w-4 h-4"></i> Export CSV
+<div class="space-y-6 bg-[#f9fafb] min-h-screen p-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight"><?= htmlspecialchars($reportTypes[$type]) ?>
+            </h1>
+            <p class="text-sm text-slate-500">Manage and export your hospital data insights.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            
+            <div class="flex gap-2">
+    <a href="modules/reports/export.php?<?php echo http_build_query(array_merge($_GET, ['export' => 'xlsx'])); ?>"
+                    class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-black ">
+                    Export XLSX
+                </a>
+            
+                <a href="modules/reports/export.php?<?php echo http_build_query(array_merge($_GET, ['export' => 'csv'])); ?>"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-black ">
+                Export CSV
             </a>
-            <a href="modules/reports/export.php?type=<?= urlencode($type) ?>&format=xlsx&<?= http_build_query(array_merge($_GET, ['format' => 'xlsx'])) ?>"
-                class="px-3 py-2 bg-primary-600 text-white rounded-xl text-sm font-semibold flex items-center gap-2 hover:bg-primary-700">
-                <i data-lucide="download" class="w-4 h-4"></i> Export XLSX
-            </a>
+            </div>
         </div>
     </div>
 
-    <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
-        <input type="hidden" name="page" value="reports">
-        <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
-
-        <div>
-            <label class="text-xs font-semibold text-gray-500">Start Date</label>
-            <input type="date" name="start_date" value="<?= htmlspecialchars($start) ?>"
-                class="w-full px-3 py-2 rounded-xl border border-gray-200">
-            </div>
-        <div>
-            <label class="text-xs font-semibold text-gray-500">End Date</label>
-            <input type="date" name="end_date" value="<?= htmlspecialchars($end) ?>"
-                class="w-full px-3 py-2 rounded-xl border border-gray-200">
-        </div>
-        <div>
-            <label class="text-xs font-semibold text-gray-500">Status</label>
-            <input type="text" name="status" value="<?= htmlspecialchars($status) ?>" placeholder="status"
-                class="w-full px-3 py-2 rounded-xl border border-gray-200">
-        </div>
-        <div>
-            <label class="text-xs font-semibold text-gray-500">Search</label>
-            <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Search"
-                class="w-full px-3 py-2 rounded-xl border border-gray-200">
-        </div>
-
-        <div class="md:col-span-4 flex items-center gap-2">
-     <?php foreach ($reportTypes as $key => $label): ?>
-        <?php $active = $key === $type; ?>
-        <a href="index.php?page=reports&type=<?= $key ?>"
-            class="px-4 py-2 rounded-full text-sm font-medium border transition-shadow <?= $active ? 'bg-primary-600 text-white shadow-md' : 'bg-white text-gray-600 hover:shadow-sm' ?>">
-            <?= $label ?></a>
-    <?php endforeach; ?>
-    <button type="submit" class="ml-auto px-4 py-2 bg-primary-600 text-white rounded-xl">Filter</button>
-        </div>
-    </form>
-
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <table class="w-full text-left">
-            <thead class="bg-gray-50 border-b">
-                <tr>
-                    <?php if (!empty($rows)):
-                        foreach (array_keys($rows[0]) as $h): ?>
-                            <th class="px-6 py-4 text-xs font-semibold text-gray-600 uppercase"><?= htmlspecialchars($h) ?></th>
-                        <?php endforeach; else: ?>
-                        <th class="px-6 py-4 text-sm text-gray-600">No results</th>
+    <div class="border-b border-slate-200 overflow-x-auto no-scrollbar">
+        <div class="flex gap-8 min-w-max">
+            <?php foreach ($reportTypes as $key => $label):
+                $isActive = ($type === $key);
+                $cleanLabel = str_replace(' Report', '', $label); // Shorten for tabs
+                ?>
+                <a href="?page=reports&type=<?= $key ?>"
+                    class="pb-4 text-sm font-medium transition-all relative <?= $isActive ? 'text-primary-600' : 'text-slate-500 hover:text-slate-700' ?>">
+                    <?= htmlspecialchars($cleanLabel) ?>
+                    <?php if ($isActive): ?>
+                        <div class="absolute bottom-0 left-0 w-full h-0.5 bg-primary-600 rounded-full"></div>
                     <?php endif; ?>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-50">
-                <?php if (!empty($rows)):
-                    foreach ($rows as $r): ?>
-                        <tr class="hover:bg-gray-50 transition-all">
-                            <?php foreach ($r as $cell): ?>
-                                <td class="px-6 py-4 text-sm text-gray-700"><?= htmlspecialchars((string) $cell) ?></td>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+            <input type="hidden" name="page" value="reports">
+            <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
+
+            <div class="md:col-span-3">
+                <label class="block text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1.5 ml-1">Start Date</label>
+                <input type="date" name="start_date" value="<?= htmlspecialchars($start) ?>"
+                    class="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none">
+            </div>
+
+            <div class="md:col-span-3">
+                <label class="block text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1.5 ml-1">End Date</label>
+                <input type="date" name="end_date" value="<?= htmlspecialchars($end) ?>"
+                    class="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none">
+            </div>
+
+            <div class="md:col-span-4">
+                <label class="block text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1.5 ml-1">Search Records</label>
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                    <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Search name, ID or MRN..."
+            class="w-full pl-10 pr-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none">
+    </div>
+            </div>
+
+            <div class="md:col-span-2">
+                <button type="submit" class="w-full bg-slate-800 text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-900 transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="filter" class="w-4 h-4"></i> Apply Filter
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200">
+                        <?php if (!empty($rows)): ?>
+                            <?php foreach (array_keys($rows[0]) as $header): ?>
+                                <th class="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+                                    <?= str_replace(['_', 'id'], [' ', 'ID'], $header) ?>
+                                </th>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    <?php if (empty($rows)): ?>
+                        <tr>
+                            <td colspan="10" class="px-6 py-12 text-center text-slate-400 text-sm">No records found for the selected
+                                criteria.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($rows as $row): ?>
+                            <tr class="hover:bg-slate-50 transition-colors group">
+                                <?php foreach ($row as $key => $val): ?>
+                                    <td class="px-6 py-4 text-sm text-slate-600">
+                                        <?php if ($key === 'status'): ?>
+                                            <span
+                                                class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide <?= $val === 'active' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600' ?>">
+                                                <?= htmlspecialchars($val) ?>
+                                            </span>
+                                        <?php elseif ($key === 'full_name' || $key === 'patient'): ?>
+                                            <span class="font-semibold text-slate-900"><?= htmlspecialchars($val) ?></span>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($val) ?>
+                                        <?php endif; ?>
+                                    </td>
+                                <?php endforeach; ?>
+                    </tr>
                         <?php endforeach; ?>
-                                                                                    </tr>
-                                                                            <?php endforeach; else: ?>
-                                                                            <tr>
-                                                                                <td class="p-12 text-center text-gray-400">No records found for selected filters.</td>
-                                                                            </tr>
-                                                                            <?php endif; ?>
-                                                                            </tbody>
-                                                                            </table>
-                                                                            
-                                                                            <?php $total_pages = $total > 0 ? ceil($total / $limit) : 1;
-                                                                            if ($total_pages > 1): ?>
-                                                                            <div class="px-6 py-4 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
-                                                                                <span class="text-sm text-gray-500">Page <?= $page ?> of <?= $total_pages ?></span>
-                                                                                <div class="flex items-center gap-2">
-                                                                                    <?php if ($page > 1): ?>
-                                                                                    <a href="<?= htmlspecialchars('?page=reports&type=' . $type . '&p=' . ($page - 1) . '&' . http_build_query(array_merge($_GET, ['p' => $page - 1]))) ?>"
-                                                                                        class="px-3 py-2 bg-white border rounded-xl">Prev</a>
-                                                                                    <?php endif; ?>
-                                                                                    <?php if ($page < $total_pages): ?>
-                                                                                    <a href="<?= htmlspecialchars('?page=reports&type=' . $type . '&p=' . ($page + 1) . '&' . http_build_query(array_merge($_GET, ['p' => $page + 1]))) ?>"
-                                                                                        class="px-3 py-2 bg-white border rounded-xl">Next</a>
-                                                                                    <?php endif; ?>
-                                                                                </div>
-                                                                            </div>
-                                                                            <?php endif; ?>
+                        <?php endif; ?>
+                        </tbody>
+                        </table>
+        </div>
+
+        <?php if ($total > $limit): ?>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                <p class="text-xs text-slate-500">Showing <?= count($rows) ?> of <?= $total ?> results</p>
+                <div class="flex gap-1">
+                    <?php for ($i = 1; $i <= ceil($total / $limit); $i++): ?>
+                        <a href="?<?= http_build_query(array_merge($_GET, ['p' => $i])) ?>"
+                            class="w-8 h-8 flex items-center justify-center rounded-md text-xs font-medium transition-all <?= $page == $i ? 'bg-primary-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-primary-400' ?>">
+                            <?= $i ?>
+                        </a>
+                    <?php endfor; ?>
+                </div>
+            </div>
+        <?php endif; ?>
     </div>
 </div>
+
+<style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
 
 <script>lucide.createIcons();</script>

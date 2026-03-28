@@ -151,18 +151,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
     $visit_id = $visitObj->create($_POST['patient_id'], $_POST['visit_type'], $_POST['clinical_notes']);
 
     if ($visit_id) {
-        // ONLY assign the Doctor at this stage
-        $assignObj->autoAssignDoctor($visit_id);
+        // Assign the least-loaded doctor and capture details for the clerk
+        $assignedDoctor = $assignObj->autoAssignDoctor($visit_id);
 
-        $msg = "TB intake successful. Client assigned to TB clinician.";
-        $msgType = "emerald";
+        if ($assignedDoctor) {
+            $doctorLabel = $assignedDoctor['full_name'] ?? 'Assigned Clinician';
+            $doctorId = $assignedDoctor['user_id'] ?? '';
+            $doctorEmail = $assignedDoctor['email'] ?? '';
+
+            $doctorSummary = $doctorLabel;
+            if (!empty($doctorId)) {
+                $doctorSummary .= " (" . $doctorId . ")";
+            }
+            if (!empty($doctorEmail)) {
+                $doctorSummary .= " • " . $doctorEmail;
+            }
+
+            $msg = "TB intake successful. Assigned Doctor -> " . $doctorSummary . ".";
+            $msgType = "emerald";
+            $_SESSION['flash_msg'] = $msg;
+            $_SESSION['flash_type'] = $msgType;
+        } else {
+            $msg = "TB intake successful, but no clinician was available for auto-assignment.";
+            $msgType = "orange";
+            $_SESSION['flash_msg'] = $msg;
+            $_SESSION['flash_type'] = $msgType;
+        }
 
         echo "<script>
             setTimeout(function() {
                 window.location.href='index.php?page=visit&status=success&vid=$visit_id';
-            }, 1000);
+            }, 2000);
         </script>";
-        exit;
     }
 }
 ?>
