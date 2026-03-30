@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `mattu_tbmis`
+-- Database: `mattu_tbmis_db`
 --
 
 -- --------------------------------------------------------
@@ -26,7 +26,9 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `appointments`
 --
-
+ Drop database if exists `mattu_tbmis_db`;
+CREATE DATABASE `mattu_tbmis_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `mattu_tbmis_db`;
 CREATE TABLE `appointments` (
   `appointment_id` varchar(20) NOT NULL,
   `patient_id` varchar(20) DEFAULT NULL,
@@ -405,6 +407,54 @@ CREATE TABLE `vital_signs` (
   `requires_clerical_action` tinyint(1) DEFAULT 0,
   `clerical_action_completed` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Add assignment tracking to Visits (for Doctors)
+ALTER TABLE medical_visits ADD COLUMN assigned_doctor_id VARCHAR(20) NULL;
+ALTER TABLE medical_visits ADD CONSTRAINT fk_visit_doctor FOREIGN KEY (assigned_doctor_id) REFERENCES users(user_id);
+
+-- Add assignment tracking to Lab Requests (for Technicians)
+ALTER TABLE lab_requests ADD COLUMN assigned_tech_id VARCHAR(20) NULL;
+ALTER TABLE lab_requests ADD CONSTRAINT fk_lab_tech FOREIGN KEY (assigned_tech_id) REFERENCES users(user_id);
+
+-- Add assignment tracking to Lab Requests (for radiologist)
+ALTER TABLE radiology_requests ADD COLUMN assigned_rad_id VARCHAR(20) NULL;
+ALTER TABLE radiology_requests ADD CONSTRAINT fk_rad FOREIGN KEY (assigned_rad_id) REFERENCES users(user_id);
+
+-- Add assignment tracking to Vitals/Nursing requests (for Nurses)
+ALTER TABLE medical_visits ADD COLUMN assigned_nurse_id VARCHAR(20) NULL;
+ALTER TABLE medical_visits ADD CONSTRAINT fk_visit_nurse FOREIGN KEY (assigned_nurse_id) REFERENCES users(user_id);
+
+-- Visit ward assignments
+CREATE TABLE visit_ward_assignments (
+    visit_id VARCHAR(20) PRIMARY KEY,
+    assignment_location VARCHAR(255) NOT NULL,
+    assigned_by VARCHAR(20) NOT NULL,
+    assigned_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_ward_visit FOREIGN KEY (visit_id) REFERENCES medical_visits(visit_id) ON DELETE CASCADE,
+    CONSTRAINT fk_ward_assigned_by FOREIGN KEY (assigned_by) REFERENCES users(user_id)
+) ENGINE=InnoDB;
+
+-- Ward assignment requests (workflow queue)
+CREATE TABLE visit_ward_assignment_requests (
+    visit_id VARCHAR(20) PRIMARY KEY,
+    requested_by VARCHAR(20) NOT NULL,
+    status ENUM('pending','completed') NOT NULL DEFAULT 'pending',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP NULL DEFAULT NULL,
+    CONSTRAINT fk_ward_request_visit FOREIGN KEY (visit_id) REFERENCES medical_visits(visit_id) ON DELETE CASCADE,
+    CONSTRAINT fk_ward_request_user FOREIGN KEY (requested_by) REFERENCES users(user_id)
+) ENGINE=InnoDB;
+
+-- Care-team history (doctor/nurse assignments)
+CREATE TABLE visit_care_team_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    visit_id VARCHAR(20) NOT NULL,
+    staff_id VARCHAR(20) NOT NULL,
+    role ENUM('Doctor','Nurse') NOT NULL,
+    assigned_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_care_team_visit FOREIGN KEY (visit_id) REFERENCES medical_visits(visit_id) ON DELETE CASCADE,
+    CONSTRAINT fk_care_team_staff FOREIGN KEY (staff_id) REFERENCES users(user_id)
+) ENGINE=InnoDB;
 
 --
 -- Dumping data for table `vital_signs`

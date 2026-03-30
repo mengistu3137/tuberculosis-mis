@@ -12,17 +12,29 @@ if (!$patient) {
     exit;
 }
 
-// Get active visit if visit_id not provided
-if (empty($visit_id)) {
+// Get visit context (prefer explicit vid)
+if (!empty($visit_id)) {
+    $vQuery = $db->prepare("SELECT * FROM medical_visits WHERE visit_id = ? AND patient_id = ? LIMIT 1");
+    $vQuery->execute([$visit_id, $id]);
+    $activeVisit = $vQuery->fetch(PDO::FETCH_ASSOC);
+} else {
     $vQuery = $db->prepare("SELECT * FROM medical_visits WHERE patient_id = ? ORDER BY created_at DESC LIMIT 1");
     $vQuery->execute([$id]);
     $activeVisit = $vQuery->fetch(PDO::FETCH_ASSOC);
     $visit_id = $activeVisit['visit_id'] ?? "NO_ACTIVE_VISIT";
 }
 
+$visitStatus = $activeVisit['status'] ?? 'active';
+$viewOnly = ($visitStatus === 'completed');
+
 // Handle POST requests
 $msg = "";
 $msgType = "teal";
+
+if ($viewOnly && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    header("Location: index.php?page=record-vital&id=$id&vid=$visit_id&viewonly=1");
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Save new vital signs
@@ -102,6 +114,13 @@ $exitPath = "visit";
 ?>
 
 <div class="space-y-6">
+    <?php if ($viewOnly): ?>
+        <div
+            class="p-4 bg-amber-50 border border-amber-200 text-amber-700 rounded-2xl text-xs font-semibold flex items-center gap-2">
+            <i data-lucide="shield" class="w-4 h-4"></i>
+            <span>Visit is discharged and read-only. Vitals cannot be edited.</span>
+        </div>
+    <?php endif; ?>
     <!-- Notification Alert -->
     <?php if ($msg): ?>
         <div id="notification-alert"
@@ -176,27 +195,28 @@ $exitPath = "visit";
                             <div>
                                 <label class="text-[10px] font-medium text-gray-500 ml-4 block mb-2">Temperature
                                     (°C)</label>
-                                <input type="number" step="0.1" name="temperature" placeholder="36.5" required
+                                <input <?php echo $viewOnly ? 'disabled' : ''; ?> type="number" step="0.1" name="temperature" placeholder="36.5"
+                                    required
                                     class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl font-bold text-sm shadow-inner focus:ring-2 focus:ring-teal-500">
                             </div>
 
                             <div>
                                 <label class="text-[10px] font-medium text-gray-500 ml-4 block mb-2">Heart Rate
                                     (BPM)</label>
-                                <input type="number" name="pulse" placeholder="72" required
+                                <input <?php echo $viewOnly ? 'disabled' : ''; ?> type="number" name="pulse" placeholder="72" required
                                     class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl font-bold text-sm shadow-inner focus:ring-2 focus:ring-teal-500">
                             </div>
 
                             <div>
                                 <label class="text-[10px] font-medium text-gray-500 ml-4 block mb-2">Blood
                                     Pressure</label>
-                                <input type="text" name="blood_pressure" placeholder="120/80" required
+                                <input <?php echo $viewOnly ? 'disabled' : ''; ?> type="text" name="blood_pressure" placeholder="120/80" required
                                     class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl font-bold text-sm shadow-inner focus:ring-2 focus:ring-teal-500">
                             </div>
                         </div>
 
-                        <button type="submit" name="save_triage"
-                            class="w-full py-5 bg-teal-600 text-white rounded-2xl font-semibold text-xs uppercase tracking-wide hover:bg-teal-700 transition-all shadow-md active:scale-95 flex items-center justify-center gap-3">
+                        <button type="submit" name="save_triage" <?php echo $viewOnly ? 'disabled' : ''; ?>
+                            class="w-full py-5 bg-teal-600 text-white rounded-2xl font-semibold text-xs uppercase tracking-wide hover:bg-teal-700 transition-all shadow-md active:scale-95 flex items-center justify-center gap-3 <?php echo $viewOnly ? 'opacity-40 cursor-not-allowed' : ''; ?>">
                             <i data-lucide="heart-pulse" class="w-5 h-5"></i>
                             Record Vital Signs
                         </button>

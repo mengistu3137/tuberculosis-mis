@@ -146,44 +146,83 @@ $stmt = $patientObj->searchPaginated($searchTerm, $limit, $offset);
 // Handle POST Check-in (Encounter Initiation)
 $msg = "";
 $msgType = "teal";
+$assignmentCard = null;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
-    $visit_id = $visitObj->create($_POST['patient_id'], $_POST['visit_type'], $_POST['clinical_notes']);
+    $patientId = $_POST['patient_id'];
+    $visitType = $_POST['visit_type'];
+    $clinicalNotes = $_POST['clinical_notes'];
+
+    $redirectParams = [
+        'page' => $_GET['page'] ?? 'registration',
+        'p' => max(1, $current_page),
+    ];
+
+    if ($searchTerm !== '') {
+        $redirectParams['q'] = $searchTerm;
+    }
+
+    $visit_id = $visitObj->create($patientId, $visitType, $clinicalNotes);
 
     if ($visit_id) {
-        // Assign the least-loaded doctor and capture details for the clerk
-        $assignedDoctor = $assignObj->autoAssignDoctor($visit_id);
+        $assignObj->autoAssignDoctor($visit_id);
 
-        if ($assignedDoctor) {
-            $doctorLabel = $assignedDoctor['full_name'] ?? 'Assigned Clinician';
-            $doctorId = $assignedDoctor['user_id'] ?? '';
-            $doctorEmail = $assignedDoctor['email'] ?? '';
+        $doctorDetails = $assignObj->getAssignedDoctorDetails($visit_id);
+        $patientMeta = $patientObj->getById($patientId);
 
-            $doctorSummary = $doctorLabel;
-            if (!empty($doctorId)) {
-                $doctorSummary .= " (" . $doctorId . ")";
-            }
-            if (!empty($doctorEmail)) {
-                $doctorSummary .= " • " . $doctorEmail;
-            }
-
-            $msg = "TB intake successful. Assigned Doctor -> " . $doctorSummary . ".";
+        if ($doctorDetails) {
+            $activeLoad = $doctorDetails['active_cases'] ?? 0;
+            $msg = "TB intake successful. Assigned Doctor → " . ($doctorDetails['full_name'] ?? 'Assigned Clinician') . " (" . ($doctorDetails['email'] ?? 'N/A') . ")";
             $msgType = "emerald";
-            $_SESSION['flash_msg'] = $msg;
-            $_SESSION['flash_type'] = $msgType;
-        } else {
-            $msg = "TB intake successful, but no clinician was available for auto-assignment.";
-            $msgType = "orange";
-            $_SESSION['flash_msg'] = $msg;
-            $_SESSION['flash_type'] = $msgType;
-        }
 
-        echo "<script>
-            setTimeout(function() {
-                window.location.href='index.php?page=visit&status=success&vid=$visit_id';
-            }, 2000);
-        </script>";
+            $_SESSION['flash_payload'] = [
+                'msg' => $msg,
+                'type' => $msgType,
+                'assignment' => [
+                    'staff' => $doctorDetails,
+                    'patient' => [
+                        'full_name' => $patientMeta['full_name'] ?? '',
+                        'medical_record_number' => $patientMeta['medical_record_number'] ?? '',
+                        'patient_id' => $patientId,
+                    ],
+                    'visit_id' => $visit_id,
+                ],
+                'meta' => [
+                    'active_load' => $activeLoad,
+                ],
+            ];
+        } else {
+            $_SESSION['flash_payload'] = [
+                'msg' => 'TB intake successful, but no clinician was available for auto-assignment.',
+                'type' => 'orange',
+                'assignment' => null,
+            ];
+        }
+    } else {
+        $_SESSION['flash_payload'] = [
+            'msg' => 'System error: failed to create visit. Please retry.',
+            'type' => 'red',
+            'assignment' => null,
+        ];
     }
+
+    $redirectUrl = 'index.php?' . http_build_query($redirectParams);
+    if (!headers_sent()) {
+        header('Location: ' . $redirectUrl);
+        exit;
+    }
+
+    // Fallback when headers already sent (e.g., prior output from host page)
+    echo "<script>window.location.href='" . htmlspecialchars($redirectUrl, ENT_QUOTES, 'UTF-8') . "';</script>";
+    exit;
+}
+
+$flashPayload = $_SESSION['flash_payload'] ?? null;
+if ($flashPayload) {
+    unset($_SESSION['flash_payload']);
+    $msg = $flashPayload['msg'] ?? $msg;
+    $msgType = $flashPayload['type'] ?? $msgType;
+    $assignmentCard = $flashPayload['assignment'] ?? null;
 }
 ?>
 
@@ -246,6 +285,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
             </a>
         </div>
     </div>
+
+    <?php if (!empty($assignmentCard['staff'])):
+        $staff = $assignmentCard['staff'];
+        $patientCard = $assignmentCard['patient'] ?? [];
+        $visitRef = $assignmentCard['visit_id'] ?? '';
+        $activeLoad = $staff['active_cases'] ?? 0;
+        ?>
+        <div class="bg-white border border-emerald-100 shadow-sm rounded-2xl p-4 flex flex-col gap-3">
+            <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold shadow-inner">
+                        <i data-lucide="stethoscope" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Assigned Physician</p>
+                        <p class="text-base font-bold text-gray-800 leading-tight">
+                            <?php echo $staff['full_name'] ?? 'Assigned Clinician'; ?>
+                        </p>
+                        <p class="text-xs text-gray-500 font-semibold">
+                            <?php echo $staff['role'] ?? 'Doctor'; ?> • <?php echo $staff['email'] ?? 'No email'; ?>
+                        </p>
+                    </div>
+                </div>
+                <span
+                    class="px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-emerald-50 text-emerald-600 border border-emerald-100">Load:
+                    <?php echo $activeLoad; ?></span>
+            </div>
+    
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-semibold text-gray-600">
+                <div class="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2">
+                    <p class="text-[9px] uppercase tracking-widest text-gray-400">Patient</p>
+                    <p class="text-sm font-bold text-gray-800"><?php echo $patientCard['full_name'] ?? 'N/A'; ?></p>
+                </div>
+                <div class="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2">
+                    <p class="text-[9px] uppercase tracking-widest text-gray-400">MRN</p>
+                    <p class="text-sm font-bold text-gray-800"><?php echo $patientCard['medical_record_number'] ?? '—'; ?></p>
+                </div>
+                <div class="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2">
+                    <p class="text-[9px] uppercase tracking-widest text-gray-400">Visit Ref</p>
+                    <p class="text-sm font-bold text-gray-800"><?php echo $visitRef ?: '—'; ?></p>
+                </div>
+            </div>
+    
+            <div class="flex items-center justify-end gap-2">
+                <a href="index.php?page=visit&focus=<?php echo urlencode($visitRef); ?>"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-[11px] font-semibold uppercase tracking-widest rounded-xl shadow-sm hover:bg-emerald-700 transition-all">
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    Go to Encounter
+                </a>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <!-- TB Patient Registry Table -->
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all">
@@ -359,7 +451,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
                 </span>
                 <div class="flex gap-1.5">
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <a href="index.php?page=registration&p=<?php echo $i; ?>&q=<?php echo $searchTerm; ?>"
+                                <?php
+                                $pageParams = [
+                                    'page' => $_GET['page'] ?? 'registration',
+                                    'p' => $i,
+                                ];
+                                if ($searchTerm !== '') {
+                                    $pageParams['q'] = $searchTerm;
+                                }
+                                $pageUrl = 'index.php?' . http_build_query($pageParams);
+                                ?>
+                            <a href="<?php echo $pageUrl; ?>"
                             class="w-8 h-8 flex items-center justify-center rounded-lg font-semibold text-xs transition-all duration-200 <?php echo ($i == $current_page) ? 'bg-primary-600 text-white shadow-md' : 'bg-white text-gray-400 border border-gray-200 hover:border-primary-300'; ?>">
                             <?php echo $i; ?>
                         </a>
@@ -677,6 +779,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['perform_checkin'])) {
         // Initialize icons
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
+        }
+
+        // Deep-link triggers (e.g., from dashboard quick actions)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('modal') === 'registration') {
+            openRegistrationModal();
         }
 
         // Toggle Patient Menu

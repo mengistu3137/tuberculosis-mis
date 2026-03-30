@@ -478,7 +478,7 @@ switch ($type) {
                 </a>
             
                 <a href="modules/reports/export.php?<?php echo http_build_query(array_merge($_GET, ['export' => 'csv'])); ?>"
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-black ">
+                class="px-4 py-2 bg-emrald-600 text-white rounded-lg text-xs font-black ">
                 Export CSV
             </a>
             </div>

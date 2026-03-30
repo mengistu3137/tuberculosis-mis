@@ -18,14 +18,9 @@
             'id' => 'registration',
             'label' => 'TB Registration Desk',
             'icon' => 'monitor',
-            'roles' => ['Admin', 'Clerk']
+            'roles' => ['Clerk']
         ],
-        [
-            'id' => 'records',
-            'label' => 'TB Case Records',
-            'icon' => 'clipboard-list',
-            'roles' => ['Admin']
-        ],
+        
         [
          'id' => 'visit', 
          'label' => 'Active Worklist', 
@@ -36,13 +31,13 @@
             'id' => 'laboratory',
             'label' => 'TB Laboratory',
             'icon' => 'test-tube',
-            'roles' => ['Admin', 'Lab Technician']
+            'roles' => ['Lab Technician']
         ],
         [
             'id' => 'pharmacy',
             'label' => 'TB Drug Unit',
             'icon' => 'pill',
-            'roles' => ['Admin', 'Pharmacist']
+            'roles' => ['Pharmacist']
         ],
         [
             'id' => 'admin',
@@ -55,13 +50,13 @@
             'id'=>"radiology",
             'label'=>"Radiology",
             'icon'=>"scan",
-            'roles'=>['Admin', 'Radiologist']
+            'roles'=>['Radiologist']
         ],
         [
             'id' => 'reports',
             'label' => 'Reports',
             'icon' => 'bar-chart-2',
-            'roles' => ['Admin', 'Clerk', 'Doctor', 'Nurse', 'Lab Technician', 'Pharmacist', 'Radiologist']
+            'roles' => ['Admin', 'Clerk']
         ],
         [
             "id"=>"visit-history",

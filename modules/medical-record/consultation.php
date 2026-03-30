@@ -9,16 +9,28 @@ if (!$patient) {
     exit;
 }
 
-// 2. Identify the Active Visit (MOVE THIS UP)
-$vQuery = $db->prepare("SELECT * FROM medical_visits WHERE patient_id = ? ORDER BY created_at DESC LIMIT 1");
-$vQuery->execute([$id]);
-$activeVisit = $vQuery->fetch(PDO::FETCH_ASSOC);
+// 2. Identify the Visit (prefer explicit vid, fallback to latest)
+$visit_id = $_GET['vid'] ?? null;
+if (!empty($visit_id)) {
+    $vQuery = $db->prepare("SELECT * FROM medical_visits WHERE visit_id = ? AND patient_id = ? LIMIT 1");
+    $vQuery->execute([$visit_id, $id]);
+    $activeVisit = $vQuery->fetch(PDO::FETCH_ASSOC);
+} else {
+    $vQuery = $db->prepare("SELECT * FROM medical_visits WHERE patient_id = ? ORDER BY created_at DESC LIMIT 1");
+    $vQuery->execute([$id]);
+    $activeVisit = $vQuery->fetch(PDO::FETCH_ASSOC);
+    $visit_id = $activeVisit['visit_id'] ?? "NO_ACTIVE_VISIT";
+}
 
-$visit_id = $activeVisit['visit_id'] ?? "NO_ACTIVE_VISIT";
-$hasActiveVisit = ($visit_id !== "NO_ACTIVE_VISIT");
+$visit_id = $visit_id ?? "NO_ACTIVE_VISIT";
+$hasActiveVisit = ($visit_id !== "NO_ACTIVE_VISIT" && !empty($activeVisit));
+$assignedNurseDetails = $hasActiveVisit ? $assignObj->getAssignedNurseDetails($visit_id) : null;
 
-// 3. Check if this is view-only mode (for discharged patients) - NOW AFTER visit_id is defined
-$viewOnly = isset($_GET['viewonly']) && $_GET['viewonly'] == 1;
+// 3. Check if this is view-only mode (for discharged patients)
+$viewOnly = (isset($_GET['viewonly']) && $_GET['viewonly'] == 1);
+if ($hasActiveVisit && isset($activeVisit['status']) && $activeVisit['status'] === 'completed') {
+    $viewOnly = true;
+}
 
 // If view-only mode, disable all form submissions
 if ($viewOnly) {
@@ -40,23 +52,18 @@ $msg = "";
 $msgType = "teal";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Nurses are limited to vitals; block clinical plan edits
+    if ($role === 'Nurse' && (isset($_POST['save_treatment']) || isset($_POST['update_treatment']) || isset($_POST['delete_treatment_confirm']) || isset($_POST['save_diagnosis']) || isset($_POST['update_diagnosis']) || isset($_POST['delete_diagnosis_confirm']))) {
+        $msg = "Nurses have read-only access to treatment plans and diagnoses.";
+        $msgType = "red";
+    } else {
     if (isset($_POST['request_nurse'])) {
-        $assignedNurse = $assignObj->autoAssignNurse($visit_id);
+            $assignObj->autoAssignNurse($visit_id);
+            $assignedNurseDetails = $assignObj->getAssignedNurseDetails($visit_id);
 
-        if ($assignedNurse) {
-            $nurseLabel = $assignedNurse['full_name'] ?? 'Assigned Nurse';
-            $nurseId = $assignedNurse['user_id'] ?? '';
-            $nurseEmail = $assignedNurse['email'] ?? '';
-
-            $nurseSummary = $nurseLabel;
-            if (!empty($nurseId)) {
-                $nurseSummary .= " (" . $nurseId . ")";
-            }
-            if (!empty($nurseEmail)) {
-                $nurseSummary .= " • " . $nurseEmail;
-            }
-
-            $msg = "Nursing support assigned -> " . $nurseSummary . ".";
+            if ($assignedNurseDetails) {
+                $load = $assignedNurseDetails['active_cases'] ?? 0;
+                $msg = "Nursing support assigned → " . ($assignedNurseDetails['full_name'] ?? 'Assigned Nurse') . " (" . ($assignedNurseDetails['email'] ?? 'N/A') . ") • Active cases: " . $load;
             $msgType = "indigo";
         } else {
             $msg = "No nurses available at the moment.";
@@ -122,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $msgType = "red";
         }
     }
+    }
 
     // Other standard actions...
     if (isset($_POST['save_triage'])) {
@@ -172,7 +180,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // We use the visitObj to update the database table 'medical_visits'
         $stmt = $db->prepare("UPDATE medical_visits SET visit_type = 'Inpatient' WHERE visit_id = ?");
         if ($stmt->execute([$visit_id])) {
-            $msg = "Patient status upgraded to Inpatient Admission successfully.";
+            $msgParts = ["Patient status upgraded to Inpatient."];
+            // Auto-assign nurse if missing
+            if (empty($activeVisit['assigned_nurse_id'])) {
+                $autoNurse = $assignObj->autoAssignNurse($visit_id);
+                $assignedNurseDetails = $assignObj->getAssignedNurseDetails($visit_id);
+                if ($autoNurse) {
+                    $msgParts[] = "Nurse assigned → " . ($autoNurse['full_name'] ?? 'Nurse');
+                } else {
+                    $msgParts[] = "No nurse available for assignment.";
+                }
+            }
+
+            if (method_exists($assignObj, 'createWardAssignmentRequest')) {
+                $assignObj->createWardAssignmentRequest($visit_id, $_SESSION['user_id']);
+                $msgParts[] = "Ward placement task sent to nursing.";
+            }
+
+            $msg = implode(' ', $msgParts);
             $msgType = "indigo";
             // Update the local variable so the UI reflects the change immediately without refresh
             $activeVisit['visit_type'] = 'Inpatient';
@@ -310,6 +335,23 @@ $actions = [
                                     <i data-lucide="x-circle" class="w-5 h-5"></i>
                                 </a>
             </div>
+<?php if ($assignedNurseDetails): ?>
+    <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 flex flex-col gap-2">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white text-indigo-600 flex items-center justify-center shadow-inner">
+                <i data-lucide="heart-pulse" class="w-4 h-4"></i>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-indigo-500">Assigned Nurse</p>
+                <p class="text-sm font-bold text-slate-800 leading-tight">
+                    <?php echo $assignedNurseDetails['full_name'] ?? 'N/A'; ?>
+                </p>
+                <p class="text-[11px] text-slate-500 font-semibold"><?php echo $assignedNurseDetails['email'] ?? 'N/A'; ?> •
+                    Load: <?php echo $assignedNurseDetails['active_cases'] ?? 0; ?></p>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
         </div>
     </div>
 
