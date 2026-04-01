@@ -1,44 +1,604 @@
 <?php
+// Reports Module
+// TB-focused reports with filtering, pagination, and CSV export
+
+if (!isset($db)) {
+    echo "<div class='p-6 bg-red-50 text-red-600 rounded-xl'>Database connection not available.</div>";
+    return;
+}
+
+// RBAC: Only allow specified roles to access reports
+$allowedRoles = ['Admin', 'Clerk', 'Doctor', 'Nurse', 'Lab Technician', 'Pharmacist', 'Radiologist'];
+$userRole = $_SESSION['role'] ?? '';
+if (!in_array($userRole, $allowedRoles)) {
+    echo "<div class='p-6 bg-yellow-50 text-yellow-800 rounded-xl'>You do not have permission to view reports.</div>";
+    return;
+}
+
 $reportTypes = [
-    ["title" => "Daily TB Intake Summary", "desc" => "TB suspect registrations and case entries", "icon" => "calendar", "color" => "emerald"],
-    ["title" => "TB Diagnosis Burden", "desc" => "Pulmonary, extrapulmonary, and MDR-TB trend", "icon" => "activity", "color" => "red"],
-    ["title" => "TB Drug Dispensing", "desc" => "Regimen dispatch and adherence risk monitoring", "icon" => "pill", "color" => "amber"],
-    ["title" => "TB Follow-up Outcomes", "desc" => "Missed visits, outcomes, and treatment continuity", "icon" => "clock", "color" => "teal"]
+    'patient-visits' => 'Patient Visit Report',
+    'doctor-workload' => 'Doctor Workload Report',
+    'nurse-assignment' => 'Nurse Assignment Report',
+    'lab-requests' => 'Lab Requests Report',
+    'radiology-requests' => 'Radiology Requests Report',
+    'pharmacy-dispensing' => 'Pharmacy Dispensing Report',
+    'referral' => 'Referral Report',
+    'discharge' => 'Discharge Summary Report',
+    'staff-activity' => 'Staff Activity Report'
 ];
+
+$type = isset($_GET['type']) && array_key_exists($_GET['type'], $reportTypes) ? $_GET['type'] : 'patient-visits';
+
+// Filters
+$start = isset($_GET['start_date']) ? $_GET['start_date'] : '';
+$end = isset($_GET['end_date']) ? $_GET['end_date'] : '';
+$status = isset($_GET['status']) ? $_GET['status'] : '';
+$search = isset($_GET['q']) ? trim($_GET['q']) : '';
+
+// Pagination
+$limit = 10;
+$page = isset($_GET['p']) ? max(1, (int) $_GET['p']) : 1;
+$offset = ($page - 1) * $limit;
+
+$params = [];
+
+function output_csv($filename, $headers, $rows)
+{
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    $out = fopen('php://output', 'w');
+    fputcsv($out, $headers);
+    foreach ($rows as $r)
+        fputcsv($out, $r);
+    fclose($out);
+    exit;
+}
+
+function output_xlsx($filename, $headers, $rows)
+{
+    // Use PhpSpreadsheet if available
+    if (!class_exists('\PhpOffice\PhpSpreadsheet\Spreadsheet')) {
+        echo "<div class='p-6 bg-yellow-50 text-yellow-800 rounded-xl'>XLSX export requires PhpSpreadsheet. Run:<br><code>composer require phpoffice/phpspreadsheet</code></div>";
+        return;
+    }
+
+
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // helper: convert 1-based column index to Excel column letters
+    $colLetter = function ($col) {
+        $letters = '';
+        while ($col > 0) {
+            $mod = ($col - 1) % 26;
+            $letters = chr(65 + $mod) . $letters;
+            $col = (int) (($col - $mod - 1) / 26);
+        }
+        return $letters;
+    };
+
+    // headers
+    $col = 1;
+    foreach ($headers as $h) {
+        $cell = $colLetter($col) . '1';
+        $sheet->setCellValue($cell, $h);
+        $col++;
+    }
+
+    $rowNum = 2;
+    foreach ($rows as $r) {
+        $col = 1;
+        foreach ($r as $c) {
+            $cell = $colLetter($col) . $rowNum;
+            $sheet->setCellValue($cell, $c);
+            $col++;
+        }
+        $rowNum++;
+    }
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+    $writer->save('php://output');
+    exit;
+}
+
+$rows = [];
+$total = 0;
+
+switch ($type) {
+    case 'patient-visits':
+        $where = 'WHERE 1=1';
+        if ($start && $end) {
+            $where .= ' AND v.visit_date BETWEEN :start AND :end';
+            $params[':start'] = $start;
+            $params[':end'] = $end;
+        }
+        if ($status) {
+            $where .= ' AND v.status = :status';
+            $params[':status'] = $status;
+        }
+        if ($search) {
+            $where .= ' AND (p.full_name LIKE :q OR p.medical_record_number LIKE :q)';
+            $params[':q'] = "%$search%";
+        }
+
+        $countStmt = $db->prepare("SELECT COUNT(*) FROM medical_visits v JOIN patients p ON v.patient_id = p.patient_id $where");
+        $countStmt->execute($params);
+        $total = $countStmt->fetchColumn();
+
+        $sql = "SELECT v.visit_id, v.visit_date, p.full_name, p.medical_record_number, v.visit_type, v.status FROM medical_visits v JOIN patients p ON v.patient_id = p.patient_id $where ORDER BY v.visit_date DESC LIMIT :limit OFFSET :offset";
+        $stmt = $db->prepare($sql);
+        foreach ($params as $k => $v)
+            $stmt->bindValue($k, $v);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (isset($_GET['export'])) {
+            $headers = ['Visit ID', 'Visit Date', 'Patient', 'MRN', 'Visit Type', 'Status'];
+            $out = [];
+            foreach ($rows as $r)
+                $out[] = [$r['visit_id'], $r['visit_date'], $r['full_name'], $r['medical_record_number'], $r['visit_type'], $r['status']];
+            if ($_GET['export'] === 'csv')
+                output_csv('patient_visits.csv', $headers, $out);
+            if ($_GET['export'] === 'xlsx')
+                output_xlsx('patient_visits.xlsx', $headers, $out);
+        }
+        break;
+
+    case 'doctor-workload':
+        $where = 'WHERE 1=1';
+        if ($start && $end) {
+            $where .= ' AND v.visit_date BETWEEN :start AND :end';
+            $params[':start'] = $start;
+            $params[':end'] = $end;
+        }
+        if ($search) {
+            $where .= ' AND (u.full_name LIKE :q)';
+            $params[':q'] = "%$search%";
+        }
+
+        $countStmt = $db->prepare("SELECT COUNT(DISTINCT assigned_doctor_id) FROM medical_visits v JOIN users u ON v.assigned_doctor_id = u.user_id $where");
+        $countStmt->execute($params);
+        $total = $countStmt->fetchColumn();
+
+        $sql = "SELECT v.assigned_doctor_id AS user_id, u.full_name, COUNT(*) AS visits FROM medical_visits v JOIN users u ON v.assigned_doctor_id = u.user_id $where GROUP BY v.assigned_doctor_id ORDER BY visits DESC LIMIT :limit OFFSET :offset";
+        $stmt = $db->prepare($sql);
+        foreach ($params as $k => $v)
+            $stmt->bindValue($k, $v);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (isset($_GET['export'])) {
+            $headers = ['Doctor ID', 'Doctor Name', 'Visit Count'];
+            $out = [];
+            foreach ($rows as $r)
+                $out[] = [$r['user_id'], $r['full_name'], $r['visits']];
+            if ($_GET['export'] === 'csv')
+                output_csv('doctor_workload.csv', $headers, $out);
+            if ($_GET['export'] === 'xlsx')
+                output_xlsx('doctor_workload.xlsx', $headers, $out);
+        }
+        break;
+
+    case 'nurse-assignment':
+        $where = 'WHERE 1=1';
+        if ($start && $end) {
+            $where .= ' AND v.visit_date BETWEEN :start AND :end';
+            $params[':start'] = $start;
+            $params[':end'] = $end;
+        }
+        if ($search) {
+            $where .= ' AND (u.full_name LIKE :q)';
+            $params[':q'] = "%$search%";
+        }
+
+        $countStmt = $db->prepare("SELECT COUNT(DISTINCT assigned_nurse_id) FROM medical_visits v JOIN users u ON v.assigned_nurse_id = u.user_id $where");
+        $countStmt->execute($params);
+        $total = $countStmt->fetchColumn();
+
+        $sql = "SELECT v.assigned_nurse_id AS user_id, u.full_name, COUNT(*) AS assigned FROM medical_visits v JOIN users u ON v.assigned_nurse_id = u.user_id $where GROUP BY v.assigned_nurse_id ORDER BY assigned DESC LIMIT :limit OFFSET :offset";
+        $stmt = $db->prepare($sql);
+        foreach ($params as $k => $v)
+            $stmt->bindValue($k, $v);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (isset($_GET['export'])) {
+            $headers = ['Nurse ID', 'Nurse Name', 'Assigned Count'];
+            $out = [];
+            foreach ($rows as $r)
+                $out[] = [$r['user_id'], $r['full_name'], $r['assigned']];
+            if ($_GET['export'] === 'csv')
+                output_csv('nurse_assignment.csv', $headers, $out);
+            if ($_GET['export'] === 'xlsx')
+                output_xlsx('nurse_assignment.xlsx', $headers, $out);
+        }
+        break;
+
+    case 'lab-requests':
+        $where = 'WHERE 1=1';
+        if ($start && $end) {
+            $where .= ' AND lr.request_date BETWEEN :start AND :end';
+            $params[':start'] = $start;
+            $params[':end'] = $end;
+        }
+        if ($status) {
+            $where .= ' AND lr.status = :status';
+            $params[':status'] = $status;
+        }
+        if ($search) {
+            $where .= ' AND (p.full_name LIKE :q OR lr.test_type LIKE :q)';
+            $params[':q'] = "%$search%";
+        }
+
+        $countStmt = $db->prepare("SELECT COUNT(*) FROM lab_requests lr JOIN medical_visits v ON lr.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id $where");
+        $countStmt->execute($params);
+        $total = $countStmt->fetchColumn();
+
+        $sql = "SELECT lr.request_id, lr.request_date, p.full_name AS patient, lr.test_type, lr.status FROM lab_requests lr JOIN medical_visits v ON lr.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id $where ORDER BY lr.request_date DESC LIMIT :limit OFFSET :offset";
+        $stmt = $db->prepare($sql);
+        foreach ($params as $k => $v)
+            $stmt->bindValue($k, $v);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (isset($_GET['export'])) {
+            $headers = ['Request ID', 'Request Date', 'Patient', 'Test Type', 'Status'];
+            $out = [];
+            foreach ($rows as $r)
+                $out[] = [$r['request_id'], $r['request_date'], $r['patient'], $r['test_type'], $r['status']];
+            if ($_GET['export'] === 'csv')
+                output_csv('lab_requests.csv', $headers, $out);
+            if ($_GET['export'] === 'xlsx')
+                output_xlsx('lab_requests.xlsx', $headers, $out);
+        }
+        break;
+
+    case 'radiology-requests':
+        $where = 'WHERE 1=1';
+        if ($start && $end) {
+            $where .= ' AND rr.request_date BETWEEN :start AND :end';
+            $params[':start'] = $start;
+            $params[':end'] = $end;
+        }
+        if ($status) {
+            $where .= ' AND rr.status = :status';
+            $params[':status'] = $status;
+        }
+        if ($search) {
+            $where .= ' AND (p.full_name LIKE :q OR rr.exam_type LIKE :q)';
+            $params[':q'] = "%$search%";
+        }
+
+        $countStmt = $db->prepare("SELECT COUNT(*) FROM radiology_requests rr JOIN medical_visits v ON rr.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id $where");
+        $countStmt->execute($params);
+        $total = $countStmt->fetchColumn();
+
+        $sql = "SELECT rr.request_id, rr.request_date, p.full_name AS patient, rr.exam_type, rr.status FROM radiology_requests rr JOIN medical_visits v ON rr.visit_id = v.visit_id JOIN patients p ON v.patient_id = p.patient_id $where ORDER BY rr.request_date DESC LIMIT :limit OFFSET :offset";
+        $stmt = $db->prepare($sql);
+        foreach ($params as $k => $v)
+            $stmt->bindValue($k, $v);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (isset($_GET['export'])) {
+            $headers = ['Request ID', 'Request Date', 'Patient', 'Exam Type', 'Status'];
+            $out = [];
+            foreach ($rows as $r)
+                $out[] = [$r['request_id'], $r['request_date'], $r['patient'], $r['exam_type'], $r['status']];
+            if ($_GET['export'] === 'csv')
+                output_csv('radiology_requests.csv', $headers, $out);
+            if ($_GET['export'] === 'xlsx')
+                output_xlsx('radiology_requests.xlsx', $headers, $out);
+        }
+        break;
+
+    case 'pharmacy-dispensing':
+        $where = 'WHERE 1=1';
+        if ($start && $end) {
+            $where .= ' AND dr.dispense_date BETWEEN :start AND :end';
+            $params[':start'] = $start;
+            $params[':end'] = $end;
+        }
+        if ($search) {
+            $where .= ' AND (p.full_name LIKE :q OR pr.medication_name LIKE :q)';
+            $params[':q'] = "%$search%";
+        }
+
+        $countStmt = $db->prepare("SELECT COUNT(*) FROM dispensing_records dr LEFT JOIN prescriptions pr ON dr.prescription_id = pr.prescription_id LEFT JOIN medical_visits v ON pr.visit_id = v.visit_id LEFT JOIN patients p ON v.patient_id = p.patient_id $where");
+        $countStmt->execute($params);
+        $total = $countStmt->fetchColumn();
+
+        $sql = "SELECT dr.dispense_id, dr.dispense_date, p.full_name AS patient, pr.medication_name, dr.pharmacist_id FROM dispensing_records dr LEFT JOIN prescriptions pr ON dr.prescription_id = pr.prescription_id LEFT JOIN medical_visits v ON pr.visit_id = v.visit_id LEFT JOIN patients p ON v.patient_id = p.patient_id $where ORDER BY dr.dispense_date DESC LIMIT :limit OFFSET :offset";
+        $stmt = $db->prepare($sql);
+        foreach ($params as $k => $v)
+            $stmt->bindValue($k, $v);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (isset($_GET['export'])) {
+            $headers = ['Dispense ID', 'Dispense Date', 'Patient', 'Medication', 'Pharmacist ID'];
+            $out = [];
+            foreach ($rows as $r)
+                $out[] = [$r['dispense_id'], $r['dispense_date'], $r['patient'], $r['medication_name'], $r['pharmacist_id']];
+            if ($_GET['export'] === 'csv')
+                output_csv('pharmacy_dispensing.csv', $headers, $out);
+            if ($_GET['export'] === 'xlsx')
+                output_xlsx('pharmacy_dispensing.xlsx', $headers, $out);
+        }
+        break;
+
+    case 'referral':
+        $where = 'WHERE 1=1';
+        if ($start && $end) {
+            $where .= ' AND r.referral_date BETWEEN :start AND :end';
+            $params[':start'] = $start;
+            $params[':end'] = $end;
+        }
+        if ($status) {
+            $where .= ' AND r.status = :status';
+            $params[':status'] = $status;
+        }
+        if ($search) {
+            $where .= ' AND (p.full_name LIKE :q OR r.referral_id LIKE :q)';
+            $params[':q'] = "%$search%";
+        }
+
+        $countStmt = $db->prepare("SELECT COUNT(*) FROM referrals r JOIN patients p ON r.patient_id = p.patient_id $where");
+        $countStmt->execute($params);
+        $total = $countStmt->fetchColumn();
+
+        $sql = "SELECT r.referral_id, r.referral_date, p.full_name AS patient, r.target_facility, r.priority, r.status FROM referrals r JOIN patients p ON r.patient_id = p.patient_id $where ORDER BY r.referral_date DESC LIMIT :limit OFFSET :offset";
+        $stmt = $db->prepare($sql);
+        foreach ($params as $k => $v)
+            $stmt->bindValue($k, $v);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (isset($_GET['export'])) {
+            $headers = ['Referral ID', 'Referral Date', 'Patient', 'Target Facility', 'Priority', 'Status'];
+            $out = [];
+            foreach ($rows as $r)
+                $out[] = [$r['referral_id'], $r['referral_date'], $r['patient'], $r['target_facility'], $r['priority'], $r['status']];
+            if ($_GET['export'] === 'csv')
+                output_csv('referral_report.csv', $headers, $out);
+            if ($_GET['export'] === 'xlsx')
+                output_xlsx('referral_report.xlsx', $headers, $out);
+        }
+        break;
+
+    case 'discharge':
+        $where = 'WHERE 1=1';
+        if ($start && $end) {
+            $where .= ' AND d.discharged_at BETWEEN :start AND :end';
+            $params[':start'] = $start;
+            $params[':end'] = $end;
+        }
+        if ($search) {
+            $where .= ' AND (p.full_name LIKE :q OR d.discharge_id LIKE :q)';
+            $params[':q'] = "%$search%";
+        }
+
+        $countStmt = $db->prepare("SELECT COUNT(*) FROM discharges d JOIN patients p ON d.patient_id = p.patient_id $where");
+        $countStmt->execute($params);
+        $total = $countStmt->fetchColumn();
+
+        $sql = "SELECT d.discharge_id, d.discharged_at, p.full_name AS patient, d.summary_of_care, d.instructions FROM discharges d JOIN patients p ON d.patient_id = p.patient_id $where ORDER BY d.discharged_at DESC LIMIT :limit OFFSET :offset";
+        $stmt = $db->prepare($sql);
+        foreach ($params as $k => $v)
+            $stmt->bindValue($k, $v);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (isset($_GET['export'])) {
+            $headers = ['Discharge ID', 'Discharged At', 'Patient', 'Summary', 'Instructions'];
+            $out = [];
+            foreach ($rows as $r)
+                $out[] = [$r['discharge_id'], $r['discharged_at'], $r['patient'], $r['summary_of_care'], $r['instructions']];
+            if ($_GET['export'] === 'csv')
+                output_csv('discharge_summary.csv', $headers, $out);
+            if ($_GET['export'] === 'xlsx')
+                output_xlsx('discharge_summary.xlsx', $headers, $out);
+        }
+        break;
+
+    case 'staff-activity':
+        $where = 'WHERE 1=1';
+        if ($start && $end) {
+            $where .= ' AND sl.changed_at BETWEEN :start AND :end';
+            $params[':start'] = $start;
+            $params[':end'] = $end;
+        }
+        if ($search) {
+            $where .= ' AND (u.full_name LIKE :q)';
+            $params[':q'] = "%$search%";
+        }
+
+        $countStmt = $db->prepare("SELECT COUNT(DISTINCT sl.user_id) FROM status_logs sl JOIN users u ON sl.user_id = u.user_id $where");
+        $countStmt->execute($params);
+        $total = $countStmt->fetchColumn();
+
+        $sql = "SELECT sl.user_id, u.full_name, COUNT(*) AS changes FROM status_logs sl JOIN users u ON sl.user_id = u.user_id $where GROUP BY sl.user_id ORDER BY changes DESC LIMIT :limit OFFSET :offset";
+        $stmt = $db->prepare($sql);
+        foreach ($params as $k => $v)
+            $stmt->bindValue($k, $v);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (isset($_GET['export'])) {
+            $headers = ['User ID', 'Full Name', 'Change Count'];
+            $out = [];
+            foreach ($rows as $r)
+                $out[] = [$r['user_id'], $r['full_name'], $r['changes']];
+            if ($_GET['export'] === 'csv')
+                output_csv('staff_activity.csv', $headers, $out);
+            if ($_GET['export'] === 'xlsx')
+                output_xlsx('staff_activity.xlsx', $headers, $out);
+        }
+        break;
+
+    default:
+        $rows = [];
+}
+
 ?>
 
-<div class="space-y-8">
-    <div>
-        <h1 class="text-3xl font-bold text-gray-800">TB Program Intelligence & Reports</h1>
-        <p class="text-gray-500 font-medium italic">Generate data-driven outputs for tuberculosis program management</p>
+<div class="space-y-6 bg-[#f9fafb] min-h-screen p-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight"><?= htmlspecialchars($reportTypes[$type]) ?>
+            </h1>
+            <p class="text-sm text-slate-500">Manage and export your hospital data insights.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            
+            <div class="flex gap-2">
+    <a href="modules/reports/export.php?<?php echo http_build_query(array_merge($_GET, ['export' => 'xlsx'])); ?>"
+                    class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-black ">
+                    Export XLSX
+                </a>
+            
+                <a href="modules/reports/export.php?<?php echo http_build_query(array_merge($_GET, ['export' => 'csv'])); ?>"
+                class="px-4 py-2 bg-emrald-600 text-white rounded-lg text-xs font-black ">
+                Export CSV
+            </a>
+            </div>
+        </div>
     </div>
 
-    <!-- Report Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <?php foreach ($reportTypes as $report): ?>
-            <div
-                class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm flex items-start gap-6 hover:shadow-xl hover:scale-[1.01] transition-all cursor-pointer group">
-                <div
-                    class="w-16 h-16 bg-<?php echo $report['color']; ?>-50 text-<?php echo $report['color']; ?>-500 rounded-3xl flex items-center justify-center shrink-0 group-hover:bg-<?php echo $report['color']; ?>-500 group-hover:text-white transition-colors">
-                    <i data-lucide="<?php echo $report['icon']; ?>" class="w-8 h-8"></i>
-                </div>
-                <div class="flex-1">
-                    <h3 class="font-bold text-gray-800 text-lg mb-1">
-                        <?php echo $report['title']; ?>
-                    </h3>
-                    <p class="text-sm text-gray-400 mb-6 font-medium">
-                        <?php echo $report['desc']; ?>
-                    </p>
-                    <div class="flex items-center gap-3">
-                        <button
-                            class="px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-xs font-bold hover:bg-gray-100">Preview</button>
-                        <button
-                            class="px-4 py-2 bg-teal-50 text-teal-600 rounded-xl text-xs font-bold hover:bg-teal-600 hover:text-white transition-all">Download
-                            PDF</button>
-                    </div>
+    <div class="border-b border-slate-200 overflow-x-auto no-scrollbar">
+        <div class="flex gap-8 min-w-max">
+            <?php foreach ($reportTypes as $key => $label):
+                $isActive = ($type === $key);
+                $cleanLabel = str_replace(' Report', '', $label); // Shorten for tabs
+                ?>
+                <a href="?page=reports&type=<?= $key ?>"
+                    class="pb-4 text-sm font-medium transition-all relative <?= $isActive ? 'text-primary-600' : 'text-slate-500 hover:text-slate-700' ?>">
+                    <?= htmlspecialchars($cleanLabel) ?>
+                    <?php if ($isActive): ?>
+                        <div class="absolute bottom-0 left-0 w-full h-0.5 bg-primary-600 rounded-full"></div>
+                    <?php endif; ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+            <input type="hidden" name="page" value="reports">
+            <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
+
+            <div class="md:col-span-3">
+                <label class="block text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1.5 ml-1">Start Date</label>
+                <input type="date" name="start_date" value="<?= htmlspecialchars($start) ?>"
+                    class="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none">
+            </div>
+
+            <div class="md:col-span-3">
+                <label class="block text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1.5 ml-1">End Date</label>
+                <input type="date" name="end_date" value="<?= htmlspecialchars($end) ?>"
+                    class="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none">
+            </div>
+
+            <div class="md:col-span-4">
+                <label class="block text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1.5 ml-1">Search Records</label>
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                    <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Search name, ID or MRN..."
+            class="w-full pl-10 pr-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none">
+    </div>
+            </div>
+
+            <div class="md:col-span-2">
+                <button type="submit" class="w-full bg-slate-800 text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-900 transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="filter" class="w-4 h-4"></i> Apply Filter
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200">
+                        <?php if (!empty($rows)): ?>
+                            <?php foreach (array_keys($rows[0]) as $header): ?>
+                                <th class="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+                                    <?= str_replace(['_', 'id'], [' ', 'ID'], $header) ?>
+                                </th>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    <?php if (empty($rows)): ?>
+                        <tr>
+                            <td colspan="10" class="px-6 py-12 text-center text-slate-400 text-sm">No records found for the selected
+                                criteria.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($rows as $row): ?>
+                            <tr class="hover:bg-slate-50 transition-colors group">
+                                <?php foreach ($row as $key => $val): ?>
+                                    <td class="px-6 py-4 text-sm text-slate-600">
+                                        <?php if ($key === 'status'): ?>
+                                            <span
+                                                class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide <?= $val === 'active' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600' ?>">
+                                                <?= htmlspecialchars($val) ?>
+                                            </span>
+                                        <?php elseif ($key === 'full_name' || $key === 'patient'): ?>
+                                            <span class="font-semibold text-slate-900"><?= htmlspecialchars($val) ?></span>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($val) ?>
+                                        <?php endif; ?>
+                                    </td>
+                                <?php endforeach; ?>
+                    </tr>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                        </tbody>
+                        </table>
+        </div>
+
+        <?php if ($total > $limit): ?>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                <p class="text-xs text-slate-500">Showing <?= count($rows) ?> of <?= $total ?> results</p>
+                <div class="flex gap-1">
+                    <?php for ($i = 1; $i <= ceil($total / $limit); $i++): ?>
+                        <a href="?<?= http_build_query(array_merge($_GET, ['p' => $i])) ?>"
+                            class="w-8 h-8 flex items-center justify-center rounded-md text-xs font-medium transition-all <?= $page == $i ? 'bg-primary-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-primary-400' ?>">
+                            <?= $i ?>
+                        </a>
+                    <?php endfor; ?>
                 </div>
             </div>
-        <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </div>
+
+<style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
 <script>lucide.createIcons();</script>

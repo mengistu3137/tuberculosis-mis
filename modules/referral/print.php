@@ -89,24 +89,24 @@ ob_start();
 <head>
     <style>
         body { font-family: 'Helvetica', sans-serif; font-size: 12px; color: #333; line-height: 1.4; }
-        .header { border-bottom: 2px solid #2563eb; padding-bottom: 10px; margin-bottom: 20px; }
+        .header { border-bottom: 2px solid #2dd4bf; padding-bottom: 10px; margin-bottom: 20px; }
         .header table { width: 100%; }
         .title { font-size: 20px; font-weight: bold; color: #1f2937; }
-        .section-title { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #2563eb; margin-top: 15px; border-bottom: 1px solid #e5e7eb; }
+        .section-title { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #2dd4bf; margin-top: 15px; border-bottom: 1px solid #e5e7eb; }
         .grid { width: 100%; margin-top: 10px; }
         .grid td { width: 50%; vertical-align: top; padding: 5px 0; }
         .label { font-size: 10px; color: #6b7280; font-weight: bold; text-transform: uppercase; }
         .value { font-size: 12px; font-weight: bold; color: #111; }
         .list-item { margin-bottom: 3px; }
 
-             .footer { position: fixed; bottom: 0; width: 100%; border-top: 2px solid #2563eb; padding-top: 10px; font-size: 9px; }
+             .footer { position: fixed; bottom: 0; width: 100%; border-top: 2px solid #2dd4bf; padding-top: 10px; font-size: 9px; }
         .logo {
         width: 80px; /* Adjust size as needed */
         height: auto;
     }
     .header-table {
         width: 100%;
-        border-bottom: 2px solid #2563eb;
+        border-bottom: 2px solid #2dd4bf;
         padding-bottom: 10px;
         margin-bottom: 20px;
     }

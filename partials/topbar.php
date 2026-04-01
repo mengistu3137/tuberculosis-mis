@@ -92,7 +92,7 @@ try {
                     <?php echo $_SESSION['role']; ?></p>
             </div>
 
-            <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-primary-600 to-primary-800 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-primary-200/40 border-2 border-white ring-1 ring-gray-100">
+            <div class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-primary-600 to-primary-800 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-primary-200/40 border-2 border-white ring-1 ring-gray-100">
                 <?php echo strtoupper(substr($_SESSION['full_name'], 0, 1)); ?>
             </div>
         </div>

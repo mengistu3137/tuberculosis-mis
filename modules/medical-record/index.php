@@ -19,18 +19,37 @@
         $visit_id = $visitObj->create($_POST['patient_id'], $_POST['visit_type'], $_POST['clinical_notes']);
 
         if ($visit_id) {
-            // ONLY assign the Doctor at this stage
-            $assignObj->autoAssignDoctor($visit_id);
+            $assignedDoctor = $assignObj->autoAssignDoctor($visit_id);
 
-            $msg = "Check-in successful. Patient assigned to Physician.";
-            $msgType = "emerald";
+            if ($assignedDoctor) {
+                $doctorLabel = $assignedDoctor['full_name'] ?? 'Assigned Clinician';
+                $doctorId = $assignedDoctor['user_id'] ?? '';
+                $doctorEmail = $assignedDoctor['email'] ?? '';
+
+                $doctorSummary = $doctorLabel;
+                if (!empty($doctorId)) {
+                    $doctorSummary .= " (" . $doctorId . ")";
+                }
+                if (!empty($doctorEmail)) {
+                    $doctorSummary .= " • " . $doctorEmail;
+                }
+
+                $msg = "Check-in successful. Assigned Doctor -> " . $doctorSummary . ".";
+                $msgType = "emerald";
+                $_SESSION['flash_msg'] = $msg;
+                $_SESSION['flash_type'] = $msgType;
+            } else {
+                $msg = "Check-in successful, but no clinician was available for auto-assignment.";
+                $msgType = "orange";
+                $_SESSION['flash_msg'] = $msg;
+                $_SESSION['flash_type'] = $msgType;
+            }
 
             echo "<script>
-            setTimeout(function() {
-                window.location.href='index.php?page=visit&status=success&vid=$visit_id';
-            }, 1000);
-        </script>";
-            exit;
+                setTimeout(function() {
+                    window.location.href='index.php?page=visit&status=success&vid=$visit_id';
+                }, 2000);
+            </script>";
         }
     }
     ?>

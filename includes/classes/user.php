@@ -219,11 +219,53 @@ class User
     // --- BULK DELETE ---
     public function bulkDelete($ids)
     {
+        // Prevent self-deletion and ensure there are ids
+        $ids = array_values(array_filter($ids, function ($v) {
+            return $v !== $_SESSION['user_id'];
+        }));
+        if (empty($ids))
+            return false;
+
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
-        $query = "DELETE FROM " . $this->table . " WHERE user_id IN ($placeholders) AND user_id != ?";
-        $stmt = $this->conn->prepare($query);
-        // Execute with IDs + current session ID to prevent self-deletion
-        return $stmt->execute(array_merge($ids, [$_SESSION['user_id']]));
+
+        try {
+            $this->conn->beginTransaction();
+
+            // Nullify FK references in bulk for the selected users
+            $updates = [
+                "UPDATE medical_visits SET assigned_nurse_id = NULL WHERE assigned_nurse_id IN ($placeholders)",
+                "UPDATE medical_visits SET assigned_doctor_id = NULL WHERE assigned_doctor_id IN ($placeholders)",
+                "UPDATE lab_requests SET assigned_tech_id = NULL WHERE assigned_tech_id IN ($placeholders)",
+                "UPDATE lab_requests SET doctor_id = NULL WHERE doctor_id IN ($placeholders)",
+                "UPDATE lab_results SET technician_id = NULL WHERE technician_id IN ($placeholders)",
+                "UPDATE radiology_requests SET assigned_rad_id = NULL WHERE assigned_rad_id IN ($placeholders)",
+                "UPDATE radiology_requests SET doctor_id = NULL WHERE doctor_id IN ($placeholders)",
+                "UPDATE radiology_results SET radiologist_id = NULL WHERE radiologist_id IN ($placeholders)",
+                "UPDATE diagnoses SET doctor_id = NULL WHERE doctor_id IN ($placeholders)",
+                "UPDATE prescriptions SET prescribed_by = NULL WHERE prescribed_by IN ($placeholders)",
+                "UPDATE discharges SET discharged_by = NULL WHERE discharged_by IN ($placeholders)",
+                "UPDATE appointments SET doctor_id = NULL WHERE doctor_id IN ($placeholders)",
+                "UPDATE referrals SET source_doctor_id = NULL WHERE source_doctor_id IN ($placeholders)"
+            ];
+
+            foreach ($updates as $u) {
+                $stmt = $this->conn->prepare($u);
+                $stmt->execute($ids);
+            }
+
+            // Delete users
+            $delQuery = "DELETE FROM " . $this->table . " WHERE user_id IN ($placeholders)";
+            $delStmt = $this->conn->prepare($delQuery);
+            $res = $delStmt->execute($ids);
+
+            $this->conn->commit();
+            return $res;
+        } catch (PDOException $e) {
+            if ($this->conn->inTransaction())
+                $this->conn->rollBack();
+            error_log('Bulk delete error: ' . $e->getMessage());
+            return false;
+        }
     }
 
 
@@ -330,8 +372,47 @@ class User
     {
         if ($id == $_SESSION['user_id'])
             return false;
-        $stmt = $this->conn->prepare("DELETE FROM users WHERE user_id = :id");
-        $stmt->bindParam(':id', $id);
-        return $stmt->execute();
+        try {
+            // Start transaction to safely nullify FK references then delete
+            $this->conn->beginTransaction();
+
+            // Nullify references across tables that reference users.user_id
+            $updates = [
+                "UPDATE medical_visits SET assigned_nurse_id = NULL WHERE assigned_nurse_id = :id",
+                "UPDATE medical_visits SET assigned_doctor_id = NULL WHERE assigned_doctor_id = :id",
+                "UPDATE lab_requests SET assigned_tech_id = NULL WHERE assigned_tech_id = :id",
+                "UPDATE lab_requests SET doctor_id = NULL WHERE doctor_id = :id",
+                "UPDATE lab_results SET technician_id = NULL WHERE technician_id = :id",
+                "UPDATE radiology_requests SET assigned_rad_id = NULL WHERE assigned_rad_id = :id",
+                "UPDATE radiology_requests SET doctor_id = NULL WHERE doctor_id = :id",
+                "UPDATE radiology_results SET radiologist_id = NULL WHERE radiologist_id = :id",
+                "UPDATE diagnoses SET doctor_id = NULL WHERE doctor_id = :id",
+                "UPDATE prescriptions SET prescribed_by = NULL WHERE prescribed_by = :id",
+                "UPDATE discharges SET discharged_by = NULL WHERE discharged_by = :id",
+                "UPDATE appointments SET doctor_id = NULL WHERE doctor_id = :id",
+                "UPDATE referrals SET source_doctor_id = NULL WHERE source_doctor_id = :id"
+            ];
+
+            foreach ($updates as $u) {
+                $stmt = $this->conn->prepare($u);
+                $stmt->bindParam(':id', $id);
+                $stmt->execute();
+            }
+
+            // Finally delete user
+            $del = $this->conn->prepare("DELETE FROM users WHERE user_id = :id");
+            $del->bindParam(':id', $id);
+            $res = $del->execute();
+
+            $this->conn->commit();
+            return $res;
+        } catch (PDOException $e) {
+            // Rollback on error and log for debugging
+            if ($this->conn->inTransaction()) {
+                $this->conn->rollBack();
+            }
+            error_log('User delete error: ' . $e->getMessage());
+            return false;
+        }
     }
 }

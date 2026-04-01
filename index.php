@@ -51,9 +51,12 @@ $routes = [
     'discharge' => 'modules/medical-record/discharge.php',
     'visit' => 'modules/medical-record/visits.php',
     'record-vital' => 'modules/medical-record/record-vital.php',
+    'ward-assignment' => 'modules/medical-record/ward-assignment.php',
     'radiology' => 'modules/radiology/index.php',
     'radiology-result' => 'modules/radiology/result.php',
+    'upload-images' => 'modules/radiology/upload-images.php',
     'referral-print' => 'modules/referral/print.php',
+    'reports' => 'modules/reports/index.php',
    
 ];
 

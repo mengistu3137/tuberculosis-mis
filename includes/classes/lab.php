@@ -28,7 +28,7 @@ class Lab
     // 1. Count all requests (for pagination math)
     public function countAllRequests()
     {
-        $query = "SELECT COUNT(*) FROM " . $this->requestTable;
+        $query = "SELECT COUNT(*) FROM " . $this->requestTable . " WHERE status = 'pending'";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt->fetchColumn();
@@ -42,7 +42,8 @@ class Lab
                   JOIN medical_visits v ON r.visit_id = v.visit_id
                   JOIN patients p ON v.patient_id = p.patient_id
                   JOIN users u ON r.doctor_id = u.user_id
-                  ORDER BY r.status DESC, r.created_at DESC 
+                  WHERE r.status = 'pending'
+                  ORDER BY r.created_at DESC 
                   LIMIT :limit OFFSET :offset";
 
         $stmt = $this->conn->prepare($query);

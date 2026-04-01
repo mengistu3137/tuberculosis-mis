@@ -77,32 +77,103 @@ class AssignmentEngine
     }
     private function findLeastLoadedStaff($role)
     {
-        // Query to find active staff of a specific role and count their current assigned tasks
-        // We only look for staff who are 'active'
-        $query = "SELECT u.user_id, COUNT(v.visit_id) as current_load 
-                  FROM users u 
-                  LEFT JOIN medical_visits v ON u.user_id = v.assigned_doctor_id 
-                  -- Logic: Only count visits that are NOT yet discharged/completed
+        // Map to the correct visit column for the role-specific workload
+        $columnMap = [
+            'Doctor' => 'assigned_doctor_id',
+            'Nurse' => 'assigned_nurse_id',
+        ];
+
+        if (!isset($columnMap[$role])) {
+            return null;
+        }
+
+        $visitColumn = $columnMap[$role];
+
+        // Count only active visits against active staff
+        $query = "SELECT u.user_id, u.full_name, u.email, u.role, COALESCE(COUNT(v.visit_id), 0) AS current_load
+                  FROM users u
+                  LEFT JOIN medical_visits v ON u.user_id = v.$visitColumn AND v.status = 'active'
                   WHERE u.role = :role AND u.status = 'active'
-                  GROUP BY u.user_id 
-                  ORDER BY current_load ASC 
+                  GROUP BY u.user_id, u.full_name, u.email, u.role
+                  ORDER BY current_load ASC, u.user_id ASC
                   LIMIT 1";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':role', $role);
         $stmt->execute();
 
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+    private function logCareTeam($visit_id, $staff_id, $role)
+    {
+        $sql = "INSERT INTO visit_care_team_history (visit_id, staff_id, role) VALUES (:vid, :sid, :role)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            ':vid' => $visit_id,
+            ':sid' => $staff_id,
+            ':role' => $role
+        ]);
+    }
+
+    private function countActiveCases($column, $uid)
+    {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM medical_visits WHERE $column = ? AND status = 'active'");
+        $stmt->execute([$uid]);
+        return (int) $stmt->fetchColumn();
+    }
+
+    private function getAssignedStaffDetails($visit_id, $role)
+    {
+        $columnMap = [
+            'Doctor' => 'assigned_doctor_id',
+            'Nurse' => 'assigned_nurse_id',
+        ];
+
+        if (!isset($columnMap[$role])) {
+            return null;
+        }
+
+        $column = $columnMap[$role];
+
+        $query = "SELECT u.user_id, u.full_name, u.email, u.role
+                  FROM medical_visits v
+                  JOIN users u ON v.$column = u.user_id
+                  WHERE v.visit_id = :visit_id
+                  LIMIT 1";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':visit_id', $visit_id);
+        $stmt->execute();
+
         $staff = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $staff ? $staff['user_id'] : null;
+        if ($staff) {
+            $staff['active_cases'] = $this->countActiveCases($column, $staff['user_id']);
+        }
+
+        return $staff ?: null;
+    }
+
+    public function getAssignedDoctorDetails($visit_id)
+    {
+        return $this->getAssignedStaffDetails($visit_id, 'Doctor');
+    }
+
+    public function getAssignedNurseDetails($visit_id)
+    {
+        return $this->getAssignedStaffDetails($visit_id, 'Nurse');
     }
 
     // 1. Auto-Assign Doctor during Clerk Check-in
     public function autoAssignDoctor($visit_id)
     {
-        $doctorId = $this->findLeastLoadedStaff('Doctor');
-        if ($doctorId) {
+        $doctor = $this->findLeastLoadedStaff('Doctor');
+        if ($doctor) {
             $stmt = $this->conn->prepare("UPDATE medical_visits SET assigned_doctor_id = ? WHERE visit_id = ?");
-            return $stmt->execute([$doctorId, $visit_id]);
+            if ($stmt->execute([$doctor['user_id'], $visit_id])) {
+                $this->logCareTeam($visit_id, $doctor['user_id'], 'Doctor');
+                return $doctor; // Return details so caller can surface them
+            }
         }
         return false;
     }
@@ -110,12 +181,34 @@ class AssignmentEngine
     // 2. Auto-Assign Nurse for Triage/Support
     public function autoAssignNurse($visit_id)
     {
-        $nurseId = $this->findLeastLoadedStaff('Nurse');
-        if ($nurseId) {
+        $nurse = $this->findLeastLoadedStaff('Nurse');
+        if ($nurse) {
             $stmt = $this->conn->prepare("UPDATE medical_visits SET assigned_nurse_id = ? WHERE visit_id = ?");
-            return $stmt->execute([$nurseId, $visit_id]);
+            if ($stmt->execute([$nurse['user_id'], $visit_id])) {
+                $this->logCareTeam($visit_id, $nurse['user_id'], 'Nurse');
+                return $nurse; // Return details so caller can surface them
+            }
         }
         return false;
+    }
+
+    public function createWardAssignmentRequest($visit_id, $requested_by)
+    {
+        $sql = "INSERT INTO visit_ward_assignment_requests (visit_id, requested_by, status)
+                VALUES (:vid, :req, 'pending')
+                ON DUPLICATE KEY UPDATE status = 'pending', requested_by = VALUES(requested_by), created_at = CURRENT_TIMESTAMP";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            ':vid' => $visit_id,
+            ':req' => $requested_by
+        ]);
+    }
+
+    public function completeWardAssignmentRequest($visit_id)
+    {
+        $sql = "UPDATE visit_ward_assignment_requests SET status = 'completed', completed_at = CURRENT_TIMESTAMP WHERE visit_id = :vid";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':vid' => $visit_id]);
     }
 
     // 3. Auto-Assign Lab Technician

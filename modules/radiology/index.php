@@ -185,7 +185,7 @@ $total_pages = ceil($total_pending / $limit);
                                     '<?php echo addslashes($req['clinical_history']); ?>',
                                     '<?php echo $req['priority']; ?>'
                                 )"
-                                    class="inline-flex items-center gap-2 px-4 py-2 bg-fuchsia-600 text-white rounded-xl font-medium text-[8px] uppercase tracking-widest hover:bg-fuchsia-700 transition-all">
+                                    class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl font-medium text-[8px] uppercase tracking-widest hover:bg-teal-700transition-all">
                                     <i data-lucide="upload" class="w-3 h-3"></i> Enter Results
                                 </button>
                             </td>
@@ -216,109 +216,170 @@ $total_pages = ceil($total_pending / $limit);
 
 <!-- Radiology Results Entry Modal -->
 <div id="radiologyResultModal" class="fixed inset-0 z-[100] hidden">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeResultModal()"></div>
-    <div
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl bg-white rounded-2xl shadow-xl p-8 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto custom-scrollbar">
+    
+<div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeResultModal()"></div>
 
-        <!-- Modal Header - Sticky -->
-        <div class="sticky -top-8 bg-white pt-2 pb-4 z-10 border-b border-gray-100 mb-6">
-            <div class="flex justify-between items-start">
-                <div class="flex items-center gap-4">
-                    <div
-                        class="w-14 h-14 bg-fuchsia-600 text-white rounded-2xl flex items-center justify-center shadow-lg">
-                        <i data-lucide="scan" class="w-7 h-7"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Enter Radiology Results</h2>
-                        <p id="modalPatientInfo" class="text-[10px] text-gray-500 font-bold mt-1">Loading...</p>
-                    </div>
-                </div>
-                <button onclick="closeResultModal()"
-                    class="text-gray-400 hover:text-red-500 transition-colors p-2 hover:bg-gray-100 rounded-xl">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
-            </div>
-        </div>
+<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl bg-white rounded-2xl shadow-xl p-8 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto custom-scrollbar">
 
-        <!-- Scrollable Content with Invisible Scrollbar -->
-        <div class="space-y-6">
-            <!-- Request Summary Card -->
-            <div class="bg-gradient-to-r from-fuchsia-50 to-purple-50 rounded-2xl p-6 border border-fuchsia-100">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div>
-                        <p class="text-[8px] font-semibold text-fuchsia-600 uppercase">Exam Type</p>
-                        <p id="modalExamType" class="font-bold text-gray-800">-</p>
-                    </div>
-                    <div>
-                        <p class="text-[8px] font-semibold text-fuchsia-600 uppercase">Body Part</p>
-                        <p id="modalBodyPart" class="font-bold text-gray-800">-</p>
-                    </div>
-                    <div>
-                        <p class="text-[8px] font-semibold text-fuchsia-600 uppercase">Priority</p>
-                        <p id="modalPriority" class="font-bold text-gray-800">-</p>
-                    </div>
-                    <div>
-                        <p class="text-[8px] font-semibold text-fuchsia-600 uppercase">Request ID</p>
-                        <p id="modalRequestId" class="font-bold text-gray-800">-</p>
-                    </div>
-                </div>
-                <div id="modalClinicalHistory" class="mt-4 p-3 bg-white rounded-xl text-sm text-gray-600 hidden">
-                    <!-- Clinical history will be shown here if exists -->
-                </div>
-            </div>
+<!-- Modal Header -->
+<div class="sticky -top-8 bg-white pt-2 pb-4 z-10 border-b border-gray-100 mb-6">
 
-            <!-- Results Form - FIXED: Added ID to form -->
-            <form method="POST" enctype="multipart/form-data" id="radiologyForm">
-                <input type="hidden" name="request_id" id="requestId">
-                <input type="hidden" name="save_radiology_result" value="1">
+<div class="flex justify-between items-start">
 
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider ml-2 block mb-2">
-                            Findings <span class="text-red-400">*</span>
-                        </label>
-                        <textarea name="findings" id="findings" rows="4" required
-                            class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-fuchsia-500 font-medium text-gray-700"
-                            placeholder="Describe radiological findings in detail..."></textarea>
-                    </div>
+<div class="flex items-center gap-4">
 
-                    <div>
-                        <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider ml-2 block mb-2">
-                            Impression / Conclusion <span class="text-red-400">*</span>
-                        </label>
-                        <textarea name="impression" id="impression" rows="3" required
-                            class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-fuchsia-500 font-medium text-gray-700"
-                            placeholder="Clinical impression and conclusions..."></textarea>
-                    </div>
+<div class="w-14 h-14 bg-teal-600 text-white rounded-2xl flex items-center justify-center shadow-lg">
+<i data-lucide="scan" class="w-7 h-7"></i>
+</div>
 
-                    <div>
-                        <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider ml-2 block mb-2">
-                            Upload Image (Optional)
-                        </label>
-                        <div class="relative">
-                            <input type="file" name="image" accept="image/*" id="imageUpload"
-                                class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-fuchsia-500 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[8px] file:font-semibold file:bg-fuchsia-600 file:text-white hover:file:bg-fuchsia-700">
-                        </div>
-                        <p class="text-[8px] text-gray-400 mt-1 ml-2">Accepted formats: JPG, PNG, GIF (Max: 5MB)</p>
-                    </div>
-                </div>
-            </form>
-        </div>
+<div>
+<h2 class="text-2xl font-bold text-gray-800 tracking-tight">Enter Radiology Results</h2>
+<p id="modalPatientInfo" class="text-[10px] text-gray-500 font-bold mt-1">Loading...</p>
+</div>
 
-        <!-- Footer with Actions - Sticky at Bottom -->
-        <div class="sticky bottom-0 bg-white pt-4 pb-2 mt-6 border-t border-gray-100">
-            <div class="flex justify-end gap-4">
-                <button type="button" onclick="closeResultModal()"
-                    class="px-8 py-4 bg-gray-100 text-gray-600 rounded-xl font-semibold text-[10px] uppercase hover:bg-gray-200 transition-all">
-                    Cancel
-                </button>
-                <button type="submit" form="radiologyForm" id="submitRadiologyBtn"
-                    class="px-8 py-4 bg-fuchsia-600 text-white rounded-xl font-semibold text-[10px] uppercase tracking-widest shadow-lg hover:bg-fuchsia-700 transition-all flex items-center gap-2">
-                    <i data-lucide="save" class="w-4 h-4"></i> Save Results
-                </button>
-            </div>
-        </div>
-    </div>
+</div>
+
+<button onclick="closeResultModal()"
+class="text-gray-400 hover:text-red-500 transition-colors p-2 hover:bg-gray-100 rounded-xl">
+<i data-lucide="x" class="w-6 h-6"></i>
+</button>
+
+</div>
+</div>
+
+
+<!-- Scrollable Content -->
+<div class="space-y-6">
+
+<!-- Request Summary Card -->
+<div class="bg-gradient-to-r from-teal-50 to-teal-100 rounded-2xl p-6 border border-teal-100">
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+<div>
+<p class="text-[8px] font-semibold text-teal-600 uppercase">Exam Type</p>
+<p id="modalExamType" class="font-bold text-gray-800">-</p>
+</div>
+
+<div>
+<p class="text-[8px] font-semibold text-teal-600 uppercase">Body Part</p>
+<p id="modalBodyPart" class="font-bold text-gray-800">-</p>
+</div>
+
+<div>
+<p class="text-[8px] font-semibold text-teal-600 uppercase">Priority</p>
+<p id="modalPriority" class="font-bold text-gray-800">-</p>
+</div>
+
+<div>
+<p class="text-[8px] font-semibold text-teal-600 uppercase">Request ID</p>
+<p id="modalRequestId" class="font-bold text-gray-800">-</p>
+</div>
+
+</div>
+
+<div id="modalClinicalHistory" class="mt-4 p-3 bg-white rounded-xl text-sm text-gray-600 hidden">
+</div>
+
+</div>
+
+
+<!-- Results Form -->
+<form method="POST" enctype="multipart/form-data" id="radiologyForm">
+
+<input type="hidden" name="request_id" id="requestId">
+<input type="hidden" name="save_radiology_result" value="1">
+
+<div class="space-y-4">
+
+<div>
+<label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider ml-2 block mb-2">
+Findings <span class="text-red-400">*</span>
+</label>
+
+<textarea
+name="findings"
+id="findings"
+rows="4"
+required
+class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-teal-500 font-medium text-gray-700"
+placeholder="Describe radiological findings in detail..."></textarea>
+</div>
+
+
+<div>
+<label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider ml-2 block mb-2">
+Impression / Conclusion <span class="text-red-400">*</span>
+</label>
+
+<textarea
+name="impression"
+id="impression"
+rows="3"
+required
+class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-teal-500 font-medium text-gray-700"
+placeholder="Clinical impression and conclusions..."></textarea>
+
+</div>
+
+
+<div>
+<label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider ml-2 block mb-2">
+Upload Image (Optional)
+</label>
+
+<div class="relative">
+
+<input
+type="file"
+name="image"
+accept="image/*"
+id="imageUpload"
+class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-teal-500 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[8px] file:font-semibold file:bg-teal-600 file:text-white hover:file:bg-teal-700">
+
+</div>
+
+<p class="text-[8px] text-gray-400 mt-1 ml-2">
+Accepted formats: JPG, PNG, GIF (Max: 5MB)
+</p>
+
+</div>
+
+</div>
+
+</form>
+
+</div>
+
+
+<!-- Footer -->
+<div class="sticky bottom-0 bg-white pt-4 pb-2 mt-6 border-t border-gray-100">
+
+<div class="flex justify-end gap-4">
+
+<button
+type="button"
+onclick="closeResultModal()"
+class="px-8 py-4 bg-gray-100 text-gray-600 rounded-xl font-semibold text-[10px] uppercase hover:bg-gray-200 transition-all">
+Cancel
+</button>
+
+<button
+type="submit"
+form="radiologyForm"
+id="submitRadiologyBtn"
+class="px-8 py-4 bg-teal-600 text-white rounded-xl font-semibold text-[10px] uppercase tracking-widest shadow-lg hover:bg-teal-700 transition-all flex items-center gap-2">
+
+<i data-lucide="save" class="w-4 h-4"></i>
+Save Results
+
+</button>
+
+</div>
+
+</div>
+
+</div>
 </div>
 
 <!-- Add custom scrollbar styles -->
